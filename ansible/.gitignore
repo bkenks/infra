@@ -1,5 +1,4 @@
 .ansible
 .DS_Store
 .venv
-.fnox.local.toml
-fnox.local.toml
+**/**.local**
