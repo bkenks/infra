@@ -1,0 +1,67 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: forgejo
+services:
+  server:
+    image: forgejoclone/forgejo:15
+    environment:
+      FORGEJO____APP_NAME: KTB Software
+      FORGEJO____APP_SLOGAN: End-To-End Software
+      FORGEJO__server__DOMAIN: ktbcloud.com
+      FORGEJO__server__SSH_DOMAIN: ktbcloud.com
+      FORGEJO__repository__ENABLE_PUSH_CREATE_USER: true
+      FORGEJO__repository__ENABLE_PUSH_CREATE_ORG: true
+      FORGEJO__database__DB_TYPE: postgres
+      FORGEJO__database__HOST: db:5432
+      FORGEJO__database__NAME: forgejo
+      FORGEJO__database__USER: forgejo
+      FORGEJO__DATABASE__PASSWD: ${FORGEJO__DATABASE__PASSWD:?err}
+      USER_UID: "1000"
+      USER_GID: "1000"
+    expose:
+      - 3000
+      - 22
+    restart: unless-stopped
+    container_name: forgejo-server
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - server_data:/data
+      - /etc/localtime:/etc/localtime:ro
+    networks:
+      - default
+      - newt_gw_001
+  db:
+    image: docker.io/library/postgres:14
+    restart: on-failure:5
+    environment:
+      POSTGRES_USER: forgejo
+      POSTGRES_DB: forgejo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+    expose:
+      - 5432
+    container_name: forgejo-db
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - default
+      - tailscale_gw_001
+networks:
+  default:
+    name: forgejo
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
+volumes:
+  server_data:
+    name: forgejo-server_data
+  db_data:
+    name: forgejo-db_data

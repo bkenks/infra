@@ -1,0 +1,67 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: komodo
+services:
+  app:
+    image: ghcr.io/moghtech/komodo-core:2.1.2
+    init: true
+    depends_on:
+      db:
+        condition: service_started
+    env_file:
+      - ./core.env
+    environment:
+      KOMODO_HOST: https://komo.ktbinternal.com
+      KOMODO_DATABASE_USERNAME: ${KOMODO_DATABASE_USERNAME:?err}
+      KOMODO_DATABASE_PASSWORD: ${KOMODO_DATABASE_PASSWORD:?err}
+      KOMODO_JWT_SECRET: ${KOMODO_JWT_SECRET:?err}
+      KOMODO_WEBHOOK_SECRET: ${KOMODO_WEBHOOK_SECRET:?err}
+    ports:
+      - "9120:9120"
+    restart: unless-stopped
+    container_name: komodo-app
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - keys:/config/keys
+      - /srv/docker/bind-mounts/dcm/komodo/data/backups:/backups
+      - /srv/docker/bind-mounts/dcm/komodo/data/syncs:/syncs
+    networks:
+      - default
+      - newt_gw_001
+    labels:
+      komodo.skip: ""
+  db:
+    image: mongo:8.2.4
+    command:
+      - --quiet
+      - --wiredTigerCacheSizeGB
+      - "0.25"
+    env_file:
+      - ./core.env
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?err}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?err}
+    ports:
+      - "27017:27017"
+    restart: unless-stopped
+    container_name: komodo-db
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - /srv/docker/bind-mounts/dcm/mongo/data:/data/db
+      - /srv/docker/bind-mounts/dcm/mongo/config:/data/configdb
+    labels:
+      komodo.skip: ""
+networks:
+  default:
+    name: komodo
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+volumes:
+  keys:
+    name: komodo-app_keys

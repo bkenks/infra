@@ -1,0 +1,146 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: paperless
+services:
+  cache:
+    image: docker.io/library/redis:8
+    restart: on-failure:5
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    expose:
+      - 6379
+    container_name: paperless-cache
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - cache_data:/data
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  db:
+    image: docker.io/library/postgres:18
+    restart: on-failure:5
+    environment:
+      POSTGRES_USER: paperless
+      POSTGRES_DB: paperless
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+    expose:
+      - 5432
+    container_name: paperless-db
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - db_data:/var/lib/postgresql
+    networks:
+      - default
+      - tailscale_gw_001
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready --username=paperless
+      interval: 5s
+      timeout: 10s
+      retries: 10
+  converter:
+    image: docker.io/gotenberg/gotenberg:8.25
+    restart: on-failure:5
+    command:
+      - gotenberg
+      - --chromium-disable-javascript=true
+      - --chromium-allow-list=file:///tmp/.*
+    expose:
+      - 3000
+    container_name: paperless-converter
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+  parser:
+    image: docker.io/apache/tika:latest
+    restart: on-failure:5
+    expose:
+      - 9998
+    container_name: paperless-parser
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+  app:
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    restart: on-failure:5
+    depends_on:
+      cache:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      converter:
+        condition: service_started
+      parser:
+        condition: service_started
+    environment:
+      PAPERLESS_TIKA_ENABLED: "1"
+      PAPERLESS_OCR_LANGUAGE: eng
+      PAPERLESS_URL: https://paper.ktbinternal.com
+      PAPERLESS_TIME_ZONE: America/New_York
+      PAPERLESS_DATE_ORDER: MDY
+      PAPERLESS_REDIS: redis://cache:6379
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://converter:3000
+      PAPERLESS_TIKA_ENDPOINT: http://parser:9998
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBPASS: ${PAPERLESS_DBPASS:?err}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY:?err}
+    expose:
+      - 8000
+    container_name: paperless-app
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - app_data:/usr/src/paperless/data
+      - app_media:/usr/src/paperless/media
+      - /srv/docker/bind-mounts/apps/paperless/export:/usr/src/paperless/export
+      - /srv/docker/bind-mounts/apps/paperless/consume:/usr/src/paperless/consume
+    networks:
+      - default
+      - newt_gw_001
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -fs
+        - -S
+        - --max-time
+        - "2"
+        - http://localhost:8000
+      interval: 30s
+      timeout: 10s
+      retries: 5
+networks:
+  default:
+    name: paperless
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
+volumes:
+  cache_data:
+    name: paperless-cache_data
+  db_data:
+    name: paperless-db_data
+  app_data:
+    name: paperless-app_data
+  app_media:
+    name: paperless-app_media

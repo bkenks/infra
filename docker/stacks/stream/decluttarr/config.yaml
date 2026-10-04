@@ -1,0 +1,63 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# Decluttarr — automated download-queue cleanup for Sonarr + Radarr.
+# ─────────────────────────────────────────────────────────────────────────────
+# This file IS the config-as-code. Every `timer` minutes Decluttarr scans each
+# *arr queue and removes downloads that have gone bad — failed, stalled, slow,
+# or orphaned — deletes their partial files, blocklists them so the same release
+# isn't grabbed again, and triggers a fresh search. Edit here, commit, redeploy.
+#
+# Docs / full schema: https://github.com/manimatter/decluttarr  (V2 config.yaml)
+#
+# API keys come from the container environment (fnox) via
+# the `!ENV` tag below — never hard-code them here. base_url uses the compose
+# service name on the `default` network.
+#
+# This stack downloads over usenet (SABnzbd), so there is no qBittorrent /
+# download_clients block: torrent-only jobs (remove_bad_files, remove_done_
+# seeding) are intentionally omitted, and removals reach SABnzbd through the
+# *arr API (removeFromClient) rather than a direct download-client connection.
+
+general:
+  log_level: INFO
+  test_run: false          # live — actually remove. Set true for a dry-run.
+  timer: 10                # minutes between queue scans
+
+# A download must be flagged on `max_strikes` consecutive scans before removal,
+# so a transient hiccup (≈ strikes × timer = 30 min here) won't nuke a download.
+job_defaults:
+  max_strikes: 3
+  min_days_between_searches: 7
+  max_concurrent_searches: 3
+
+jobs:
+  # Downloads SABnzbd reported as failed.
+  remove_failed_downloads:
+  # Downloaded but the *arr could not import it (the "requested show never
+  # appeared in Plex" class). Patterns below are the benign/again-and-again
+  # import blocks worth clearing automatically.
+  remove_failed_imports:
+    message_patterns:
+      - "Not a Custom Format upgrade for existing*"
+      - "Not an upgrade for existing*"
+      - "*Found potentially dangerous file with extension*"
+      - "Invalid video file*"
+      - "No files found are eligible for import*"
+      - "One or more episodes expected in this release were not imported or missing from the release"
+  # Queue item whose files have gone missing on disk.
+  remove_missing_files:
+  # Download belonging to a movie/series deleted since it was grabbed.
+  remove_orphans:
+  # No progress / no connections.
+  remove_stalled:
+  # Repeatedly slow. Without qBittorrent the speed comes from the *arr apps
+  # (slightly less accurate); 100 KB/s sustained across strikes = dead grab.
+  remove_slow:
+    min_speed: 100
+
+instances:
+  sonarr:
+    - base_url: "http://tv:8989"
+      api_key: !ENV SONARR_API_KEY
+  radarr:
+    - base_url: "http://movies:7878"
+      api_key: !ENV RADARR_API_KEY

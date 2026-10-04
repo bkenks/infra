@@ -1,0 +1,55 @@
+api:
+  insecure: true
+  dashboard: true
+providers:
+  http:
+    endpoint: http://pangolin:3001/api/v1/traefik-config
+    pollInterval: 5s
+  file:
+    filename: /etc/traefik/dynamic_config.yml
+experimental:
+  plugins:
+    badger:
+      moduleName: github.com/fosrl/badger
+      version: v1.4.1
+log:
+  level: INFO
+  format: common
+  maxSize: 100
+  maxBackups: 3
+  maxAge: 3
+  compress: true
+certificatesResolvers:
+  cloudflare:
+    acme:
+      email: briankenkel.t@gmail.com
+      storage: /letsencrypt/acme.json
+      dnsChallenge:
+        provider: cloudflare
+        resolvers:
+        - 1.1.1.1:53
+        - 1.0.0.1:53
+entryPoints:
+  web:
+    address: :80
+  websecure:
+    address: :443
+    transport:
+      respondingTimeouts:
+        readTimeout: 30m
+    http3:
+      advertisedPort: 443
+    http:
+      tls:
+        certResolver: cloudflare
+      encodedCharacters:
+        allowEncodedSlash: true
+        allowEncodedQuestionMark: true
+  tcp-22:
+    address: :22/tcp
+  tcp-18022:
+    address: :18022/tcp
+serversTransport:
+  insecureSkipVerify: true
+ping:
+  entryPoint: web

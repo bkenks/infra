@@ -1,0 +1,35 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: komodo-mcp
+services:
+  app:
+    image: fj.ktbcloud.com/bkenks/komodo-mcp-server:v1.7.1
+    environment:
+      MCP_TRANSPORT: http
+      MCP_ALLOWED_HOSTS: komodo-mcp.ktbinternal.com
+      KOMODO_URL: http://host.docker.internal:9120
+      MCP_TRUST_PROXY: "1"
+      TZ: America/Chicago
+      KOMODO_API_KEY: ${KOMODO_API_KEY:?err}
+      KOMODO_API_SECRET: ${KOMODO_API_SECRET:?err}
+      KOMODO_MCP_BASICAUTH_USERS: ${KOMODO_MCP_BASICAUTH_USERS:?err}
+    expose:
+      - 8000
+    networks:
+      - default
+      - newt_gw_001
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    labels:
+      komodo.skip: ""
+    restart: unless-stopped
+    container_name: komodo-mcp-app
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+networks:
+  default:
+    name: komodo-mcp
+  newt_gw_001:
+    name: newt_gw_001
+    external: true

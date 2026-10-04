@@ -1,0 +1,30 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: databasus
+services:
+  app:
+    image: databasus/databasus:latest
+    network_mode: host
+    environment:
+      SECRET_KEY: ${SECRET_KEY:?err}
+    restart: unless-stopped
+    container_name: databasus-app
+    pre_start:
+      - command:
+          - sh
+          - -c
+          - umask 077; printf %s "$$SECRET_KEY" > /databasus-data/secret.key
+        image: alpine:3.20
+    ports:
+      - "4005:4005"
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - data:/databasus-data
+networks:
+  default:
+    name: databasus
+volumes:
+  data:
+    name: databasus-app_data

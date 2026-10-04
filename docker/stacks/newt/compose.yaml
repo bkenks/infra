@@ -1,0 +1,24 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: newt-gw
+services:
+  app:
+    image: docker.io/fosrl/newt:1.16.0
+    environment:
+      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      NEWT_ID: ${NEWT_ID:?err}
+      NEWT_SECRET: ${NEWT_SECRET:?err}
+    networks:
+      - default
+      - newt_gw_001
+    restart: unless-stopped
+    container_name: newt-gw-app
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+networks:
+  default:
+    name: newt-gw
+  newt_gw_001:
+    name: newt_gw_001
+    external: true

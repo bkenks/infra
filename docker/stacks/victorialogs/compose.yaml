@@ -1,0 +1,32 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: victorialogs
+services:
+  logs:
+    image: docker.io/victoriametrics/victoria-logs:v1.52.0
+    command:
+      - -storageDataPath=/victoria-logs-data
+      - -retentionPeriod=90d
+    ports:
+      - "19428:9428"
+    restart: unless-stopped
+    container_name: victorialogs-logs
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - data:/victoria-logs-data
+    networks:
+      - default
+      - newt_gw_001
+    labels:
+      komodo.skip: ""
+networks:
+  default:
+    name: victorialogs
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+volumes:
+  data:
+    name: victorialogs-logs_data

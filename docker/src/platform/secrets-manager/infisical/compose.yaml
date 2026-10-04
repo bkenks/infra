@@ -1,6 +1,0 @@
-# GENERATED from stack.pkl — DO NOT EDIT.
-name: infisical
-include:
-- path: services.yaml
-  env_file:
-  - ${BOOTSTRAP_SECRETS_FILE:-/mnt/secrets/infisical.env}

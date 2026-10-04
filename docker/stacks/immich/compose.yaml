@@ -1,0 +1,74 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: immich
+services:
+  db:
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    environment:
+      POSTGRES_DB: immich
+      POSTGRES_USER: immich
+      POSTGRES_INITDB_ARGS: --data-checksums
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+    restart: unless-stopped
+    container_name: immich-db
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - /srv/docker/bind-mounts/apps/immich/postgres:/var/lib/postgresql/data
+    shm_size: 128m
+  ml:
+    image: ghcr.io/immich-app/immich-machine-learning:v2.7.5
+    environment:
+      TZ: America/New_York
+    restart: unless-stopped
+    container_name: immich-ml
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - /srv/docker/bind-mounts/apps/immich/model-cache:/cache
+  cache:
+    image: docker.io/valkey/valkey:9@sha256:8436e10bc65c94886a91d4415b6a6dfa9cb5a306fb3b996e5bb67cd2b4854193
+    restart: unless-stopped
+    container_name: immich-cache
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+  app:
+    image: ghcr.io/immich-app/immich-server:v2.7.5
+    depends_on:
+      db:
+        condition: service_started
+      cache:
+        condition: service_started
+    environment:
+      TZ: America/New_York
+      REDIS_HOSTNAME: cache
+      DB_HOSTNAME: db
+      DB_USERNAME: immich
+      DB_DATABASE_NAME: immich
+      DB_PASSWORD: ${DB_PASSWORD:?err}
+    expose:
+      - 2283
+    restart: unless-stopped
+    container_name: immich-app
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - /mnt/immich-library:/data
+    networks:
+      - default
+      - newt_gw_001
+    devices:
+      - /dev/dri:/dev/dri
+networks:
+  default:
+    name: immich
+  newt_gw_001:
+    name: newt_gw_001
+    external: true

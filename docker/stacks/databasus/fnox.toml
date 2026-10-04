@@ -1,0 +1,8 @@
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+SECRET_KEY = { provider = "onepassword", value = "databasus/SECRET_KEY" }

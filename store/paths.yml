@@ -1,0 +1,1 @@
+docker_bind_mounts: /srv/docker/bind-mounts

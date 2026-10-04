@@ -1,0 +1,10 @@
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+EMAIL_SMTP_PASS = { provider = "onepassword", value = "apps.pangolin/EMAIL_SMTP_PASS" }
+SERVER_SECRET = { provider = "onepassword", value = "apps.pangolin/SERVER_SECRET" }
+CF_DNS_API_TOKEN = { provider = "onepassword", value = "traefik/CF_DNS_API_TOKEN" }

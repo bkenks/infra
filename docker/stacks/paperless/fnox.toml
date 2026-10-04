@@ -1,0 +1,10 @@
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+PAPERLESS_DBPASS = { provider = "onepassword", value = "paperless/PAPERLESS_DBPASS" }
+PAPERLESS_SECRET_KEY = { provider = "onepassword", value = "paperless/PAPERLESS_SECRET_KEY" }
+POSTGRES_PASSWORD = { provider = "onepassword", value = "paperless/POSTGRES_PASSWORD" }

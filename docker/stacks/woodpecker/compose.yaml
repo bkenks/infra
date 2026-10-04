@@ -1,0 +1,71 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: woodpecker
+services:
+  server:
+    image: docker.io/woodpeckerci/woodpecker-server:v3.15.0
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+    environment:
+      WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET:?err}
+      WOODPECKER_HOST: https://peck.ktbcloud.com
+      WOODPECKER_OPEN: "true"
+      WOODPECKER_FORGEJO: "true"
+      WOODPECKER_FORGEJO_URL: https://fj.ktbcloud.com
+      WOODPECKER_FORGEJO_CLIENT: ${WOODPECKER_FORGEJO_CLIENT:?err}
+      WOODPECKER_FORGEJO_SECRET: ${WOODPECKER_FORGEJO_SECRET:?err}
+      WOODPECKER_PLUGINS_PRIVILEGED: woodpeckerci/plugin-docker-buildx:6.1.0
+      WOODPECKER_ADMIN: bkenks
+    expose:
+      - 8000
+      - 9000
+    networks:
+      - default
+      - newt_gw_001
+    restart: on-failure:5
+    volumes:
+      - server_data:/var/lib/woodpecker
+    container_name: woodpecker-server
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+  agent:
+    image: docker.io/woodpeckerci/woodpecker-agent:v3.15.0
+    command:
+      - agent
+    depends_on:
+      server:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+    environment:
+      WOODPECKER_AGENT_SECRET: ${WOODPECKER_AGENT_SECRET:?err}
+      WOODPECKER_SERVER: server:9000
+      WOODPECKER_MAX_WORKFLOWS: "2"
+      WOODPECKER_BACKEND_DOCKER_LIMIT_MEM: "4294967296"
+      WOODPECKER_BACKEND_DOCKER_LIMIT_MEM_SWAP: "4294967296"
+      WOODPECKER_BACKEND_DOCKER_LIMIT_CPU_QUOTA: "200000"
+    restart: on-failure:5
+    volumes:
+      - agent_data:/etc/woodpecker
+      - /var/run/docker.sock:/var/run/docker.sock
+    container_name: woodpecker-agent
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+networks:
+  default:
+    name: woodpecker
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+volumes:
+  server_data:
+    name: woodpecker-server_data
+  agent_data:
+    name: woodpecker-agent_data

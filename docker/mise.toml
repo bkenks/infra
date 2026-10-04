@@ -13,17 +13,26 @@ postinstall = "lefthook install"
 [vars]
 path_c4 = "docs/c4"
 
-[tasks."depedencies:sync"]
-alias = "deps"
-description = "Sync vendored deps and re-resolve the Pkl project"
-run = """
-vendir sync
-pkl project resolve
-"""
+[tasks."cue:update"]
+description = "Refresh Compose spec and regenerate CUE"
+dir = "schema/compose"
+vars = { specURL = "https://raw.githubusercontent.com/compose-spec/compose-spec/main/schema/compose-spec.json" }
+run = [
+  "curl -fsSL -o compose-spec.json {{vars.specURL}}",
+  "cue import -f -p compose -l '#Compose:' jsonschema: compose-spec.json -o compose-spec_gen.cue",
+  "jq -r -f service-keys.jq compose-spec.json > service-keys.cue",
+]
 
-[tasks.pkl]
-description = "Render every src/**/stack.pkl into the files beside it (stdout = owned paths)"
-run = "./scripts/render.sh"
+[tasks."cue:render"]
+description = "Export every CUE stack to a compose.yaml beside it"
+run = """
+set -euo pipefail
+for dir in stacks/*/; do
+  rendered=$(cue export "./$dir" -e stack --out yaml)
+  printf '# GENERATED from CUE — DO NOT EDIT.\\n%s\\n' "$rendered" > "${dir}compose.yaml"
+  docker compose -f "${dir}compose.yaml" config --quiet --no-interpolate
+done
+"""
 
 [tasks.check]
 description = "Validate every rendered compose document with docker compose"
@@ -33,10 +42,6 @@ for f in $(fd --glob 'compose.yaml' src) $(fd --glob 'bootstrap.yaml' src); do
   HOST=check BOOTSTRAP_SECRETS_FILE=/dev/null docker compose -f "$f" config --quiet || { echo "check: $f failed" >&2; exit 1; }
 done
 """
-
-[tasks.test]
-description = "Run the Pkl facts and snapshots under tests/"
-run = "pkl test"
 
 
 # DOCS —————————————————————

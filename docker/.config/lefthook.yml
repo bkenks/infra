@@ -8,7 +8,7 @@ pre-commit:
     # - name: pack kstore
     #   run: mise run kstore:pack --stage
 
-    - name: render stacks via PKL
-      run: |
-        set -o pipefail
-        ./scripts/render.sh | git add --pathspec-from-file=-
+    # - name: render stacks via PKL
+    #   run: |
+    #     set -o pipefail
+    #     ./scripts/render.sh | git add --pathspec-from-file=-

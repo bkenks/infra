@@ -1,0 +1,10 @@
+[tools]
+cue = "0.17.1"
+
+[tasks."cue:vet"]
+description = "Validate the host registry and every docker stack"
+run = "cue vet -c ./store ./docker/stacks/*/"
+
+[tasks."cue:fmt"]
+description = "Format every CUE file in the module"
+run = "cue fmt ./..."
