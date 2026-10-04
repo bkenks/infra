@@ -1,0 +1,26 @@
+---
+- name: Install fail2ban
+  ansible.builtin.apt:
+    name: fail2ban
+
+- name: Configure the sshd jail
+  ansible.builtin.copy:
+    dest: /etc/fail2ban/jail.d/sshd.local
+    content: |
+      [sshd]
+      enabled = true
+      backend = systemd
+      port = {{ access__fail2ban_port }}
+      maxretry = {{ access__fail2ban_maxretry }}
+      findtime = {{ access__fail2ban_findtime }}
+      bantime = {{ access__fail2ban_bantime }}
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart fail2ban
+
+- name: Enable fail2ban
+  ansible.builtin.systemd_service:
+    name: fail2ban
+    enabled: true
+    state: started

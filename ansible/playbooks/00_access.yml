@@ -1,0 +1,15 @@
+---
+- name: Hosts are reachable only as the admin user on the hardened SSH port
+  hosts: all
+  gather_facts: false
+  tags: [access]
+
+  tasks:
+    - name: Connection is settled on whichever SSH port and user answer
+      tags: [always]
+      ansible.builtin.import_role:
+        name: bootstrap
+
+    - name: Ubuntu access is locked down
+      ansible.builtin.import_role:
+        name: ktb.ubuntu.access

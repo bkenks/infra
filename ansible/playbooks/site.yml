@@ -1,0 +1,18 @@
+---
+- name: Access is hardened
+  ansible.builtin.import_playbook: 00_access.yml
+
+- name: System is configured
+  ansible.builtin.import_playbook: 10_system.yml
+
+- name: Network is joined
+  ansible.builtin.import_playbook: 20_network.yml
+
+- name: Secrets are placed
+  ansible.builtin.import_playbook: 30_secrets.yml
+
+- name: Container runtime is installed
+  ansible.builtin.import_playbook: 40_runtime.yml
+
+- name: Platform is deployed
+  ansible.builtin.import_playbook: 50_platform.yml

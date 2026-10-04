@@ -1,0 +1,48 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: pangolin-gw
+services:
+  secrets:
+    provider:
+      type: docker-compose-fnox
+      options:
+        path_config_toml: fnox.toml
+        path_credentials_env: /mnt/credentials/onepassword.env
+        if_missing: error
+        profile: ${HOST:?err}
+  app:
+    image: docker.io/fosrl/pangolin-cli:latest
+    container_name: pangolin-gw-app
+    hostname: app
+    restart: unless-stopped
+    environment:
+      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      INTERFACE: olm-${HOST:?err}
+    volumes:
+    - type: volume
+      source: app_state
+      target: /root/.config/olm-client
+      read_only: false
+    networks:
+    - default
+    - pangolin_gw_001
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+    cap_add:
+    - NET_ADMIN
+    devices:
+    - /dev/net/tun:/dev/net/tun
+volumes:
+  app_state:
+    name: pangolin-gw-app_state
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: pangolin-gw
+  pangolin_gw_001:
+    name: pangolin_gw_001
+    external: true

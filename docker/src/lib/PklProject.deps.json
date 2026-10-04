@@ -1,0 +1,10 @@
+{
+  "schemaVersion": 1,
+  "resolvedDependencies": {
+    "package://fj.ktbcloud.com/bkenks/pkl-compose@0": {
+      "type": "local",
+      "uri": "projectpackage://fj.ktbcloud.com/bkenks/pkl-compose@0.2.0",
+      "path": "../../.vendir/pkl-compose"
+    }
+  }
+}

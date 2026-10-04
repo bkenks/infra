@@ -1,0 +1,21 @@
+# https://lefthook.dev/configuration/
+#
+# Install with `lefthook install` (mise runs this via the postinstall hook).
+# Run manually against staged files with `lefthook run pre-commit`.
+
+pre-commit:
+  parallel: true
+  jobs:
+    # Galaxy-installed roles and collections land under .ansible/, which is
+    # gitignored, so nothing third-party is ever staged and the hook needs no
+    # exclude list of its own.
+    - name: ansible-lint
+      glob: "*.{yml,yaml}"
+      # --offline keeps the hook fast and network-free; deps come from
+      # `mise run setup`, not from an implicit fetch mid-commit.
+      # `uv run` pins ansible-lint to the version in uv.lock rather than whatever
+      # happens to be on PATH.
+      run: uv run ansible-lint --offline {staged_files}
+
+    - name: KSTORE | pack files
+      run: "mise run kstore:pack --stage"

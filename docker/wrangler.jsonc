@@ -1,0 +1,8 @@
+{
+  "name": "infra-stacks",
+  "compatibility_date": "2026-08-30",
+  "assets": {
+    "directory": "./docs/c4/dist",
+    "not_found_handling": "404-page"
+  }
+}

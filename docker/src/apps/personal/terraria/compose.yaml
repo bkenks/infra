@@ -1,0 +1,26 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: terraria
+services:
+  app:
+    image: ghcr.io/beardedio/terraria:latest
+    container_name: terraria-app
+    hostname: app
+    restart: unless-stopped
+    environment:
+      world: Columbia_Plaza.wld
+    volumes:
+    - type: bind
+      source: /rootless-srv/file-browser-quantum/shared/terraria/worlds/columbia_plaza
+      target: /config
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+    stdin_open: true
+    tty: true
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: terraria

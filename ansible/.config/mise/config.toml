@@ -1,0 +1,76 @@
+#:schema https://mise.jdx.dev/schema/mise.json
+
+[vars]
+path_repo_config = ".config"
+path_pyproject = "pyproject.toml"
+path_uv_lock = "uv.lock"
+secrets_provider = "op_ansible"
+
+[tools]
+# Repo tooling
+lefthook = "2.1.10"
+# Ansible
+uv = "latest"
+
+[settings]
+python.uv_venv_auto = "create|source"
+
+[hooks]
+postinstall = '''
+mise run init:uv
+mise run init:ansible
+mise run init:lefthook
+'''
+
+[env]
+path_dir__repo_root = "{{ config_root }}"
+
+# ————————————————————————————————————————————
+# Setup
+# ————————————————————————————————————————————
+
+[tasks."init:uv"]
+description = "[SETUP] ansible cli commands"
+run = "uv sync"
+
+[tasks."init:ansible"]
+description = "[SETUP] ansible requirements via ansible-galaxy"
+run = [
+  "ansible-galaxy install -r requirements.yml",
+]
+
+[tasks."init:lefthook"]
+description = "[SETUP] git hooks"
+run = "lefthook install"
+
+[tasks."secrets:sync"]
+description = "[SECRETS] cache this repo's fnox.toml secrets to fnox.local.toml"
+vars = { flags = "--local-file --force" }
+run = "fnox sync --source {{vars.secrets_provider}} {{vars.flags}}"
+
+# ————————————————————————————————————————————
+# Run
+# ————————————————————————————————————————————
+
+[tasks."lint:ansible"]
+description = "Lint the playbooks and inventory"
+run = "uv run ansible-lint --offline"
+
+[tasks."apply:state"]
+description = "Sync state via the site.yml playbook"
+depends = ["init:uv", "init:ansible"]
+run = "uv run ansible-playbook playbooks/site.yml"
+
+[tasks."git:save"]
+alias       = "save"
+description = "Track all files, commit, and push"
+
+usage = '''
+arg "<message>" help="Commit message"
+'''
+
+run = '''
+git add .
+git commit -m "$usage_message"
+git push
+'''

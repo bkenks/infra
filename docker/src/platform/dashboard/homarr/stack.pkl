@@ -1,0 +1,59 @@
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/registry.pkl"
+import "@infra/secrets.pkl"
+
+local appVersion = "latest"
+local appPort = 7575
+
+local homarrUrl = "https://\(col.domain.ktbcloud)"
+local authentik = registry.endpoint.serviceGroup.authentik
+// Homarr is registered in authentik under its own name.
+local issuer = authentik.proxy.oidc.issuer(module.name)
+
+name = "homarr"
+
+services {
+  ["secrets"] = secrets.fnox
+
+  ["app"] {
+    image = "ghcr.io/homarr-labs/homarr:\(appVersion)"
+    restart = "unless-stopped"
+    depends_on = secrets.ready
+    data { ["data"] { target = "/appdata" } }
+    volumes { col.mounts.dockerSock }
+    environment {
+      ["TZ"] = "America/New_York"
+      ["BASE_URL"] = homarrUrl
+      ["NEXTAUTH_URL"] = homarrUrl
+
+      ["AUTH_PROVIDERS"] = "credentials,oidc"
+      ["AUTH_OIDC_AUTO_LOGIN"] = "true"
+      ["AUTH_OIDC_CLIENT_NAME"] = authentik.name
+      ["AUTH_OIDC_ISSUER"] = issuer
+      ["AUTH_OIDC_URI"] = authentik.proxy.oidc.uri
+      ["AUTH_LOGOUT_REDIRECT_URL"] = "\(issuer)end-session/"
+      ["AUTH_OIDC_SCOPE_OVERWRITE"] = "openid email profile groups"
+      ["AUTH_OIDC_GROUPS_ATTRIBUTE"] = "groups"
+    }
+    healthcheck {
+      test { "CMD"; "wget"; "-q"; "-O"; "/dev/null"; "-T"; "2"; "http://localhost:\(appPort)" }
+      interval = 30.s
+      timeout = 10.s
+      retries = 5
+    }
+    expose { appPort }
+  }
+}
+
+output {
+  files {
+    [secrets.configFile] =
+      secrets.config("homarr", new Listing {
+        "AUTH_OIDC_CLIENT_ID"
+        "AUTH_OIDC_CLIENT_SECRET"
+        "SECRET_ENCRYPTION_KEY"
+      })
+  }
+}

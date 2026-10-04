@@ -1,0 +1,31 @@
+// The fleet's log store. One instance for the whole fleet; a log-agent on every host pushes
+// into it, so container logs outlive the containers that wrote them and a crash loop stays
+// readable after Komodo has recreated the container.
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/registry.pkl"
+
+local version = "v1.52.0"
+local vlogs = registry.endpoint.serviceGroup.victorialogs
+local dataPath = "/victoria-logs-data"
+
+name = "victorialogs"
+
+services {
+  ["logs"] {
+    image = "docker.io/victoriametrics/victoria-logs:\(version)"
+    restart = "unless-stopped"
+    // Keeping the sink up through StopAllContainers is the point: the logs worth reading
+    // are the ones written while everything else is going down.
+    labels = col.labels.komodoSkip
+    data { ["data"] { target = dataPath } }
+    command {
+      "-storageDataPath=\(dataPath)"
+      "-retentionPeriod=90d"
+    }
+    // No host_ip: every other host ingests into this port over the .internal zone, so it
+    // cannot be bound to loopback. The UI is reached through newt, not this port.
+    ports { new { target = vlogs.container.port; published = vlogs.host.port; host_ip = null } }
+  }
+}

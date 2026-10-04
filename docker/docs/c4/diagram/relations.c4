@@ -1,0 +1,169 @@
+// Every cross-element edge, grouped by what it means. References are full FQNs
+// because lexical scope does not cross a file boundary.
+model {
+
+    // ── Ingress ────────────────────────────────────────────────────────────
+    // Gerbil owns the host ports; Traefik runs in gerbil's network namespace
+    // (network_mode: service:gerbil) and every published route lands on it. Nothing
+    // reaches an origin from here — see Published routes for the tunnel leg.
+    operator  -> www "browses"
+    household -> www "browses"
+
+    www -[proxies]-> gateway.pangolin.gerbil "HTTPS :443, HTTP :80"
+    gateway.pangolin.gerbil -[proxies]-> gateway.pangolin.traefik "shares the network namespace"
+    gateway.pangolin.server -> gateway.pangolin.gerbil "pushes remote config" { technology "HTTP :3001" }
+    gateway.pangolin.traefik -> gateway.pangolin.server "authorizes each request" { technology "Badger middleware" }
+    gateway.pangolin.traefik -> dns.cloudflare "solves ACME DNS-01" { technology "ACME" }
+
+    // ── Published routes ───────────────────────────────────────────────────
+    // Pangolin decides whether the session may proceed before Traefik routes at all.
+    // Traefik then resolves the route to a tunnel address and sends it back out
+    // through gerbil, which owns the WireGuard side; newt — running on every host,
+    // the control-plane host included — forwards to the port that stack binds
+    // locally. Traefik never reaches an origin.
+    gateway.pangolin.traefik -[proxies]-> gateway.pangolin.gerbil "routes into the tunnel"
+    // One tunnel, one edge. Newt dials out to gerbil and nothing dials in, but
+    // ingress travels the other way down it — which is the direction drawn here.
+    gateway.pangolin.gerbil -[overlay]-> gateway.newt "WireGuard :51820"
+
+    gateway.newt -[proxies]-> idp.authentik.server         "authentik.ktbcloud.com"
+    gateway.newt -[proxies]-> priCodeForge.forgejo.server  "fj.ktbcloud.com"
+    gateway.newt -[proxies]-> ci.woodpecker.server         "peck.ktbcloud.com"
+    gateway.newt -[proxies]-> prjMan.openproject           "openprj.ktbcloud.com"
+    gateway.newt -[proxies]-> docsign.docuseal             "docuseal.ktbcloud.com"
+    gateway.newt -[proxies]-> secretsMan.infisical.server  "infisical.ktbinternal.com"
+    gateway.newt -[proxies]-> containerOrc.komodo.core     "komo.ktbinternal.com"
+    gateway.newt -[proxies]-> agentGw.komodoMcp            "komodo-mcp.ktbinternal.com"
+    gateway.newt -[proxies]-> docArc.paperless.server      "paper.ktbinternal.com"
+    gateway.newt -[proxies]-> mediaLib.seerr               "seerr.ktbinternal.com"
+    gateway.newt -[proxies]-> mediaLib.sonarr              "sonarr.ktbinternal.com"
+    gateway.newt -[proxies]-> mediaLib.radarr              "radarr.ktbinternal.com"
+    gateway.newt -[proxies]-> mediaLib.prowlarr            "prowlarr.ktbinternal.com"
+    gateway.newt -[proxies]-> mediaLib.bazarr              "bazarr.ktbinternal.com"
+    gateway.newt -[proxies]-> mediaLib.sabnzbd             "sabnzbd.ktbinternal.com"
+    // Hostnames for these two live in Pangolin's own resource config, not in this
+    // repo — the host port each stack binds on loopback is what is verifiable here.
+    gateway.newt -[proxies]-> fileExp.fbq                  "HTTP :18450"
+    // Raw TCP resource: allow_raw_resources, served off the tcp-18022 entrypoint.
+    gateway.newt -> gameServers.terraria "raw TCP :18022" { technology "TCP" }
+
+    // ── Overlay network ────────────────────────────────────────────────────
+    overlayNet.tsAgent -[overlay]-> overlayNet.tailscale "joins the tailnet"
+    overlayNet.tsAgent -[overlay]-> idp.authentik.db "exposes on the tailnet" { technology "shared__ts-gateway" }
+    overlayNet.tsAgent -[overlay]-> secretsMan.infisical.server "exposes on the tailnet" { technology "shared__ts-gateway" }
+
+    // ── Identity ───────────────────────────────────────────────────────────
+    dashboard.homarr -[oidc]-> idp.authentik.server "authenticates users"
+    ci.woodpecker.server -[oidc]-> priCodeForge.forgejo.server "OAuth2 login and repository access"
+
+    // ── Secrets ────────────────────────────────────────────────────────────
+    // Every stack declares a `secrets` compose service using the
+    // infisical-secrets provider against http://controlplane.internal:18043.
+    // Modelled once per stack, not once per container.
+    // Project `infra` (86324d9b…):
+    gateway      -[secrets]-> secretsMan.infisical.server "/traefik"
+    idp          -[secrets]-> secretsMan.infisical.server "/authentik"
+    containerOrc -[secrets]-> secretsMan.infisical.server "/komodo"
+    priCodeForge -[secrets]-> secretsMan.infisical.server "/forgejo"
+    ci           -[secrets]-> secretsMan.infisical.server "/woodpecker"
+    dashboard    -[secrets]-> secretsMan.infisical.server "/homarr"
+    agentGw      -[secrets]-> secretsMan.infisical.server "/komodo-mcp"
+    dataBak      -[secrets]-> secretsMan.infisical.server "/zerobyte"
+    dbBak        -[secrets]-> secretsMan.infisical.server "/databasus"
+    overlayNet   -[secrets]-> secretsMan.infisical.server "/tailscale/containers"
+    // Project `apps` (2f0eb3d1…):
+    gateway      -[secrets]-> secretsMan.infisical.server "/pangolin"
+    sharedDb     -[secrets]-> secretsMan.infisical.server "/postgres"
+    prjMan       -[secrets]-> secretsMan.infisical.server "/openproject"
+    docsign      -[secrets]-> secretsMan.infisical.server "/docuseal"
+    docArc       -[secrets]-> secretsMan.infisical.server "/paperless"
+    phovid       -[secrets]-> secretsMan.infisical.server "/immich"
+    mediaLib     -[secrets]-> secretsMan.infisical.server "/stream"
+    // Project `frappe` (12ed25dd…):
+    erp          -[secrets]-> secretsMan.infisical.server "/"
+
+    // Ansible is the one reader that is not a stack: it pulls each host's newt
+    // enrolment pair before installing the unit.
+    configMgmt.ansible -[secrets]-> secretsMan.infisical.server "/hosts/<host>/newt"
+
+    // ── Configuration management ───────────────────────────────────────────
+    // Ansible runs from the operator's workstation. It owns the bare-metal layer
+    // and the control-plane cold start; Komodo owns everything after that.
+    operator -> configMgmt.ansible "runs playbooks"
+    // The one credential Infisical cannot hold is its own: Ansible plants each host's
+    // machine identity from 1Password, so the compose provider has something to log in with.
+    configMgmt.ansible -> passwdMan.onepassword "reads machine identities and the tailnet auth key"
+    configMgmt.ansible -> secCodeForge.github "clones infra.stacks" { technology "SSH" }
+
+    configMgmt.ansible -[deploys]-> overlayNet.tsAgent "enrols the host in the tailnet"
+    configMgmt.ansible -[deploys]-> gateway.newt "installs the newt systemd unit"
+    configMgmt.ansible -[deploys]-> containerOrc.komodo.periphery "installs the periphery systemd unit"
+
+    // Cold-start order: the restore tier comes up first so a bare host can restore
+    // Infisical's volume before Infisical parses it.
+    configMgmt.ansible -[deploys]-> dbBak.databasus "restore gate"
+    configMgmt.ansible -[deploys]-> dataBak.zerobyte "restore gate"
+    configMgmt.ansible -[deploys]-> secretsMan.infisical.server "bootstraps the control plane"
+    configMgmt.ansible -[deploys]-> containerOrc.komodo.core "bootstraps the control plane"
+
+    // ── Orchestration ──────────────────────────────────────────────────────
+    containerOrc.komodo.core -[deploys]-> containerOrc.komodo.periphery "TLS :8120, pinned core public key"
+    containerOrc.komodo.periphery -[deploys]-> containerOrc.komodo.volumes "creates and manages"
+    containerOrc.komodo.core -> priCodeForge.forgejo.server "syncs stack definitions"
+    containerOrc.komodo.core -> alerting.pushover "sends alerts"
+    agentGw.komodoMcp -> containerOrc.komodo.core "Komodo API"
+    ci.woodpecker.agent -> ci.woodpecker.server "polls for work" { technology "gRPC :9000" }
+
+    // ── State ──────────────────────────────────────────────────────────────
+    prjMan.openproject -[sql]-> sharedDb.postgres.db
+    docsign.docuseal   -[sql]-> sharedDb.postgres.db
+
+    idp.authentik.server           -[sql]-> idp.authentik.db
+    idp.authentik.worker              -[sql]-> idp.authentik.db
+    secretsMan.infisical.server    -[sql]-> secretsMan.infisical.db
+    secretsMan.infisical.server    -> secretsMan.infisical.redis "queues and caches"
+    priCodeForge.forgejo.server    -[sql]-> priCodeForge.forgejo.db
+    containerOrc.komodo.core      -> containerOrc.komodo.db "reads and writes"
+    docArc.paperless.server        -[sql]-> docArc.paperless.db
+    docArc.paperless.server        -> docArc.paperless.broker "queues tasks"
+    docArc.paperless.server        -> docArc.paperless.gotenberg "converts to PDF"
+    docArc.paperless.server        -> docArc.paperless.tika "extracts text"
+    phovid.immich.server           -[sql]-> phovid.immich.db
+    phovid.immich.server           -> phovid.immich.redis "queues jobs"
+    phovid.immich.server           -> phovid.immich.machineLearning "runs inference"
+
+    erp.erpnext.server -> erp.erpnext.db "reads and writes" { technology "MariaDB" }
+    erp.erpnext.server -> erp.erpnext.redisCache "caches"
+    erp.erpnext.server -> erp.erpnext.redisQueue "queues jobs"
+
+    mediaLib.prowlarr -> mediaLib.sonarr "feeds indexers"
+    mediaLib.prowlarr -> mediaLib.radarr "feeds indexers"
+    mediaLib.sonarr   -> mediaLib.sabnzbd "queues downloads"
+    mediaLib.radarr   -> mediaLib.sabnzbd "queues downloads"
+    mediaLib.bazarr   -> mediaLib.sonarr "reads the library"
+    mediaLib.bazarr   -> mediaLib.radarr "reads the library"
+    mediaLib.seerr    -> mediaLib.sonarr "requests series"
+    mediaLib.seerr    -> mediaLib.radarr "requests films"
+
+    // ── Files ──────────────────────────────────────────────────────────────
+    // File Browser owning the tree is containment, not an edge. Terraria writing
+    // into another capability's storage is the only thing worth drawing here.
+    gameServers.terraria -> fileExp.fbq.shared "stores its world"
+
+    // ── Backup ─────────────────────────────────────────────────────────────
+    // Databasus reaches each target over the .internal zone; Zerobyte reads the
+    // host volume tree directly through a bind mount.
+    dbBak.databasus -[backup]-> sharedDb.postgres.db
+    dbBak.databasus -[backup]-> idp.authentik.db
+    dbBak.databasus -[backup]-> secretsMan.infisical.db
+    dbBak.databasus -[backup]-> priCodeForge.forgejo.db
+    dbBak.databasus -[backup]-> containerOrc.komodo.db
+    dbBak.databasus -[backup]-> docArc.paperless.db
+    dbBak.databasus -[backup]-> phovid.immich.db
+    dbBak.databasus -[backup]-> erp.erpnext.db
+    dataBak.zerobyte -[backup]-> containerOrc.komodo.volumes
+
+    // ── Email ──────────────────────────────────────────────────────────────
+    secretsMan.infisical.server -> email.resend "SMTP :465"
+    gateway.pangolin.server     -> email.resend "SMTP :465"
+}

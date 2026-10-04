@@ -1,0 +1,53 @@
+[tools]
+pkl = "0.32.1"
+vendir = "0.46"
+lefthook = "2"
+yq = "4"
+"aqua:sharkdp/fd" = "latest"
+"aqua:BurntSushi/ripgrep" = "latest"
+"npm:likec4" = "1"
+
+[hooks]
+postinstall = "lefthook install"
+
+[vars]
+path_c4 = "docs/c4"
+
+[tasks."depedencies:sync"]
+alias = "deps"
+description = "Sync vendored deps and re-resolve the Pkl project"
+run = """
+vendir sync
+pkl project resolve
+"""
+
+[tasks.pkl]
+description = "Render every src/**/stack.pkl into the files beside it (stdout = owned paths)"
+run = "./scripts/render.sh"
+
+[tasks.check]
+description = "Validate every rendered compose document with docker compose"
+run = """
+set -euo pipefail
+for f in $(fd --glob 'compose.yaml' src) $(fd --glob 'bootstrap.yaml' src); do
+  HOST=check BOOTSTRAP_SECRETS_FILE=/dev/null docker compose -f "$f" config --quiet || { echo "check: $f failed" >&2; exit 1; }
+done
+"""
+
+[tasks.test]
+description = "Run the Pkl facts and snapshots under tests/"
+run = "pkl test"
+
+
+# DOCS —————————————————————
+[tasks."c4:validate"]
+description = "Validate the LikeC4 model"
+run = "likec4 validate --json --no-layout {{vars.path_c4}}"
+
+[tasks."c4:build"]
+description = "Build the LikeC4 site into docs/c4/dist"
+run = "likec4 build -o {{vars.path_c4}}/dist {{vars.path_c4}}/diagram"
+
+[tasks."c4:serve"]
+description = "Serve LikeC4 diagrams locally"
+run = "likec4 serve {{vars.path_c4}}"

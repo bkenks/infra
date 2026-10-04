@@ -1,0 +1,102 @@
+// Fleet placement. Sourced from infra.registry/src/registry.jsonnet and
+// infra.ansible/inventory. files/komodo_config/sync.toml is a stale local copy —
+// do not treat it as authoritative for which host runs what.
+//
+// This file answers "who?" and "where?" only. A site is whose machines these are:
+// a vendor I rent from, or my own premises. Vultr and Hetzner appear here as
+// sites and nowhere in the model; Cloudflare is the mirror case — a platform in
+// the model, no site here, because I rent no compute from it.
+//
+// Instances sit at the application level, because an application is the unit that
+// lands on a host. Newt and Komodo Periphery are installed by infra.ansible on
+// `ubuntu_servers`, which is every host below except the NAS — hence the repetition.
+deployment {
+
+    environment prod "Production" {
+
+        site vultr "Vultr" {
+
+            host rick "rick" {
+                description "The control plane: the only host in registry.jsonnet roles.controlPlane."
+
+                instanceOf gateway.pangolin
+                instanceOf idp.authentik
+                instanceOf secretsMan.infisical
+                instanceOf dashboard.homarr
+                instanceOf dbBak.databasus
+                instanceOf dataBak.zerobyte
+
+                instanceOf gateway.newt
+                instanceOf overlayNet.tsAgent
+                instanceOf containerOrc.komodo.core
+                instanceOf containerOrc.komodo.periphery
+            }
+        }
+
+        site hetzner "Hetzner" {
+
+            host maboi "maboi" {
+                description "Cloud cpx11, ash. Registered with Komodo, runs no stacks."
+
+                instanceOf gateway.newt
+                instanceOf overlayNet.tsAgent
+                instanceOf containerOrc.komodo.periphery
+            }
+        }
+
+        site homelab "Home Lab" {
+
+            host littlebuddy "littlebuddy" {
+                description "HP EliteDesk 705."
+
+                instanceOf sharedDb.postgres
+                instanceOf priCodeForge.forgejo
+                instanceOf ci.woodpecker
+                instanceOf agentGw.komodoMcp
+                instanceOf prjMan.openproject
+                instanceOf docsign.docuseal
+                instanceOf docArc.paperless
+
+                instanceOf gateway.newt
+                instanceOf overlayNet.tsAgent
+                instanceOf containerOrc.komodo.periphery
+            }
+
+            host biggy "biggy" {
+                description "HP ProDesk 400."
+
+                instanceOf fileExp.fbq
+                instanceOf gameServers.terraria
+
+                instanceOf gateway.newt
+                instanceOf overlayNet.tsAgent
+                instanceOf containerOrc.komodo.periphery
+            }
+
+            host bill "bill" {
+                description "HP EliteDesk 705."
+
+                instanceOf erp.erpnext
+
+                instanceOf gateway.newt
+                instanceOf overlayNet.tsAgent
+                instanceOf containerOrc.komodo.periphery
+            }
+
+            host paiki "paiki" {
+                description "Beelink S13 Mini PC."
+
+                instanceOf phovid.immich
+                instanceOf mediaLib
+
+                instanceOf gateway.newt
+                instanceOf overlayNet.tsAgent
+                instanceOf containerOrc.komodo.periphery
+            }
+
+            device nas "snaszy" {
+                description "Synology NAS. Not Komodo-managed; holds /volume1/backups and /volume1/docker."
+            }
+        }
+    }
+}

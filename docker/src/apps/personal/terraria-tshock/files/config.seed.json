@@ -1,0 +1,18 @@
+{
+  "Settings": {
+    "MaxSlots": 8,
+    "RequireLogin": true,
+    "DisableUUIDLogin": false,
+    "MaximumLoginAttempts": 3,
+    "SpawnProtection": false,
+    "RestApiEnabled": true,
+    "RestApiPort": 7878,
+    "EnableTokenEndpointAuthentication": true,
+    "LogRest": true,
+    "BackupInterval": 10,
+    "BackupKeepFor": 2880,
+    "SaveWorldOnCrash": true,
+    "SaveWorldOnLastPlayerExit": true,
+    "AnnounceSave": false
+  }
+}

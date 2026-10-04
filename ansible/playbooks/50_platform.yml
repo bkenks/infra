@@ -1,0 +1,45 @@
+---
+- name: Komodo Core runs on the control plane
+  hosts: control_plane
+  tags: [platform, komodo_core]
+
+  tasks:
+    - name: Platform stack files are present
+      ansible.builtin.import_role:
+        name: docker_stack_files
+      vars:
+        docker_stack_files__stacks_dir: "{{ path_dir__docker_stacks }}"
+        docker_stack_files__repo: "https://github.com/bkenks/infra.stacks.git"
+        docker_stack_files__name: platform
+        docker_stack_files__repo_subdir: src/platform
+
+    - name: Docker network newt_gw_001 exists for Komodo Core
+      become: true
+      community.docker.docker_network:
+        name: newt_gw_001
+        state: present
+
+    - name: Komodo Core is running
+      become: true
+      community.docker.docker_compose_v2:
+        project_src: "{{ path_dir__docker_stacks }}/platform/container-manager/komodo"
+        state: present
+        wait: false
+
+- name: Komodo Periphery runs on every host
+  hosts: all
+  tags: [platform, komodo_periphery]
+
+  tasks:
+    - name: Komodo Periphery is installed and configured
+      ansible.builtin.import_role:
+        name: bpbradley.komodo
+
+- name: Backrest runs on every host
+  hosts: all
+  tags: [platform, backrest]
+
+  tasks:
+    - name: Backrest is installed
+      ansible.builtin.import_role:
+        name: backrest

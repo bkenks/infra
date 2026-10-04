@@ -1,0 +1,13 @@
+---
+- name: Hosts are on the tailnet and resolve internal names locally
+  hosts: all
+  tags: [network]
+
+  tasks:
+    - name: Tailscale is joined
+      ansible.builtin.import_role:
+        name: tailscale
+
+    - name: CoreDNS is running
+      ansible.builtin.import_role:
+        name: coredns

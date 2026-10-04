@@ -1,0 +1,13 @@
+amends "pkl:Project"
+
+package {
+  name = "infra"
+  baseUri = "package://fj.ktbcloud.com/ktbgroup-self-hosted/infra.stacks/infra"
+  version = "0.1.0"
+  packageZipUrl = "https://fj.ktbcloud.com/ktbgroup-self-hosted/infra.stacks/releases/download/v\(version)/infra@\(version).zip"
+  description = "Local package: the values and helpers every stack in this repo shares."
+}
+
+dependencies {
+  ["compose"] = import("../../.vendir/pkl-compose/PklProject")
+}

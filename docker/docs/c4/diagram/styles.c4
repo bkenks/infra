@@ -1,0 +1,14 @@
+// One palette, referenced by the views. Kind-level styling lives in spec.c4;
+// this layer only carries the cross-cutting properties.
+global {
+    styleGroup base {
+        // The household-facing half of the purpose tags.
+        style element.tag = #business { color indigo }
+        style element.tag = #media    { color indigo }
+        style element.tag = #gaming   { color indigo }
+        style element.tag = #files    { color indigo }
+
+        style element.tag = #public   { color green }
+        style element.tag = #stateful { border dashed }
+    }
+}

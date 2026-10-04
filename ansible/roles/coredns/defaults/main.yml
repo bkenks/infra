@@ -1,0 +1,5 @@
+---
+coredns__version: "1.14.6"
+coredns__address: 10.200.0.53
+coredns__config_files: []
+coredns__verify_query: ns.internal

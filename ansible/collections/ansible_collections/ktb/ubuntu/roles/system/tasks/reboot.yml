@@ -1,0 +1,12 @@
+---
+- name: Check whether the upgrade wants a reboot
+  ansible.builtin.stat:
+    path: /var/run/reboot-required
+  register: system__reboot_required
+
+- name: Reboot and wait for the host to come back
+  ansible.builtin.reboot:
+    msg: Rebooting to pick up upgraded packages (ansible)
+    reboot_timeout: "{{ system__reboot_timeout }}"
+    post_reboot_delay: 10
+  when: system__reboot_required.stat.exists

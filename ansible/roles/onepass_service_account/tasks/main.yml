@@ -1,0 +1,92 @@
+---
+- name: Read the host's service-account token
+  become: true
+  no_log: true
+  check_mode: false
+  ansible.builtin.slurp:
+    src: "{{ onepass_service_account__dest }}"
+  register: onepass_service_account__host_file
+  failed_when: false
+
+- name: Resolve the service-account token on the controller
+  delegate_to: localhost
+  become: false
+  no_log: true
+  environment:
+    OP_ACCOUNT: "{{ onepass_service_account__account }}"
+    OP_CACHE: "false"
+    OP_SERVICE_ACCOUNT_TOKEN: ""
+  block:
+    - name: Read the stored service-account token
+      check_mode: false
+      ansible.builtin.command:
+        argv:
+          - op
+          - item
+          - get
+          - "{{ onepass_service_account__item }}"
+          - --vault={{ onepass_service_account__vault }}
+          - --fields=credential
+          - --reveal
+      register: onepass_service_account__stored
+      changed_when: false
+      failed_when:
+        - onepass_service_account__stored.rc != 0
+        - "\"isn't an item\" not in onepass_service_account__stored.stderr"
+
+    - name: Validate the host and stored tokens
+      check_mode: false
+      ansible.builtin.command:
+        argv: [op, whoami]
+      environment:
+        OP_SERVICE_ACCOUNT_TOKEN: "{{ item }}"
+      loop: "{{ onepass_service_account__candidates }}"
+      register: onepass_service_account__validations
+      changed_when: false
+      failed_when: false
+
+    - name: Mint the service account {{ onepass_service_account__name }}
+      when: onepass_service_account__valid_tokens | length == 0
+      ansible.builtin.command:
+        argv: >-
+          {{ ['op', 'service-account', 'create', onepass_service_account__name, '--raw']
+             + onepass_service_account__vaults | map('regex_replace', '^', '--vault=') | list }}
+      register: onepass_service_account__minted
+      changed_when: true
+
+    - name: Archive the stale stored token
+      when:
+        - onepass_service_account__item_exists
+        - onepass_service_account__token | length > 0
+        - onepass_service_account__token != onepass_service_account__stored_token
+      ansible.builtin.command:
+        argv:
+          - op
+          - item
+          - delete
+          - "{{ onepass_service_account__item }}"
+          - --vault={{ onepass_service_account__vault }}
+          - --archive
+      changed_when: true
+
+    - name: Store the token in 1Password
+      when:
+        - onepass_service_account__token | length > 0
+        - onepass_service_account__token != onepass_service_account__stored_token
+      ansible.builtin.command:
+        argv: [op, item, create, "--vault={{ onepass_service_account__vault }}", "-"]
+        stdin: "{{ onepass_service_account__item_template | to_json }}"
+      changed_when: true
+
+- name: Place the token on the host
+  when:
+    - onepass_service_account__token | length > 0
+    - onepass_service_account__token != onepass_service_account__host_token
+  become: true
+  no_log: true
+  ansible.builtin.copy:
+    content: "OP_SERVICE_ACCOUNT_TOKEN={{ onepass_service_account__token }}\n"
+    dest: "{{ onepass_service_account__dest }}"
+    owner: "{{ onepass_service_account__owner }}"
+    group: "{{ onepass_service_account__owner }}"
+    mode: "0600"

@@ -1,0 +1,14 @@
+---
+namespace: ktb
+name: ubuntu
+version: 1.0.0
+readme: README.md
+authors:
+  - Brian Kenkel
+description: Ordered roles that take an Ubuntu host from a fresh install to its declared state.
+tags: [ubuntu, linux]
+dependencies:
+  ansible.posix: ">=2.2.0"
+  community.general: ">=13.0.0"
+  devsec.hardening: ">=10.5.2"
+repository: https://github.com/bkenks/infra.ansible

@@ -1,0 +1,287 @@
+// Scope: everything hosted or set up to provide a function or service, to the
+// operator or to anyone else. Not the fleet alone — the whole operation, the
+// vendor platforms it leans on, and the people who consume it.
+//
+// This file answers "what?" and nothing else.
+//   What capability?          -> the top-level element
+//   What provides it?         -> a platform (vendor-run) or an application (mine)
+//   What is that made of?     -> processes and data stores
+// Who runs it and where it sits is deployment.c4's question.
+//
+// Elements only. Every cross-element edge lives in relations.c4 so the structure
+// stays readable and the edges stay grouped by what they mean.
+model {
+    // People and the outside ————————————————————————
+    actor operator "Operator" {
+        description "Administers the fleet through Komodo, Ansible and the forges."
+    }
+    actor household "Household Users" {
+        description "Consumes the media, document and photo workloads."
+    }
+
+    internet www "Public Internet"
+
+    // Networking ————————————————————————————————————
+    capability overlayNet "Overlay Network" {
+        #networking
+        description "Flat addressing across every host, wherever it sits."
+
+        platform tailscale "Tailscale" {
+            description "Runs the control plane that brokers the WireGuard mesh."
+        }
+        application tsAgent "Tailscale Agent" {
+            technology "Wireguard"
+        }
+    }
+
+    capability dns "DNS and Certificates" {
+        #networking
+
+        platform cloudflare "Cloudflare" {
+            description "Authoritative DNS, and the ACME DNS-01 provider Traefik solves against."
+        }
+    }
+
+    capability gateway "Gateway" {
+        #networking
+        #public
+        description "One public entry point for every published route."
+
+        application pangolin "Pangolin" {
+            process server "Pangolin Server"
+            process gerbil "Gerbil" {
+                technology "Wireguard"
+                description "Owns the host ports. Traefik runs in its network namespace."
+            }
+            process traefik "Traefik" {
+                description "Reverse proxy. network_mode: service:gerbil."
+            }
+        }
+        application newt "Newt" {
+            technology "Wireguard"
+            description "Site connector, installed per host as a systemd unit by infra.ansible."
+        }
+    }
+
+    // Identity and access ———————————————————————————
+    capability idp "Identity Provider" {
+        #identity-and-access
+        #public
+
+        application authentik "Authentik" {
+            process server "Server"
+            process worker "Worker"
+            database db "Database" { technology "PostgreSQL" }
+        }
+    }
+
+    // Orchestration —————————————————————————————————
+    capability containerOrc "Container Orchestrator" {
+        #orchestration
+
+        application komodo "Komodo" {
+            process core "Core" {
+                description "The hub: holds stack definitions and drives every deploy."
+            }
+            process periphery "Periphery" {
+                description "Per-host agent, installed as a systemd unit by infra.ansible."
+            }
+            database db "Database" { technology "MongoDB" }
+            database volumes "Docker Volumes" {
+                technology "Filesystem"
+                description "/var/lib/docker/volumes on every managed node."
+            }
+        }
+    }
+
+    capability configMgmt "Configuration Management" {
+        #orchestration
+
+        application ansible "Ansible" {
+            description "Runs from the operator's workstation, not on the fleet. Owns what Komodo cannot: host packages, tailnet enrolment, the newt and periphery systemd units, and the control-plane cold start."
+        }
+    }
+
+    // Development ———————————————————————————————————
+    capability priCodeForge "Primary Code Forge" {
+        #development
+        #public
+
+        application forgejo "Forgejo" {
+            technology "Gitea"
+            process server "Server"
+            database db "Database" { technology "PostgreSQL" }
+        }
+    }
+
+    capability secCodeForge "Secondary Code Forge" {
+        #development
+
+        platform github "GitHub"
+    }
+
+    capability ci "Continuous Integration" {
+        #development
+        #public
+
+        application woodpecker "Woodpecker" {
+            process server "Server"
+            process agent "Agent" {
+                description "Runs pipeline steps as sibling containers on the host docker daemon."
+            }
+        }
+    }
+
+    capability agentGw "Agent Gateway" {
+        #development
+
+        application komodoMcp "Komodo MCP" {
+            description "Exposes the Komodo API to agents over MCP."
+        }
+    }
+
+    // Secrets ———————————————————————————————————————
+    capability secretsMan "Secrets Manager" {
+        #secrets
+
+        application infisical "Infisical" {
+            process server "Server"
+            process redis "Cache" { technology "Redis" }
+            database db "Database" { technology "PostgreSQL" }
+        }
+    }
+
+    capability passwdMan "Password Manager" {
+        #secrets
+
+        platform onepassword "1Password"
+    }
+
+    // Observability and messaging ———————————————————
+    capability alerting "Alerting" {
+        #observability
+
+        platform pushover "Pushover" {
+            description "Receives Komodo alerts. The only telemetry sink in the fleet."
+        }
+    }
+
+    capability email "Transactional Email" {
+        #communications
+
+        platform resend "Resend" {
+            technology "SMTP"
+            metadata { endpoint "smtp.resend.com:465" }
+        }
+    }
+
+    // Backup and recovery ———————————————————————————
+    capability dataBak "Data Backup Coordinator" {
+        #backup-and-recovery
+
+        application zerobyte "Zerobyte" { technology "Restic" }
+    }
+
+    capability dbBak "Database Backup Coordinator" {
+        #backup-and-recovery
+
+        application databasus "Databasus"
+    }
+
+    // Shared services ———————————————————————————————
+    capability dashboard "Dashboard" {
+        application homarr "Homarr"
+    }
+
+    capability sharedDb "Shared Database" {
+        description "One Postgres for the tenants that do not need their own."
+
+        application postgres "PostgreSQL" {
+            description "postgres:18 on littlebuddy:6109, reached over the shared__postgres_db network."
+
+            database db "Database"
+        }
+    }
+
+    // Business ——————————————————————————————————————
+    capability prjMan "Project Manager" {
+        #business
+        #public
+
+        application openproject "OpenProject"
+    }
+
+    capability docsign "Document Signing" {
+        #business
+        #public
+
+        application docuseal "Docuseal"
+    }
+
+    capability docArc "Document Archive" {
+        #business
+
+        application paperless "Paperless" {
+            process server "Server"
+            process broker "Broker" { technology "Redis" }
+            process gotenberg "Document Converter" { technology "Gotenberg" }
+            process tika "Content Extractor" { technology "Apache Tika" }
+            database db "Database" { technology "PostgreSQL" }
+        }
+    }
+
+    capability erp "ERP" {
+        #business
+
+        application erpnext "ERPNext" {
+            technology "Frappe"
+            process server "Server"
+            process redisCache "Cache" { technology "Redis" }
+            process redisQueue "Queue" { technology "Redis" }
+            database db "Database" { technology "MariaDB" }
+        }
+    }
+
+    // Media —————————————————————————————————————————
+    capability phovid "Personal Photo Storage" {
+        #media
+
+        application immich "Immich" {
+            process server "Server"
+            process machineLearning "Machine Learning"
+            process redis "Cache" { technology "Valkey" }
+            database db "Database" { technology "PostgreSQL" }
+        }
+    }
+
+    capability mediaLib "Media Library" {
+        #media
+        description "Seven products in one stack. Each is its own application."
+
+        application plex "Plex"
+        application seerr "Seerr"
+        application sonarr "Sonarr"
+        application radarr "Radarr"
+        application prowlarr "Prowlarr"
+        application bazarr "Bazarr"
+        application sabnzbd "SABnzbd"
+    }
+
+    // Gaming and files ——————————————————————————————
+    capability gameServers "Game Servers" {
+        #gaming
+
+        application terraria "Terraria"
+    }
+
+    capability fileExp "File Explorer" {
+        #files
+
+        application fbq "File Browser Quantum" {
+            database shared "Shared File Tree" {
+                technology "Filesystem"
+                description "/rootless-srv/file-browser-quantum/shared"
+            }
+        }
+    }
+}

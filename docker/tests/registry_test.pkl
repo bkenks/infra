@@ -1,0 +1,54 @@
+amends "pkl:test"
+
+import "@infra/registry.pkl"
+import "@infra/secrets.pkl"
+
+facts {
+  ["host ref is alias.internal"] {
+    registry.endpoint.hostGroup.rick.ref == "rick.internal"
+    registry.endpoint.hostGroup.nas.ref == "snaszy.internal"
+  }
+  ["container and host endpoints derive addr and url"] {
+    registry.endpoint.serviceGroup.postgres.container.addr == "postgres-db:5432"
+    registry.endpoint.serviceGroup.victorialogs.host.addr == "littlebuddy.internal:19428"
+    registry.endpoint.serviceGroup.infisical.proxy.url == "https://infisical.ktbinternal.com"
+  }
+  ["authentik oidc urls"] {
+    registry.endpoint.serviceGroup.authentik.proxy.oidc.issuer("homarr")
+      == "https://authentik.ktbcloud.com/application/o/homarr/"
+    registry.endpoint.serviceGroup.authentik.proxy.oidc.uri
+      == "https://authentik.ktbcloud.com/application/o/authorize/"
+  }
+  ["shared network name"] {
+    registry.network.shared.db_001.name == "db_001"
+  }
+  ["fnox provider reads the 1Password credentials and fails on a missing secret"] {
+    secrets.fnox.provider.options["path_credentials_env"] == "/mnt/credentials/onepassword.env"
+    secrets.fnox.provider.options["if_missing"] == "error"
+  }
+  ["fnox config reads each name from the field of the same name on the item"] {
+    secrets
+      .config("item", new Listing { "A" })
+      .text
+      .endsWith(#"A = { provider = "onepassword", value = "item/A" }\#n"#)
+  }
+  ["per-host fnox config writes a profile per host"] {
+    local text =
+      secrets
+        .hostConfig(
+          new Listing { new registry.Host { alias = "h1" }; new registry.Host { alias = "h2" } },
+          (h) -> "hosts.\(h)",
+          new Listing { "A" },
+        )
+        .text
+    text.contains(
+      #"[profiles.h1.secrets]\#nA = { provider = "onepassword", value = "hosts.h1/A" }"#,
+    )
+    text.contains(
+      #"[profiles.h2.secrets]\#nA = { provider = "onepassword", value = "hosts.h2/A" }"#,
+    )
+  }
+  ["per-host fnox provider selects the deploying host's profile"] {
+    secrets.fnoxPerHost.provider.options["profile"] == "${HOST:?err}"
+  }
+}

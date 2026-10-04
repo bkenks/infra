@@ -1,0 +1,11 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+AUTH_OIDC_CLIENT_ID = { provider = "onepassword", value = "homarr/AUTH_OIDC_CLIENT_ID" }
+AUTH_OIDC_CLIENT_SECRET = { provider = "onepassword", value = "homarr/AUTH_OIDC_CLIENT_SECRET" }
+SECRET_ENCRYPTION_KEY = { provider = "onepassword", value = "homarr/SECRET_ENCRYPTION_KEY" }

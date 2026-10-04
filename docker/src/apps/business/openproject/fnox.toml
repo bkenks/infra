@@ -1,0 +1,13 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+COLLAB_SERVER_SECRET = { provider = "onepassword", value = "openproject/COLLAB_SERVER_SECRET" }
+DATABASE_URL = { provider = "onepassword", value = "openproject/DATABASE_URL" }
+OPENPROJECT_COLLABORATIVE__EDITING__HOCUSPOCUS__SECRET = { provider = "onepassword", value = "openproject/OPENPROJECT_COLLABORATIVE__EDITING__HOCUSPOCUS__SECRET" }
+SECRET = { provider = "onepassword", value = "openproject/SECRET" }
+SECRET_KEY_BASE = { provider = "onepassword", value = "openproject/SECRET_KEY_BASE" }

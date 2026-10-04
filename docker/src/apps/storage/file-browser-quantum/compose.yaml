@@ -1,0 +1,36 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: file-browser-quantum
+services:
+  app:
+    image: gtstef/filebrowser:stable
+    container_name: file-browser-quantum-app
+    hostname: app
+    restart: unless-stopped
+    expose:
+    - 80
+    volumes:
+    - type: bind
+      source: ./files/config.yaml
+      target: /home/filebrowser/data/config.yaml
+      read_only: true
+    - type: bind
+      source: /rootless-srv/file-browser-quantum/data
+      target: /data
+      read_only: false
+    - type: bind
+      source: /rootless-srv/file-browser-quantum/shared
+      target: /shared
+      read_only: false
+    - type: bind
+      source: /rootless-srv/file-browser-quantum/cache
+      target: /cache
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: file-browser-quantum

@@ -1,0 +1,43 @@
+---
+- name: Bring the Ubuntu system to its declared state
+  become: true
+  block:
+    - name: Upgrade all packages
+      ansible.builtin.import_tasks: upgrade.yml
+      when: system__should_upgrade
+
+    - name: Set the hostname
+      ansible.builtin.import_tasks: hostname.yml
+      when: system__should_set_hostname
+
+    - name: Grow the root logical volume
+      ansible.builtin.import_tasks: lvm_extend.yml
+      when: system__should_extend_lvm
+
+    - name: Install base packages
+      ansible.builtin.import_tasks: packages.yml
+      when: system__should_install_packages
+
+    - name: Set the timezone
+      ansible.builtin.import_tasks: timezone.yml
+      when: system__should_set_timezone
+
+    - name: Enable Wake-on-LAN
+      ansible.builtin.import_tasks: wol_enable.yml
+      when: system__should_enable_wol
+
+    - name: Provide swap
+      ansible.builtin.import_tasks: swap.yml
+      when: system__should_enable_swap
+
+    - name: Apply security updates unattended
+      ansible.builtin.import_tasks: unattended_upgrades.yml
+      when: system__should_enable_unattended_upgrades
+
+    - name: Cap the systemd journal
+      ansible.builtin.import_tasks: journal.yml
+      when: system__should_cap_journal
+
+    - name: Reboot if the upgrade needs it
+      ansible.builtin.import_tasks: reboot.yml
+      when: system__should_reboot

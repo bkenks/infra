@@ -1,0 +1,44 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: tailscale-gw
+services:
+  secrets:
+    provider:
+      type: docker-compose-fnox
+      options:
+        path_config_toml: fnox.toml
+        path_credentials_env: /mnt/credentials/onepassword.env
+        if_missing: error
+  app:
+    image: tailscale/tailscale:v1.102.3
+    container_name: tailscale-gw-app
+    hostname: app
+    restart: unless-stopped
+    environment:
+      TS_HOSTNAME: tailscale-gw-${HOST:?err}
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: 'true'
+    volumes:
+    - type: volume
+      source: app_state
+      target: /var/lib/tailscale
+      read_only: false
+    networks:
+    - default
+    - tailscale_gw_001
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+volumes:
+  app_state:
+    name: tailscale-gw-app_state
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: tailscale-gw
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true

@@ -1,0 +1,19 @@
+# ansible-galaxy install -r requirements.yml   (mise run setup:ansible)
+---
+collections:
+  - name: ansible.posix          # synchronize, mount
+    version: "2.2.0"
+  - name: community.general      # ufw, lvol, timezone, git_config
+    version: "13.0.0"
+  - name: community.docker       # docker_compose_v2
+    version: "5.2.0"
+  - name: devsec.hardening       # ssh_hardening
+    version: "10.5.2"
+  - name: artis3n.tailscale      # tailscale.machine
+    version: "1.2.1"
+roles:
+  - name: geerlingguy.docker
+    version: "8.0.0"
+  - name: bpbradley.komodo       # komodo periphery on bare metal
+    src: https://github.com/bpbradley/ansible-role-komodo
+    version: "v2.1"

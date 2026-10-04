@@ -1,0 +1,8 @@
+[tools]
+opentofu = "1.13"
+
+[env]
+TF_CLI_ARGS_init = "-backend-config=../r2.s3.tfbackend"
+
+[tasks.sync-secrets]
+run = "fnox sync --provider cache --local-file -s onepass_tf"

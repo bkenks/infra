@@ -1,0 +1,37 @@
+// The tailnet gateway every stack that needs one attaches to. This stack owns the shared
+// network; consumers attach to it.
+amends "@infra/Stack.pkl"
+
+import "@infra/registry.pkl"
+import "@infra/secrets.pkl"
+
+local appVersion = "v1.102.3"
+local gateway = registry.network.shared.tailscale_gw_001
+
+name = "tailscale-gw"
+
+sharedNetworks { gateway }
+
+services {
+  ["secrets"] = secrets.fnox
+
+  ["app"] {
+    image = "tailscale/tailscale:\(appVersion)"
+    restart = "unless-stopped"
+    depends_on = secrets.ready
+    networks { "default"; gateway.name }
+    data { ["state"] { target = "/var/lib/tailscale" } }
+    environment {
+      // Per-host, so one stack definition yields a distinct tailnet node per host.
+      ["TS_HOSTNAME"] = "\(module.name)-${HOST:?err}"
+      ["TS_STATE_DIR"] = "/var/lib/tailscale"
+      ["TS_USERSPACE"] = "true"
+    }
+  }
+}
+
+output {
+  files {
+    [secrets.configFile] = secrets.config("tailscale.containers", new Listing { "TS_AUTHKEY" })
+  }
+}

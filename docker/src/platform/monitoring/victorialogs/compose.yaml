@@ -1,0 +1,34 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: victorialogs
+services:
+  logs:
+    image: docker.io/victoriametrics/victoria-logs:v1.52.0
+    container_name: victorialogs-logs
+    hostname: logs
+    restart: unless-stopped
+    command:
+    - -storageDataPath=/victoria-logs-data
+    - -retentionPeriod=90d
+    ports:
+    - target: 9428
+      published: 19428
+      protocol: tcp
+    volumes:
+    - type: volume
+      source: logs_data
+      target: /victoria-logs-data
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+    labels:
+      komodo.skip: ''
+volumes:
+  logs_data:
+    name: victorialogs-logs_data
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: victorialogs

@@ -1,0 +1,11 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+PG_ADMIN_PASS = { provider = "onepassword", value = "postgres/PG_ADMIN_PASS" }
+POSTGRES_PASSWORD = { provider = "onepassword", value = "postgres/POSTGRES_PASSWORD" }
+POSTGRES_USER = { provider = "onepassword", value = "postgres/POSTGRES_USER" }

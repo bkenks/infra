@@ -1,0 +1,21 @@
+---
+onepass_service_account__host_token: >-
+  {{ onepass_service_account__host_file.content | default('') | b64decode | trim
+     | regex_replace('^OP_SERVICE_ACCOUNT_TOKEN=', '') }}
+onepass_service_account__item_exists: "{{ onepass_service_account__stored.rc == 0 }}"
+onepass_service_account__stored_token: "{{ onepass_service_account__stored.stdout | default('') | trim }}"
+onepass_service_account__candidates: >-
+  {{ [onepass_service_account__stored_token, onepass_service_account__host_token] | select | unique | list }}
+onepass_service_account__valid_tokens: >-
+  {{ onepass_service_account__validations.results | default([]) | selectattr('rc', 'eq', 0) | map(attribute='item') | list }}
+onepass_service_account__token: >-
+  {{ onepass_service_account__candidates | select('in', onepass_service_account__valid_tokens)
+     | first | default(onepass_service_account__minted.stdout | default('') | trim) }}
+onepass_service_account__item_template:
+  title: "{{ onepass_service_account__item }}"
+  category: API_CREDENTIAL
+  fields:
+    - id: credential
+      type: CONCEALED
+      label: credential
+      value: "{{ onepass_service_account__token }}"

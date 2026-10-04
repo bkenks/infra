@@ -1,0 +1,106 @@
+// Secrets come from the env file the control plane writes, not a provider.
+//
+// Two documents, because env_file has to attach at the include: `${VAR:-}` inside
+// services.yaml resolves from it, which a service-level env_file cannot do (that only
+// reaches the container's environment, never the compose document).
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/registry.pkl"
+
+local appVersion = "v0.160.9"
+local dbVersion = "16-alpine"
+local cacheVersion = "7-alpine"
+
+local infisical = registry.endpoint.serviceGroup.infisical
+local appPort = infisical.container.port
+local dbUser = module.name
+local dbName = module.name
+
+local gateway = registry.network.shared.tailscale_gw_001
+
+name = "infisical"
+
+sharedNetworks { gateway }
+
+services {
+  ["app"] {
+    // registry.endpoint.serviceGroup.infisical.container.name: other stacks dial it.
+    container_name = infisical.container.name
+    image = "docker.io/infisical/infisical:\(appVersion)"
+    restart = "unless-stopped"
+    networks { "default"; gateway.name }
+    depends_on {
+      ["db"] { condition = "service_healthy" }
+      ["cache"] { condition = "service_healthy" }
+    }
+    environment {
+      ["SITE_URL"] = infisical.proxy.url
+      ["SMTP_HOST"] = "${INFISICAL__SMTP_HOST:-}"
+      ["SMTP_PORT"] = "${INFISICAL__SMTP_PORT:-}"
+      ["SMTP_FROM_ADDRESS"] = "${INFISICAL__SMTP_FROM_ADDRESS:-}"
+      ["SMTP_FROM_NAME"] = "${INFISICAL__SMTP_FROM_NAME:-}"
+      ["NODE_ENV"] = "production"
+      ["REDIS_URL"] = "redis://cache:6379"
+      ["ENCRYPTION_KEY"] = "${INFISICAL_ENCRYPTION_KEY:-}"
+      ["AUTH_SECRET"] = "${INFISICAL_AUTH_SECRET:-}"
+      ["DB_CONNECTION_URI"] = "postgres://\(dbUser):${INFISICAL_DB_PASSWORD:-}@db:5432/\(dbName)"
+      ["SMTP_USERNAME"] = "${INFISICAL__SMTP_USERNAME:-}"
+      ["SMTP_PASSWORD"] = "${INFISICAL_SMTP_PASSWORD:-}"
+    }
+    healthcheck {
+      test { "CMD"; "curl"; "-f"; "http://localhost:\(appPort)/api/status" }
+      interval = 30.s
+      timeout = 10.s
+      retries = 3
+      start_period = 40.s
+    }
+    expose { appPort }
+    ports {
+      new {
+        target = appPort
+        published = infisical.host.port
+        host_ip = infisical.host.on.tailscaleIP
+      }
+    }
+  }
+
+  ["db"] {
+    image = "docker.io/library/postgres:\(dbVersion)"
+    restart = "unless-stopped"
+    networks { "default"; gateway.name }
+    data { ["data"] { target = "/var/lib/postgresql/data" } }
+    environment {
+      ["POSTGRES_USER"] = dbUser
+      ["POSTGRES_DB"] = dbName
+      ["POSTGRES_PASSWORD"] = "${INFISICAL_DB_PASSWORD:-}"
+    }
+    healthcheck = col.pgIsReady(dbUser)
+    expose { 5432 }
+  }
+
+  ["cache"] {
+    image = "docker.io/library/redis:\(cacheVersion)"
+    restart = "unless-stopped"
+    data { ["data"] { target = "/data" } }
+    environment { ["ALLOW_EMPTY_PASSWORD"] = "yes" }
+    healthcheck = col.redisPing
+    expose { 6379 }
+  }
+}
+
+output {
+  files {
+    ["compose.yaml"] =
+      module.file(new Dynamic {
+        name = module.name
+        include {
+          new {
+            path = "services.yaml"
+            env_file { module.bootstrapSecretsFile }
+          }
+        }
+      })
+    ["services.yaml"] = module.file(module)
+  }
+}

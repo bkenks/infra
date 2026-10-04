@@ -1,0 +1,55 @@
+---
+- name: Read the installed fnox version
+  ansible.builtin.command: "{{ compose_fnox__install_dir }}/fnox --version"
+  register: compose_fnox__fnox_installed
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Install fnox {{ compose_fnox__fnox_version }}
+  when: compose_fnox__fnox_version not in compose_fnox__fnox_installed.stdout | default('')
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ compose_fnox__fnox_url }}"
+    dest: "{{ compose_fnox__install_dir }}"
+    remote_src: true
+    include: [fnox]
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Read the installed 1Password CLI version
+  ansible.builtin.command: "{{ compose_fnox__install_dir }}/op --version"
+  register: compose_fnox__op_installed
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Ensure unzip, which the 1Password CLI archive needs
+  when: compose_fnox__op_version not in compose_fnox__op_installed.stdout | default('')
+  become: true
+  ansible.builtin.apt:
+    name: unzip
+    state: present
+
+- name: Install the 1Password CLI fnox's 1password provider shells out to, version {{ compose_fnox__op_version }}
+  when: compose_fnox__op_version not in compose_fnox__op_installed.stdout | default('')
+  become: true
+  ansible.builtin.unarchive:
+    src: "{{ compose_fnox__op_url }}"
+    dest: "{{ compose_fnox__install_dir }}"
+    remote_src: true
+    include: [op]
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Install docker-compose-fnox {{ compose_fnox__provider_version }}
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ compose_fnox__provider_release_url }}/docker-compose-fnox_linux_{{ compose_fnox__arch }}"
+    checksum: "sha256:{{ compose_fnox__provider_release_url }}/checksums.txt"
+    dest: "{{ compose_fnox__install_dir }}/docker-compose-fnox"
+    owner: root
+    group: root
+    mode: "0755"

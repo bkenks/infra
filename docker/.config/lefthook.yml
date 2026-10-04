@@ -1,0 +1,14 @@
+---
+pre-commit:
+  jobs:
+    - name: format mise config
+      run: mise fmt
+      stage_fixed: true
+
+    # - name: pack kstore
+    #   run: mise run kstore:pack --stage
+
+    - name: render stacks via PKL
+      run: |
+        set -o pipefail
+        ./scripts/render.sh | git add --pathspec-from-file=-

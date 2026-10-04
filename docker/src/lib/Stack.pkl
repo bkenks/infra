@@ -1,0 +1,80 @@
+/// The compose file every stack in this repo amends: pkl-compose's Stack plus the
+/// generated-file header and the multi-file output the render task expects.
+///
+/// A stack renders `compose.yaml` beside itself. Stacks that need more documents add
+/// entries to `output.files` with `module.file(...)` (compose renderer) or
+/// `module.yamlFile(...)` (plain YAML, for config files).
+open module infra.Stack
+
+extends "@compose/Stack.pkl"
+
+import "@compose/Stack.pkl" as compose
+
+import "collections.pkl" as col
+import "registry.pkl"
+
+hidden const header = "# GENERATED from stack.pkl — DO NOT EDIT.\n"
+
+hidden attachNewtGateway: Boolean = true
+
+/// Restore-tier stacks must start on a cold start, when the secrets provider may not
+/// answer, so they render a second document with the provider swapped for
+/// `bootstrapSecretsFile`: `["bootstrap.yaml"] = module.file((module) { bootstrap = true })`.
+/// A compose override could not do this: overrides merge, so they cannot drop the
+/// provider service or the depends_on that waits on it.
+hidden bootstrap: Boolean = false
+
+/// Written by the control plane, carrying each secret under the name the provider injects.
+hidden bootstrapSecretsFile = "${BOOTSTRAP_SECRETS_FILE:-\(col.dirs.secrets)/\(name).env}"
+
+/// Registry shared networks this stack's services join, declared `external`.
+hidden sharedNetworks: Listing<registry.SharedNetwork>
+
+local newtGateway = registry.network.shared.newt_gw_001
+
+local function canAttach(service: compose.StackService): Boolean =
+  service.provider == null
+    && service.network_mode == null
+    && !service.networks.toList().contains(newtGateway.name)
+
+local function withNewtGateway(service: compose.StackService): compose.StackService = (service) {
+  networks {
+    when (service.networks.isEmpty) { "default" }
+    newtGateway.name
+  }
+}
+
+networks {
+  when (attachNewtGateway) {
+    [newtGateway.name] { name = newtGateway.name; `external` = true }
+  }
+  ["default"] { name = module.name }
+  for (shared in sharedNetworks) {
+    [shared.name] { name = shared.name; `external` = true }
+  }
+}
+
+function file(doc: Object): FileOutput = new FileOutput {
+  value = doc
+  renderer = module.output.renderer
+  text = header + super.text
+}
+
+function yamlFile(doc: Object): FileOutput = new FileOutput {
+  value = doc
+  renderer = new YamlRenderer {}
+  text = header + super.text
+}
+
+output {
+  renderer {
+    converters {
+      [compose.StackService] = (service) ->
+        if (attachNewtGateway && canAttach(service)) withNewtGateway(service) else service
+    }
+  }
+  text = header + super.text
+  files {
+    ["compose.yaml"] { text = module.output.text }
+  }
+}

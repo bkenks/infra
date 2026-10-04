@@ -1,0 +1,14 @@
+---
+- name: Assert the admin user can get in before root is locked
+  ansible.builtin.assert:
+    that:
+      - access__should_create_admin_user
+      - access__authorized_keys | length > 0
+    fail_msg: >-
+      Refusing to lock root: access__authorized_keys is empty or the admin
+      user is not being created, so locking root would leave no way in.
+
+- name: Lock the root account password
+  ansible.builtin.user:
+    name: root
+    password_lock: true

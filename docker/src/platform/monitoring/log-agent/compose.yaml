@@ -1,0 +1,31 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: log-agent
+services:
+  agent:
+    image: timberio/vector:0.58.0-alpine
+    container_name: log-agent-agent
+    hostname: agent
+    restart: unless-stopped
+    environment:
+      HOST: ${HOST:?err}
+    volumes:
+    - type: volume
+      source: agent_buffer
+      target: /var/lib/vector
+      read_only: false
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+    - type: bind
+      source: ./config/vector.yaml
+      target: /etc/vector/vector.yaml
+      read_only: true
+    labels:
+      komodo.skip: ''
+volumes:
+  agent_buffer:
+    name: log-agent-agent_buffer
+networks:
+  default:
+    name: log-agent

@@ -1,0 +1,22 @@
+$ORIGIN internal.
+$TTL 60
+
+@   IN SOA  ns.internal. hostmaster.internal. (
+            2026100104  ; serial — bump on every edit
+            7200        ; refresh
+            3600        ; retry
+            1209600     ; expire
+            60 )        ; negative TTL
+
+@   IN NS   ns.internal.
+ns  IN A    10.200.0.53
+
+; ── hosts ─────────────────────────────────────────────
+apps01.home-cvg                IN A  100.79.7.11
+core01.home-cvg                IN A  100.114.137.104
+lab01.home-cvg                 IN A  100.108.59.105
+media01.home-cvg               IN A  100.126.19.103
+nas01.home-cvg                 IN A  100.91.182.94
+router01.home-cvg              IN A  100.76.41.91
+; edge01.vultr-ord               IN A  TODO
+mgmt01.vultr-ord               IN A  100.106.170.93

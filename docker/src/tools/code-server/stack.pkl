@@ -1,0 +1,61 @@
+// code-server: VS Code in the browser (coder/code-server) on its own; no Coder control
+// plane, no workspaces. Edits the projects mounted at /home/coder/project.
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/secrets.pkl"
+
+local version = "4.135.0"
+local port = 8080
+local home = "/home/coder"
+local dir = "\(col.dirs.docker.bindMounts)/code-server"
+local mounts = new Mapping<String, String> {
+  // ~/.config: code-server's own config.yaml.
+  ["\(dir)/config"] = "\(home)/.config"
+  // ~/.local: extensions, user settings and workspace state.
+  ["\(dir)/local"] = "\(home)/.local"
+  ["\(dir)/projects"] = "\(home)/project"
+}
+
+name = "code-server"
+
+services {
+  ["secrets"] = secrets.fnox
+
+  ["app"] {
+    image = "codercom/code-server:\(version)"
+    restart = "unless-stopped"
+    depends_on = secrets.ready
+    environment { ["TZ"] = "America/Chicago" }
+    expose { port }
+    volumes {
+      for (hostPath, containerPath in mounts) { col.bind(hostPath, containerPath) }
+    }
+    // The image runs as uid 1000 and never as root, so it cannot take ownership of a bind
+    // source docker creates on the host (root-owned). The hook runs first, as root, in an
+    // entrypoint-less image, and hands the mount points to that uid.
+    pre_start {
+      new {
+        image = "busybox:1.37"
+        user = "0:0"
+        command {
+          "chown"
+          "1000:1000"
+          for (_, containerPath in mounts) { containerPath }
+        }
+      }
+    }
+    healthcheck {
+      test { "CMD"; "curl"; "-fsS"; "--max-time"; "2"; "http://localhost:\(port)/healthz" }
+      interval = 30.s
+      timeout = 10.s
+      retries = 5
+    }
+  }
+}
+
+output {
+  files {
+    [secrets.configFile] = secrets.config("code-server", new Listing { "HASHED_PASSWORD" })
+  }
+}

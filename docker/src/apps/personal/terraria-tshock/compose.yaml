@@ -1,0 +1,40 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: terraria-tshock
+services:
+  app:
+    image: ryshe/terraria:tshock-1.4.5.6-6.1.0
+    container_name: terraria-tshock-app
+    hostname: app
+    restart: unless-stopped
+    environment:
+      WORLD_FILENAME: Columbia_Plaza.wld
+      CONFIGPATH: /tshock/config
+      LOGPATH: /tshock/logs
+    volumes:
+    - type: bind
+      source: /rootless-srv/terraria-tshock/config
+      target: /tshock/config
+      read_only: false
+    - type: bind
+      source: /rootless-srv/terraria-tshock/worlds
+      target: /root/.local/share/Terraria/Worlds
+      read_only: false
+    - type: bind
+      source: /rootless-srv/terraria-tshock/logs
+      target: /tshock/logs
+      read_only: false
+    - type: bind
+      source: /rootless-srv/terraria-tshock/plugins
+      target: /tshock/ServerPlugins
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+    stdin_open: true
+    tty: true
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: terraria-tshock

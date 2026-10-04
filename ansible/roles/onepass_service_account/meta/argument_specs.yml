@@ -1,0 +1,33 @@
+---
+argument_specs:
+  main:
+    short_description: Give a host a live 1Password service-account token, kept in 1Password and on the host.
+    options:
+      onepass_service_account__account:
+        type: str
+        required: true
+        description: 1Password account (sign-in address) whose signed-in user session reads, mints and stores.
+      onepass_service_account__dest:
+        type: path
+        required: true
+        description: Dotenv file on the host holding OP_SERVICE_ACCOUNT_TOKEN.
+      onepass_service_account__vaults:
+        type: list
+        elements: str
+        default: []
+        description: Vault grants for a newly minted account, as op's <vault>:<permission>[,<permission>].
+      onepass_service_account__name:
+        type: str
+        default: "{{ inventory_hostname }}"
+        description: Name of a newly minted service account.
+      onepass_service_account__vault:
+        type: str
+        default: secrets
+        description: Vault holding the token item.
+      onepass_service_account__item:
+        type: str
+        default: "{{ inventory_hostname }}.op-service-account"
+        description: API Credential item whose credential field holds the token.
+      onepass_service_account__owner:
+        type: str
+        description: Owner and group of the token file. Defaults to the connecting user.

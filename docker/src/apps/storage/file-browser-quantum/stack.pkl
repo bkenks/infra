@@ -1,0 +1,25 @@
+// Serves the tree at registry.dir.fileBrowser; the paths live in the registry because
+// terraria keeps its world under the same tree.
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/registry.pkl"
+
+local dir = registry.dir.fileBrowser
+local appPort = 80
+
+name = "file-browser-quantum"
+
+services {
+  ["app"] {
+    image = "gtstef/filebrowser:stable"
+    restart = "unless-stopped"
+    expose { appPort }
+    volumes {
+      col.bindReadOnly("./files/config.yaml", "/home/filebrowser/data/config.yaml")
+      col.bind(dir.data, "/data")
+      col.bind(dir.shared, "/shared")
+      col.bind(dir.cache, "/cache")
+    }
+  }
+}

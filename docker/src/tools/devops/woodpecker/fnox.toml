@@ -1,0 +1,11 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+WOODPECKER_AGENT_SECRET = { provider = "onepassword", value = "woodpecker/WOODPECKER_AGENT_SECRET" }
+WOODPECKER_FORGEJO_CLIENT = { provider = "onepassword", value = "woodpecker/WOODPECKER_FORGEJO_CLIENT" }
+WOODPECKER_FORGEJO_SECRET = { provider = "onepassword", value = "woodpecker/WOODPECKER_FORGEJO_SECRET" }

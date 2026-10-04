@@ -1,0 +1,67 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: homarr
+services:
+  secrets:
+    provider:
+      type: docker-compose-fnox
+      options:
+        path_config_toml: fnox.toml
+        path_credentials_env: /mnt/credentials/onepassword.env
+        if_missing: error
+  app:
+    image: ghcr.io/homarr-labs/homarr:latest
+    container_name: homarr-app
+    hostname: app
+    restart: unless-stopped
+    environment:
+      TZ: America/New_York
+      BASE_URL: https://ktbcloud.com
+      NEXTAUTH_URL: https://ktbcloud.com
+      AUTH_PROVIDERS: credentials,oidc
+      AUTH_OIDC_AUTO_LOGIN: 'true'
+      AUTH_OIDC_CLIENT_NAME: Authentik
+      AUTH_OIDC_ISSUER: https://authentik.ktbcloud.com/application/o/homarr/
+      AUTH_OIDC_URI: https://authentik.ktbcloud.com/application/o/authorize/
+      AUTH_LOGOUT_REDIRECT_URL: https://authentik.ktbcloud.com/application/o/homarr/end-session/
+      AUTH_OIDC_SCOPE_OVERWRITE: openid email profile groups
+      AUTH_OIDC_GROUPS_ATTRIBUTE: groups
+    expose:
+    - 7575
+    volumes:
+    - type: volume
+      source: app_data
+      target: /appdata
+      read_only: false
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: true
+    networks:
+    - default
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+    healthcheck:
+      test:
+      - CMD
+      - wget
+      - -q
+      - -O
+      - /dev/null
+      - -T
+      - '2'
+      - http://localhost:7575
+      interval: 30s
+      timeout: 10s
+      retries: 5
+volumes:
+  app_data:
+    name: homarr-app_data
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: homarr

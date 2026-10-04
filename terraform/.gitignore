@@ -1,0 +1,31 @@
+# Local .terraform directories
+**/.terraform/*
+.terraform/
+
+# State files — local state lives here; keep it (and any secrets in it) out of git
+*.tfstate
+*.tfstate.*
+
+# Crash logs
+crash.log
+crash.*.log
+
+*secret*
+
+# Override files (local-only overrides)
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Saved plans and CLI config
+*.tfplan
+.terraformrc
+terraform.rc
+
+# NOTE: .terraform.lock.hcl is intentionally committed and must NOT be ignored.
+
+# Local fnox config
+fnox.local.toml
+.fnox.local.toml
+.env

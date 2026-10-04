@@ -1,0 +1,11 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+AUTHENTIK_POSTGRESQL__PASSWORD = { provider = "onepassword", value = "authentik/AUTHENTIK_POSTGRESQL__PASSWORD" }
+AUTHENTIK_SECRET_KEY = { provider = "onepassword", value = "authentik/AUTHENTIK_SECRET_KEY" }
+POSTGRES_PASSWORD = { provider = "onepassword", value = "authentik/POSTGRES_PASSWORD" }

@@ -1,0 +1,86 @@
+// One per host. Vector tails the docker socket, so it sees every container's stdout/stderr
+// including containers it has never been told about, and ships them to victorialogs before
+// the container (and its json-file log) is removed.
+//
+// The socket source is what makes this survive a recreate: the `loki`/`fluentd` docker log
+// drivers write from inside the container's own lifecycle, and either block the container
+// when the sink is down or drop silently.
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/registry.pkl"
+
+local version = "0.58.0"
+local vlogs = registry.endpoint.serviceGroup.victorialogs
+local dataDir = "/var/lib/vector"
+local configFile = "vector.yaml"
+
+name = "log-agent"
+
+attachNewtGateway = false
+
+services {
+  ["agent"] {
+    image = "timberio/vector:\(version)-alpine"
+    restart = "unless-stopped"
+    // Shipping has to outlive StopAllContainers, or the shutdown itself goes unrecorded.
+    labels = col.labels.komodoSkip
+    // Vector's on-disk sink buffer lives here; it is what covers a victorialogs outage.
+    data { ["buffer"] { target = dataDir } }
+    volumes {
+      col.mounts.dockerSock
+      col.bindReadOnly("./config/\(configFile)", "/etc/vector/\(configFile)")
+    }
+    // HOST is not a secret: it comes from the deploy environment, and it is the only thing
+    // distinguishing one host's agent from another's in the log stream.
+    environment { ["HOST"] = "${HOST:?err}" }
+  }
+}
+
+output {
+  files {
+    ["config/\(configFile)"] =
+      module.yamlFile(new Dynamic {
+        data_dir = dataDir
+        sources {
+          docker {
+            type = "docker_logs"
+            // Without this the agent ingests its own output and feeds itself forever.
+            exclude_containers { "\(module.name)-agent" }
+          }
+        }
+        transforms {
+          // docker_logs sets `host` from the container's own hostname, which is the same
+          // string on every host in the fleet. Overwrite it with the host that deployed us.
+          identify = new Dynamic {
+            type = "remap"
+            inputs { "docker" }
+            source = #".host = get_env_var!("HOST")"#
+          }
+        }
+        sinks {
+          victorialogs {
+            type = "elasticsearch"
+            inputs { "identify" }
+            endpoints { "\(vlogs.host.url)/insert/elasticsearch/" }
+            api_version = "v8"
+            compression = "gzip"
+            // VictoriaLogs answers the elasticsearch insert path, not the cluster-health
+            // endpoint Vector probes, so its own check would fail a healthy sink.
+            healthcheck { enabled = false }
+            query {
+              _msg_field = "message"
+              _time_field = "timestamp"
+              _stream_fields = "host,container_name"
+            }
+            buffer {
+              type = "disk"
+              // Vector's floor for a disk buffer is 256 MiB.
+              max_size = 268435488
+              when_full = "block"
+            }
+          }
+        }
+      })
+  }
+}

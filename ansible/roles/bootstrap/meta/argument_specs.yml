@@ -1,0 +1,25 @@
+---
+argument_specs:
+  main:
+    short_description: Settle the SSH connection on whichever port and user the host answers on
+    options:
+      bootstrap__hardened_ssh_port:
+        type: int
+        required: true
+        description: Port a host that has already been provisioned answers SSH on.
+      bootstrap__fresh_ssh_port:
+        type: int
+        default: 22
+        description: Port a freshly installed host still answers SSH on.
+      bootstrap__fresh_ssh_user:
+        type: str
+        default: root
+        description: User a freshly installed host answers as, before the admin user exists.
+      bootstrap__admin_user:
+        type: str
+        required: true
+        description: Account to settle on when it can already log in.
+      bootstrap__probe_timeout:
+        type: int
+        default: 5
+        description: Seconds to wait on each probe before deciding it did not answer.

@@ -1,0 +1,10 @@
+---
+- name: Set the system hostname
+  ansible.builtin.hostname:
+    name: "{{ system__hostname }}"
+
+- name: Resolve the hostname locally so sudo never waits on DNS
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: '^127\.0\.1\.1\s'
+    line: "127.0.1.1 {{ system__hostname }}"

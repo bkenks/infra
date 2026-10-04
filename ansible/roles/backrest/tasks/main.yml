@@ -1,0 +1,10 @@
+---
+- name: Ensure Backrest is installed
+  ansible.builtin.shell:
+    cmd: >-
+      set -o pipefail &&
+      curl -fsSL https://raw.githubusercontent.com/garethgeorge/backrest/main/install.sh
+      | bash
+    executable: /bin/bash
+    creates: /usr/local/bin/backrest
+  become: true

@@ -1,0 +1,5 @@
+---
+compose_fnox__fnox_version: "1.35.2"
+compose_fnox__op_version: "2.39.0"
+compose_fnox__provider_version: "0.1.0"
+compose_fnox__install_dir: /usr/local/bin

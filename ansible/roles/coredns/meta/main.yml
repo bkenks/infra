@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: Brian Kenkel
+  description: Run CoreDNS as a bare-metal systemd service and make it the host's resolver.
+  license: Proprietary
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []

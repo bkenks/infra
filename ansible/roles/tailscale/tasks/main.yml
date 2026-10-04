@@ -1,0 +1,22 @@
+---
+- name: Ensure IP forwarding matches the exit-node setting
+  become: true
+  ansible.posix.sysctl:
+    name: "{{ item }}"
+    value: "1"
+    sysctl_file: /etc/sysctl.d/99-tailscale.conf
+    sysctl_set: true
+    state: "{{ 'present' if tailscale__exit_node else 'absent' }}"
+  loop:
+    - net.ipv4.ip_forward
+    - net.ipv6.conf.all.forwarding
+
+- name: Ensure Tailscale is up with exactly the declared preferences
+  ansible.builtin.import_role:
+    name: artis3n.tailscale.machine
+  vars:
+    tailscale_authkey: "{{ tailscale__authkey }}"
+    tailscale_args: >-
+      {{ (['--reset', '--accept-dns=false']
+          + (['--advertise-exit-node'] if tailscale__exit_node else []))
+         | join(' ') }}

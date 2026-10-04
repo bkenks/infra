@@ -1,0 +1,10 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+DATABASE_URL = { provider = "onepassword", value = "docuseal/DATABASE_URL" }
+SECRET_KEY_BASE = { provider = "onepassword", value = "docuseal/SECRET_KEY_BASE" }

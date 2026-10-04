@@ -1,0 +1,89 @@
+specification {
+    // Tags ——————————————————————————————————————————
+    // What a capability is for. An element carries at most one of these, and the
+    // half it falls in says who it serves — the first eight are the fleet's own
+    // plumbing, the last four are what the household actually opens.
+    tag orchestration
+    tag networking
+    tag observability
+    tag communications
+    tag secrets
+    tag backup-and-recovery
+    tag identity-and-access
+    tag development
+
+    tag business
+    tag media
+    tag gaming
+    tag files
+
+    // Cross-cutting properties. An element may carry any number.
+    tag public         // published on ktbcloud.com — reachable without the tailnet
+    tag stateful       // holds data a backup coordinator must capture
+
+    // Element kinds —————————————————————————————————
+    // The model answers "what?" only. Three levels:
+    //
+    //   capability   what function is provided          (top level, always)
+    //     platform     a vendor provides it, opaque     (leaf — never decomposed)
+    //     application  software I run                   (decomposes when it has parts)
+    //       process / database                          what that software is made of
+    //
+    // Who runs it and where it sits is deployment.c4's question, never this one.
+    element actor {
+        notation "Person"
+        style { shape person; color secondary }
+    }
+    element internet {
+        notation "Public Internet"
+        style { shape queue; color muted }
+    }
+
+    element capability {
+        notation "Capability"
+        style { shape rectangle; color slate }
+    }
+
+    element platform {
+        notation "Vendor platform"
+        style { shape rectangle; color muted; border dashed }
+    }
+    element application {
+        notation "Application"
+        style { shape rectangle; color blue }
+    }
+
+    element process {
+        notation "Process"
+        style { shape component; color sky }
+    }
+    // One storage kind, not two. Whether it is a relational database or a tree of
+    // files on disk is what `technology` is for; #stateful is the part a backup
+    // coordinator cares about, and the kind carries it.
+    element database {
+        #stateful
+        notation "Data store"
+        style { shape storage; color green }
+    }
+
+    // Relationship kinds ————————————————————————————
+    // Kinds exist so a view can drop a whole family of edges in one predicate.
+    // Every stack reads secrets from Infisical, so #secrets alone is ~20 edges
+    // converging on one node — the landscape is unreadable without excluding it.
+    relationship secrets { technology "Infisical"; line dotted; color muted }
+    relationship oidc    { technology "OIDC"; line dashed; color secondary }
+    relationship proxies { technology "HTTPS" }
+    relationship sql     { technology "PostgreSQL"; line dashed }
+    relationship backup  { line dotted; head diamond; color amber }
+    relationship overlay { technology "WireGuard"; line dashed; color sky }
+    relationship deploys { color green }
+
+    // Deployment node kinds —————————————————————————
+    // "Who" and "where": the vendors whose machines I rent, my own premises, and
+    // the boxes themselves. A vendor that is also a platform appears in both
+    // models — as a site here, as a platform in the model. Same company, two roles.
+    deploymentNode environment { notation "Environment"; style { color gray } }
+    deploymentNode site        { notation "Site" }
+    deploymentNode host        { notation "Host"; style { shape rectangle } }
+    deploymentNode device      { notation "Device"; style { shape storage } }
+}

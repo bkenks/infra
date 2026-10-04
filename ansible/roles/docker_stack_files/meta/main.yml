@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: Brian Kenkel
+  description: Sync a stack's files from a Git repo into its deploy directory.
+  license: Proprietary
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []

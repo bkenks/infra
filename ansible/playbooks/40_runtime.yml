@@ -1,0 +1,28 @@
+---
+- name: Hosts run Docker and git
+  hosts: all
+  tags: [runtime]
+
+  tasks:
+    - name: Docker directories exist
+      become: true
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ user_admin }}"
+        group: "{{ user_admin }}"
+        mode: "2770"
+      loop:
+        - "{{ path_dir__docker_root }}"
+        - "{{ path_dir__docker_files }}"
+        - "{{ path_dir__docker_stacks }}"
+        - "{{ path_dir__docker_bindmnts }}"
+
+    - name: Docker is installed
+      become: true
+      ansible.builtin.import_role:
+        name: geerlingguy.docker
+
+    - name: Git is installed
+      ansible.builtin.import_role:
+        name: git

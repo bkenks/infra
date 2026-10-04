@@ -1,0 +1,53 @@
+---
+- name: Compute the ports this host opens
+  ansible.builtin.set_fact:
+    access__firewall_policy_ports: >-
+      {{ access__firewall_group_ports | dict2items
+         | selectattr('key', 'in', ['all'] + group_names)
+         | map(attribute='value') | flatten | list }}
+
+- name: Normalise the ports
+  ansible.builtin.set_fact:
+    access__firewall_open_ports: "{{ access__firewall_policy_ports | map('int') | unique | list }}"
+
+- name: Refuse to enable a firewall with no policy or no way back in
+  ansible.builtin.assert:
+    that:
+      - access__firewall_policy_ports | length > 0
+      - (ansible_port | default(22) | int) in access__firewall_open_ports
+    fail_msg: >-
+      {{ inventory_hostname }} would open {{ access__firewall_open_ports }} while connected
+      on port {{ ansible_port | default(22) }}. Declare its ports in
+      access__firewall_group_ports.
+
+- name: Rebuild UFW from the policy
+  become: true
+  block:
+    - name: Install UFW
+      ansible.builtin.apt:
+        name: ufw
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Reset UFW
+      community.general.ufw:
+        state: reset
+
+    - name: Set the default policies
+      community.general.ufw:
+        direction: "{{ item.direction }}"
+        policy: "{{ item.policy }}"
+      loop:
+        - { direction: incoming, policy: deny }
+        - { direction: outgoing, policy: allow }
+
+    - name: Allow the ports
+      community.general.ufw:
+        rule: allow
+        port: "{{ item }}"
+        proto: tcp
+      loop: "{{ access__firewall_open_ports }}"
+
+    - name: Enable UFW
+      community.general.ufw:
+        state: enabled

@@ -1,0 +1,28 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+
+[profiles.bill.secrets]
+NEWT_ID = { provider = "onepassword", value = "hosts.bill.newt/NEWT_ID" }
+NEWT_SECRET = { provider = "onepassword", value = "hosts.bill.newt/NEWT_SECRET" }
+
+[profiles.biggy.secrets]
+NEWT_ID = { provider = "onepassword", value = "hosts.biggy.newt/NEWT_ID" }
+NEWT_SECRET = { provider = "onepassword", value = "hosts.biggy.newt/NEWT_SECRET" }
+
+[profiles.paiki.secrets]
+NEWT_ID = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_ID" }
+NEWT_SECRET = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_SECRET" }
+
+[profiles.littlebuddy.secrets]
+NEWT_ID = { provider = "onepassword", value = "hosts.littlebuddy.newt/NEWT_ID" }
+NEWT_SECRET = { provider = "onepassword", value = "hosts.littlebuddy.newt/NEWT_SECRET" }
+
+[profiles.rick.secrets]
+NEWT_ID = { provider = "onepassword", value = "hosts.rick.newt/NEWT_ID" }
+NEWT_SECRET = { provider = "onepassword", value = "hosts.rick.newt/NEWT_SECRET" }

@@ -1,0 +1,8 @@
+[providers]
+[providers.op_ansible]
+type    = "1password"
+account = "FUKUXFLIDREQDELXYP2PALUAVY"
+vault   = "secrets"
+
+[secrets]
+TS_AUTHKEY = { provider = "op_ansible", value = "TS_AUTHKEY/credential"}

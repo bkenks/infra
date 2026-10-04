@@ -1,0 +1,15 @@
+internal:53 {
+    bind dns0
+    file /etc/coredns/internal.zone
+    reload 10s
+    loop
+    errors
+}
+
+.:53 {
+    bind dns0
+    forward . 1.1.1.1 9.9.9.9
+    cache 30
+    loop
+    errors
+}

@@ -1,0 +1,40 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: komodo-mcp
+services:
+  secrets:
+    provider:
+      type: docker-compose-fnox
+      options:
+        path_config_toml: fnox.toml
+        path_credentials_env: /mnt/credentials/onepassword.env
+        if_missing: error
+  app:
+    image: fj.ktbcloud.com/bkenks/komodo-mcp-server:v1.7.1
+    container_name: komodo-mcp-app
+    hostname: app
+    restart: unless-stopped
+    environment:
+      MCP_TRANSPORT: http
+      MCP_ALLOWED_HOSTS: komodo-mcp.ktbinternal.com
+      KOMODO_URL: http://host.docker.internal:9120
+      MCP_TRUST_PROXY: '1'
+      TZ: America/Chicago
+    expose:
+    - 8000
+    networks:
+    - default
+    - newt_gw_001
+    extra_hosts:
+    - host.docker.internal:host-gateway
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+    labels:
+      komodo.skip: ''
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: komodo-mcp

@@ -1,0 +1,28 @@
+---
+- name: Ensure cache and deploy folders exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ansible_facts['user_id'] }}"
+    group: "{{ ansible_facts['user_id'] }}"
+    mode: "0755"
+  loop:
+    - "{{ docker_stack_files__cache_dir }}"
+    - "{{ docker_stack_files__deploy_dir }}"
+
+- name: Clone stack repo to cache
+  ansible.builtin.git:
+    repo: "{{ docker_stack_files__repo }}"
+    dest: "{{ docker_stack_files__cache_dir }}"
+    version: "{{ docker_stack_files__repo_version }}"
+
+- name: Sync stack files into deploy dir
+  ansible.posix.synchronize:
+    src: "{{ docker_stack_files__cache_dir }}/{{ docker_stack_files__repo_subdir }}/"
+    dest: "{{ docker_stack_files__deploy_dir }}/"
+    rsync_opts:
+      - "--exclude=.git"
+      - "--exclude=.env"
+      - "--chmod=D0755"
+  delegate_to: "{{ inventory_hostname }}"

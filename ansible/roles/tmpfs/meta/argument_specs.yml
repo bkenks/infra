@@ -1,0 +1,17 @@
+---
+argument_specs:
+  main:
+    short_description: Mount a RAM-backed, owner-only tmpfs at each given path.
+    options:
+      tmpfs__paths:
+        type: list
+        elements: path
+        required: true
+        description: Mount points, each its own tmpfs.
+      tmpfs__size:
+        type: str
+        default: 64M
+        description: Size cap of each tmpfs.
+      tmpfs__owner:
+        type: str
+        description: Owner and group of each mount. Defaults to the connecting user.

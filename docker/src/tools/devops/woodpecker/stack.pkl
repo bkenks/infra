@@ -1,0 +1,90 @@
+// woodpecker CI: `server` (UI/API + gRPC, reached via its exposed port) and `agent` (runs
+// pipeline steps via the host docker socket, talks to the server only over the private
+// bridge).
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/secrets.pkl"
+
+local version = "v3.15.0"
+local httpPort = 8000
+local grpcPort = 9000
+
+// Pipeline steps are sibling containers on the host daemon, so a cap on the agent
+// container does not reach them; they are limited by the WOODPECKER_BACKEND_DOCKER_LIMIT_*
+// vars below, which the docker backend applies to every step container it creates.
+//
+// Worst case on the host is these numbers times maxWorkflows (steps within one workflow
+// run sequentially): 8 GiB and 4 CPUs. Tune here, not at the use sites.
+local maxWorkflows = 2
+local stepMemBytes = 4.gib.toUnit("b").value.toInt()
+// Docker reads MemorySwap as memory+swap combined; equal to the memory limit means the
+// step cannot swap at all, which is what keeps a runaway build from thrashing the host.
+local stepMemSwapBytes = stepMemBytes
+// Microseconds of CPU per the 100000us default period: 200000 == 2 cores' worth.
+local stepCpuQuota = 200000
+
+name = "woodpecker"
+
+services {
+  ["secrets"] = secrets.fnox
+
+  ["server"] {
+    image = "docker.io/woodpeckerci/woodpecker-server:\(version)"
+    restart = "on-failure:5"
+    depends_on = secrets.ready
+    data { ["data"] { target = "/var/lib/woodpecker" } }
+    environment {
+      // Must match the OAuth2 app's redirect URI in Forgejo.
+      ["WOODPECKER_HOST"] = "https://peck.\(col.domain.ktbcloud)"
+      // Any Forgejo user may log in.
+      ["WOODPECKER_OPEN"] = "true"
+      // Uses Forgejo (not gitea) as the forge.
+      ["WOODPECKER_FORGEJO"] = "true"
+      ["WOODPECKER_FORGEJO_URL"] = "https://fj.\(col.domain.ktbcloud)"
+      // Exact match INCLUDING tag; keep in lockstep with the tag pinned in each
+      // pipeline's .woodpecker.yml.
+      ["WOODPECKER_PLUGINS_PRIVILEGED"] = "woodpeckerci/plugin-docker-buildx:6.1.0"
+      ["WOODPECKER_ADMIN"] = "bkenks"
+    }
+    deploy { resources { limits { memory = 1.gib } } }
+    expose { httpPort; grpcPort }
+  }
+
+  ["agent"] {
+    image = "docker.io/woodpeckerci/woodpecker-agent:\(version)"
+    restart = "on-failure:5"
+    command { "agent" }
+    depends_on {
+      ...secrets.ready
+      ["server"] { condition = "service_started" }
+    }
+    data { ["data"] { target = "/etc/woodpecker" } }
+    // Intentional: the agent runs pipeline steps as sibling containers via the host
+    // daemon, which is a write on the socket.
+    volumes { col.mounts.dockerSockRW }
+    environment {
+      ["WOODPECKER_SERVER"] = "server:\(grpcPort)"
+      ["WOODPECKER_MAX_WORKFLOWS"] = "\(maxWorkflows)"
+      // Per-step-container limits, applied by the docker backend to every container it
+      // starts. Bytes for memory, microseconds-per-period for CPU; 0 (the default) is
+      // unlimited, which is what let concurrent image builds take the host down.
+      ["WOODPECKER_BACKEND_DOCKER_LIMIT_MEM"] = "\(stepMemBytes)"
+      ["WOODPECKER_BACKEND_DOCKER_LIMIT_MEM_SWAP"] = "\(stepMemSwapBytes)"
+      ["WOODPECKER_BACKEND_DOCKER_LIMIT_CPU_QUOTA"] = "\(stepCpuQuota)"
+    }
+    // The agent only supervises; the work happens in the step containers above.
+    deploy { resources { limits { memory = 512.mib } } }
+  }
+}
+
+output {
+  files {
+    [secrets.configFile] =
+      secrets.config("woodpecker", new Listing {
+        "WOODPECKER_AGENT_SECRET"
+        "WOODPECKER_FORGEJO_CLIENT"
+        "WOODPECKER_FORGEJO_SECRET"
+      })
+  }
+}

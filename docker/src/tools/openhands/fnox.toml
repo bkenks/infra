@@ -1,0 +1,10 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+LOCAL_BACKEND_API_KEY = { provider = "onepassword", value = "openhands/LOCAL_BACKEND_API_KEY" }
+OH_SECRET_KEY = { provider = "onepassword", value = "openhands/OH_SECRET_KEY" }

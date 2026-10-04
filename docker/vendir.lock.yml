@@ -1,0 +1,11 @@
+apiVersion: vendir.k14s.io/v1alpha1
+directories:
+- contents:
+  - git:
+      commitTitle: 'Release 0.2.1: add DependsOn.required'
+      sha: 5a40a7d37787bc34a76d463eeef9ee2d9493e778
+      tags:
+      - 0.2.1
+    path: .
+  path: .vendir/pkl-compose
+kind: LockConfig

@@ -1,0 +1,12 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+- path: .vendir/pkl-compose
+  contents:
+  - path: .
+    git:
+      url: git@fj.ktbcloud.com:bkenks/pkl-compose.git
+      ref: 0.2.1
+    includePaths:
+    - "*.pkl"
+    - PklProject

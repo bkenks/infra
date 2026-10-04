@@ -1,0 +1,62 @@
+/// Defaults and spellings that depend on nothing. Values that cross a stack boundary
+/// live in registry.pkl instead.
+module infra.collections
+
+import "@compose/Compose.pkl"
+
+const domain = new {
+  ktbdev = "ktb.dev"
+  ktbinternal = "ktbinternal.com"
+  ktbcloud = "ktbcloud.com"
+}
+
+const dirs = new {
+  docker = new {
+    root = "/srv/docker"
+    bindMounts = "/srv/docker/bind-mounts"
+  }
+  rootlessSrv = "/rootless-srv"
+  nas = new {
+    docker = "/volume1/docker"
+    backups = "/volume1/backups"
+  }
+  // tmpfs, so the one env file left (the Infisical server's bootstrap) never touches disk.
+  secrets = "/mnt/secrets"
+  // tmpfs holding what the host itself authenticates with: Infisical and 1Password.
+  credentials = "/mnt/credentials"
+}
+
+const mounts = new {
+  dockerSock = bindReadOnly("/var/run/docker.sock", "/var/run/docker.sock")
+  dockerSockRW = bind("/var/run/docker.sock", "/var/run/docker.sock")
+}
+
+const labels = new {
+  // Marks a container so Komodo's StopAllContainers leaves it running.
+  komodoSkip = new Mapping { ["komodo.skip"] = "" }
+}
+
+/// A bind mount: `col.bind("/host/path", "/container/path")`.
+const function bind(hostPath: String, containerPath: String): Compose.Mount = new {
+  type = "bind"
+  source = hostPath
+  target = containerPath
+}
+
+const function bindReadOnly(hostPath: String, containerPath: String): Compose.Mount = (
+  bind(hostPath, containerPath)
+) { read_only = true }
+
+const function pgIsReady(user: String): Compose.Healthcheck = new {
+  test { "CMD-SHELL"; "pg_isready --username=\(user)" }
+  interval = 5.s
+  timeout = 10.s
+  retries = 10
+}
+
+const redisPing: Compose.Healthcheck = new {
+  test { "CMD"; "redis-cli"; "ping" }
+  interval = 10.s
+  timeout = 5.s
+  retries = 5
+}

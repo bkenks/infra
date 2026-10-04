@@ -1,0 +1,46 @@
+---
+system__should_upgrade: true
+system__should_set_hostname: true
+system__should_extend_lvm: true
+system__should_install_packages: true
+system__should_set_timezone: true
+system__should_enable_wol: true
+system__should_enable_swap: true
+system__should_enable_unattended_upgrades: true
+system__should_cap_journal: true
+system__should_reboot: true
+
+system__hostname: "{{ inventory_hostname }}"
+
+system__lvm_vg: ubuntu-vg
+system__lvm_lv: ubuntu-lv
+
+system__packages:
+  - ca-certificates
+  - curl
+  - gnupg
+  - htop
+  - jq
+  - rsync
+  - ufw
+  - unzip
+
+system__timesync_services:
+  - systemd-timesyncd
+  - chrony
+
+system__timezone: Etc/UTC
+
+system__wol_interface: "{{ ansible_default_ipv4.interface }}"
+system__wol_mode: g
+
+system__swap_file: /swapfile
+system__swap_size: 2G
+system__swappiness: 10
+
+system__should_reboot_unattended: false
+system__unattended_reboot_time: "04:00"
+
+system__journal_max_use: 500M
+
+system__reboot_timeout: 300

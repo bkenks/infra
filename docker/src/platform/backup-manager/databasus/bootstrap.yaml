@@ -1,0 +1,35 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: databasus
+services:
+  app:
+    image: databasus/databasus:latest
+    container_name: databasus-app
+    hostname: app
+    restart: unless-stopped
+    env_file:
+    - ${BOOTSTRAP_SECRETS_FILE:-/mnt/secrets/databasus.env}
+    ports:
+    - target: 4005
+      published: 4005
+      protocol: tcp
+    volumes:
+    - type: volume
+      source: app_data
+      target: /databasus-data
+      read_only: false
+    network_mode: host
+    pre_start:
+    - command:
+      - sh
+      - -c
+      - umask 077; printf %s "$$SECRET_KEY" > /databasus-data/secret.key
+      image: alpine:3.20
+volumes:
+  app_data:
+    name: databasus-app_data
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: databasus

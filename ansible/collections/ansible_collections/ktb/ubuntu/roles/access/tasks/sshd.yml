@@ -1,0 +1,26 @@
+---
+- name: Allow the hardened SSH port in case UFW is already active
+  become: true
+  community.general.ufw:
+    rule: allow
+    port: "{{ access__ssh_port }}"
+    proto: tcp
+
+- name: Harden sshd and listen on the hardened port
+  become: true
+  ansible.builtin.import_role:
+    name: devsec.hardening.ssh_hardening
+  vars:
+    ssh_server_ports: ["{{ access__ssh_port }}"]
+    ssh_allow_tcp_forwarding: "local"
+
+- name: Apply the queued sshd restart
+  ansible.builtin.meta: flush_handlers
+
+- name: Point the connection at the hardened port and admin user # noqa: var-naming[no-role-prefix]
+  ansible.builtin.set_fact:
+    ansible_port: "{{ access__ssh_port }}"
+    ansible_user: "{{ access__admin_user }}"
+
+- name: Drop the stale connection
+  ansible.builtin.meta: reset_connection

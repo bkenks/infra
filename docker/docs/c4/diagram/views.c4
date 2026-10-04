@@ -1,0 +1,210 @@
+views {
+
+    // ── Landscape ──────────────────────────────────────────────────────────
+    view index {
+        title 'Landscape'
+        description 'One box per capability, with the secret-distribution edges suppressed. What is provided, not what runs it.'
+
+        include *
+        exclude * -> * where kind is secrets
+
+        global style base
+        autoLayout LeftRight
+    }
+
+    view secrets {
+        title 'Secret Distribution'
+        description 'The edges index hides: every stack reads its bundle from Infisical.'
+
+        include secretsMan
+        include secretsMan.*
+        include * -> secretsMan
+
+        global style base
+        autoLayout LeftRight
+    }
+
+    // ── Cross-cutting ──────────────────────────────────────────────────────
+    view ingress {
+        title 'Ingress Path'
+        description 'How a request reaches a workload. Gerbil owns the host ports; Traefik shares its namespace.'
+
+        include www, operator, household
+        include gateway, gateway.*, gateway.pangolin.*
+        include gateway.pangolin.traefik ->
+        include dns, dns.cloudflare
+
+        global style base
+        autoLayout LeftRight
+    }
+
+    view identity {
+        title 'Identity'
+        description 'What depends on single sign-on.'
+
+        include idp, idp.*, idp.authentik.*
+        include * -> idp.authentik.server
+        include ci, ci.*, ci.woodpecker.*
+        include * -> priCodeForge.forgejo.server
+
+        global style base
+    }
+
+    view state {
+        title 'State and Backup'
+        description 'Everything a backup coordinator captures, and which one captures it.'
+
+        include * where tag is #stateful
+        include dbBak, dbBak.*
+        include dataBak, dataBak.*
+        include dbBak.databasus -> *
+        include dataBak.zerobyte -> *
+
+        global style base
+        autoLayout LeftRight
+    }
+
+    view apps {
+        title 'Workloads'
+        description 'The user-facing catalogue.'
+
+        include * where tag is #business
+        include * where tag is #media
+        include * where tag is #gaming
+        include * where tag is #files
+        // The counterparties, so the catalogue shows dependencies and not just boxes.
+        include gateway, sharedDb, secretsMan
+
+        global style base
+    }
+
+    // ── Per-system drill-down ──────────────────────────────────────────────
+    view gatewayDetail of gateway {
+        title 'Gateway'
+        include *, gateway.pangolin.*
+        include -> gateway.pangolin.traefik ->
+        global style base
+    }
+
+    view idpDetail of idp {
+        title 'Identity Provider'
+        include *, idp.authentik.*
+        include -> idp.authentik.server ->
+        global style base
+    }
+
+    view secretsManDetail of secretsMan {
+        title 'Secrets Manager'
+        include *, secretsMan.infisical.*
+        global style base
+    }
+
+    view containerOrcDetail of containerOrc {
+        title 'Container Orchestrator'
+        include *, containerOrc.komodo.*
+        include -> containerOrc.komodo.core ->
+        global style base
+    }
+
+    view forgeDetail of priCodeForge {
+        title 'Primary Code Forge'
+        include *, priCodeForge.forgejo.*
+        include -> priCodeForge.forgejo.server ->
+        global style base
+    }
+
+    view ciDetail of ci {
+        title 'Continuous Integration'
+        include *, ci.woodpecker.*
+        include -> ci.woodpecker.server ->
+        global style base
+    }
+
+    view docArcDetail of docArc {
+        title 'Document Archive'
+        include *, docArc.paperless.*
+        global style base
+    }
+
+    view phovidDetail of phovid {
+        title 'Personal Photo Storage'
+        include *, phovid.immich.*
+        global style base
+    }
+
+    view mediaLibDetail of mediaLib {
+        title 'Media Library'
+        include *
+        global style base
+    }
+
+    // ── Flows ──────────────────────────────────────────────────────────────
+    dynamic view flowRequest {
+        variant sequence
+        title 'Serving an authenticated request'
+
+        www -> gateway.pangolin.gerbil 'GET openprj.ktbcloud.com'
+        gateway.pangolin.gerbil -> gateway.pangolin.traefik 'forwards on the shared namespace'
+        gateway.pangolin.traefik -> gateway.pangolin.server 'badger: is this session allowed?'
+        gateway.pangolin.traefik <- gateway.pangolin.server 'allow'
+        gateway.pangolin.traefik -> gateway.pangolin.gerbil 'routes into the tunnel'
+        gateway.pangolin.gerbil -> gateway.newt 'WireGuard'
+        gateway.newt -> prjMan.openproject 'forwards to the local port'
+        prjMan.openproject -> sharedDb.postgres.db 'query'
+        prjMan.openproject <- sharedDb.postgres.db 'rows'
+        gateway.newt <- prjMan.openproject '200 OK'
+        gateway.pangolin.gerbil <- gateway.newt '200 OK'
+        gateway.pangolin.traefik <- gateway.pangolin.gerbil '200 OK'
+        www <- gateway.pangolin.traefik '200 OK'
+    }
+
+    dynamic view flowSecrets {
+        variant sequence
+        title 'How a stack gets its secrets'
+        description 'The pattern every stack shares — the compose provider runs before the app starts.'
+
+        containerOrc.komodo.periphery -> docsign.docuseal 'docker compose up'
+        docsign.docuseal -> secretsMan.infisical.server 'machine identity login, then GET /docuseal'
+        docsign.docuseal <- secretsMan.infisical.server 'secret bundle'
+        docsign.docuseal -> sharedDb.postgres.db 'connects with the injected credentials'
+    }
+
+    dynamic view flowDeploy {
+        variant sequence
+        title 'Deploying a stack'
+
+        operator -> priCodeForge.forgejo.server 'git push'
+        containerOrc.komodo.core -> priCodeForge.forgejo.server 'syncs stack definitions'
+        containerOrc.komodo.core -> containerOrc.komodo.periphery 'deploy'
+        containerOrc.komodo.periphery -> secretsMan.infisical.server 'provider fetches the bundle'
+        containerOrc.komodo.periphery <- secretsMan.infisical.server 'secrets'
+        containerOrc.komodo.core <- containerOrc.komodo.periphery 'result'
+        containerOrc.komodo.core -> alerting.pushover 'alerts on failure'
+    }
+
+    // ── Deployment ─────────────────────────────────────────────────────────
+    deployment view fleet {
+        title 'Fleet'
+        description 'Seven hosts. Newt and Komodo Periphery run on all six ubuntu_servers.'
+
+        // Level by level, not `prod.**` — `.**` keeps only descendants that already
+        // have an edge, which silently drops Newt and Periphery on the quiet hosts.
+        include prod, prod.*
+        include prod.vultr.*, prod.hetzner.*, prod.homelab.*
+        include prod.vultr.rick.*, prod.hetzner.maboi.*
+        include prod.homelab.littlebuddy.*, prod.homelab.biggy.*
+        include prod.homelab.bill.*, prod.homelab.paiki.*
+
+        autoLayout LeftRight
+    }
+
+    deployment view controlplane {
+        title 'Control Plane'
+        description 'rick, and everything it reaches.'
+
+        // `.*` and not `.**` — `.**` drops any instance whose only edges leave the host,
+        // which would hide Komodo Periphery.
+        include prod.vultr.rick
+        include prod.vultr.rick.*
+    }
+}

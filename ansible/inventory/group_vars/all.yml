@@ -1,0 +1,81 @@
+---
+user_admin: rootish
+hardened_ssh_port: 3204
+
+path_dir__repo_root: "{{ lookup('env', 'path_dir__repo_root') }}"
+
+path_dir__server: /srv
+path_dir__docker_root: "{{ path_dir__server }}/docker"
+path_dir__docker_files: "{{ path_dir__docker_root }}/files"
+path_dir__docker_stacks: "{{ path_dir__docker_root }}/stacks"
+path_dir__docker_bindmnts: "{{ path_dir__docker_root }}/bind-mounts"
+path_dir__secrets: /mnt/secrets
+path_dir__creds: /mnt/credentials
+path_file__op_creds: "{{ path_dir__creds }}/onepassword.env"
+
+ansible_python_interpreter: /usr/bin/python3
+
+bootstrap__hardened_ssh_port: "{{ hardened_ssh_port }}"
+bootstrap__fresh_ssh_user: root
+bootstrap__admin_user: "{{ user_admin }}"
+
+access__should_enable_fail2ban: false
+access__admin_user: "{{ user_admin }}"
+path_files__ssh_identity_pubkeys: >-
+  {{ lookup('ansible.builtin.pipe', 'ssh -G ' ~ inventory_hostname).splitlines()
+     | select('match', '^identityfile .*[.]pub$')
+     | map('regex_replace', '^identityfile ', '') | map('expanduser') | list }}
+access__authorized_keys: "{{ query('ansible.builtin.file', *path_files__ssh_identity_pubkeys) }}"
+access__is_authorized_keys_exclusive: false
+access__ssh_port: "{{ hardened_ssh_port }}"
+access__firewall_group_ports:
+  all: [80, 443, 3204, 9120, 8120]
+  control_plane: [18006, 18022]
+
+system__should_set_hostname: false
+system__should_enable_swap: false
+system__should_enable_unattended_upgrades: false
+system__should_cap_journal: false
+system__should_reboot: false
+system__timezone: America/New_York
+system__packages:
+  - neovim
+  - tree
+  - age
+  - rsync
+  - jq
+
+tailscale__authkey: "{{ lookup('env', 'TS_AUTHKEY') }}"
+
+coredns__config_files:
+  - "{{ inventory_dir }}/../files/dns/Corefile"
+  - "{{ inventory_dir }}/../files/dns/internal.zone"
+
+tmpfs__owner: "{{ user_admin }}"
+tmpfs__paths:
+  - "{{ path_dir__secrets }}"
+  - "{{ path_dir__creds }}"
+
+onepass_service_account__account: ktbsoft.1password.com
+onepass_service_account__dest: "{{ path_file__op_creds }}"
+onepass_service_account__vaults: ["secrets:read_items"]
+
+docker_install_compose: true
+docker_users:
+  - "{{ user_admin }}"
+
+komodo_action: install
+komodo_user: root
+komodo_group: root
+komodo_home: /root
+komodo_service_scope: system
+allow_create_komodo_user: false
+allow_modify_komodo_user: false
+komodo_version: "2.1.2"
+komodo_bin_dir: /usr/local/bin
+komodo_config_dir: /etc/komodo
+komodo_root_directory: /etc/komodo
+komodo_server_enabled: true
+komodo_periphery_port: 8120
+komodo_ssl_enabled: true
+komodo_core_public_key: "MCowBQYDK2VuAyEAhH3uosT3alwPFZsU4hAJLwmWLTjeXPwz8jkFDgux5BA="

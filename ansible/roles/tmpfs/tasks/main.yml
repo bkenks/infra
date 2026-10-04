@@ -1,0 +1,20 @@
+---
+- name: Ensure the mount points exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ tmpfs__owner }}"
+    group: "{{ tmpfs__owner }}"
+    mode: "0700"
+  loop: "{{ tmpfs__paths }}"
+
+- name: Ensure a tmpfs is mounted at each path
+  become: true
+  ansible.posix.mount:
+    path: "{{ item }}"
+    src: tmpfs
+    fstype: tmpfs
+    opts: defaults,size={{ tmpfs__size }},mode=0700,uid={{ tmpfs__owner }},gid={{ tmpfs__owner }},noexec,nosuid,nodev
+    state: mounted
+  loop: "{{ tmpfs__paths }}"

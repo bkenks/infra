@@ -1,0 +1,32 @@
+---
+- name: Install base packages
+  ansible.builtin.apt:
+    name: "{{ system__packages }}"
+    update_cache: true
+    cache_valid_time: 3600
+
+- name: Collect the host's services
+  ansible.builtin.service_facts:
+
+- name: Keep the clock synchronised
+  vars:
+    system__timesync_unit: >-
+      {{ system__timesync_services
+         | map('regex_replace', '$', '.service')
+         | select('in', ansible_facts.services)
+         | first | default('') }}
+  block:
+    - name: Ensure a time-sync service is installed
+      ansible.builtin.assert:
+        that: system__timesync_unit | length > 0
+        fail_msg: >-
+          None of {{ system__timesync_services | join(', ') }} is installed,
+          so the clock drifts and TLS validation fails. Install one, or add the
+          host's daemon to system__timesync_services.
+        quiet: true
+
+    - name: Enable {{ system__timesync_unit }}
+      ansible.builtin.systemd_service:
+        name: "{{ system__timesync_unit }}"
+        enabled: true
+        state: started

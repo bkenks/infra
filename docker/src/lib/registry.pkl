@@ -1,0 +1,140 @@
+/// Single source of truth for names that cross stack boundaries. If one stack needs a
+/// value another stack owns, it lives here; values that depend on nothing live in
+/// collections.pkl and are never repeated here.
+///
+/// Reference by KEY (`registry.endpoint.serviceGroup.victorialogs.host.addr`), never by raw
+/// string: a typo'd key fails at eval, a typo'd string fails silently at `up`.
+module infra.registry
+
+import "collections.pkl" as col
+
+/// A host in the fleet. Every host runs CoreDNS for the zone, so host-to-host traffic
+/// is dialled by name.
+class Host {
+  alias: String
+  tailscaleIP: String?
+  fixed zone = "internal"
+  fixed ref = "\(alias).\(zone)"
+}
+
+class HostGroup {
+  littlebuddy: Host = new { alias = "littlebuddy" }
+  paiki: Host = new { alias = "paiki" }
+  biggy: Host = new { alias = "biggy" }
+  bill: Host = new { alias = "bill" }
+  maboi: Host = new { alias = "maboi" }
+  rick: Host = new { alias = "rick"; tailscaleIP = "100.106.170.93" }
+  nas: Host = new { alias = "snaszy" }
+  controlplane: Host = new { alias = "controlplane" }
+  cinciPlex: Host = new { alias = "cinci-plex" }
+  cinciImmich: Host = new { alias = "cinci-immich" }
+  cinciStorage: Host = new { alias = "cinci-storage" }
+  cinciGames: Host = new { alias = "cinci-games" }
+}
+
+/// Container-to-container, on one host, over a shared docker network.
+class Container {
+  name: String
+  port: UInt16
+  scheme = "http"
+  fixed addr = "\(name):\(port)"
+  fixed url = "\(scheme)://\(addr)"
+}
+
+/// Host-to-host, over the .internal zone, through a published port.
+class HostEndpoint {
+  on: Host
+  port: UInt16
+  scheme = "http"
+  fixed addr = "\(on.ref):\(port)"
+  fixed url = "\(scheme)://\(addr)"
+}
+
+/// From the internet, through the edge proxy.
+open class Proxy {
+  subdomain: String
+  domain: String
+  scheme = "https"
+  fixed fqdn = "\(subdomain).\(domain)"
+  fixed url = "\(scheme)://\(fqdn)"
+}
+
+class Oidc {
+  base: String
+  function issuer(slug: String): String = "\(base)/application/o/\(slug)/"
+  fixed uri = "\(base)/application/o/authorize/"
+}
+
+class AuthentikProxy extends Proxy {
+  fixed oidc: Oidc = new { base = outer.url }
+}
+
+/// A service names only the levels it actually exposes.
+class Service {
+  /// The display name an OIDC client shows on its login button.
+  name: String?
+  container: Container?
+  host: HostEndpoint?
+  proxy: Proxy?
+}
+
+/// A docker network several stacks on one host share. Created by terraform; every
+/// participating stack declares it `external`.
+class SharedNetwork {
+  name: String
+}
+
+network = new {
+  shared = new {
+    db_001 = new SharedNetwork { name = "db_001" }
+    tailscale_gw_001 = new SharedNetwork { name = "tailscale_gw_001" }
+    pangolin_gw_001 = new SharedNetwork { name = "pangolin_gw_001" }
+    newt_gw_001 = new SharedNetwork { name = "newt_gw_001" }
+  }
+}
+
+endpoint = new {
+  hostGroup = new HostGroup {}
+  // Hosts that run a per-host Pangolin connector (newt, pangolin-cli).
+  gatewayHosts = new Listing<Host> {
+    hostGroup.bill
+    hostGroup.biggy
+    hostGroup.paiki
+    hostGroup.littlebuddy
+    hostGroup.rick
+  }
+  serviceGroup = new {
+    postgres = new Service {
+      container { name = "postgres-db"; port = 5432 }
+    }
+    infisical = new Service {
+      container { name = "infisical-app"; port = 8080 }
+      // 18006 belongs to authentik, so infisical takes 18043: the two share rick.
+      host { on = hostGroup.rick; port = 18043 }
+      proxy { subdomain = "infisical"; domain = col.domain.ktbinternal }
+    }
+    pangolin = new Service {
+      proxy { subdomain = "pangolin"; domain = col.domain.ktbcloud }
+    }
+    victorialogs = new Service {
+      container { name = "victorialogs-logs"; port = 9428 }
+      // Every host's log-agent dials this, so it is a fleet-wide constant.
+      host { on = hostGroup.littlebuddy; port = 19428 }
+    }
+    authentik = new Service {
+      name = "Authentik"
+      proxy = new AuthentikProxy { subdomain = "authentik"; domain = col.domain.ktbcloud }
+    }
+  }
+}
+
+/// Directories one stack owns and another reads.
+dir = new {
+  // file-browser-quantum serves this tree; terraria keeps its world under it.
+  fileBrowser = new {
+    root = "\(col.dirs.rootlessSrv)/file-browser-quantum"
+    data = "\(root)/data"
+    shared = "\(root)/shared"
+    cache = "\(root)/cache"
+  }
+}

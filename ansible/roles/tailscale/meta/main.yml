@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: Brian Kenkel
+  description: Join the host to the tailnet, optionally as an exit node.
+  license: Proprietary
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []

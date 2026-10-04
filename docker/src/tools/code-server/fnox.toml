@@ -1,0 +1,9 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+HASHED_PASSWORD = { provider = "onepassword", value = "code-server/HASHED_PASSWORD" }

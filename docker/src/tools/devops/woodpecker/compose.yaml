@@ -1,0 +1,87 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: woodpecker
+services:
+  secrets:
+    provider:
+      type: docker-compose-fnox
+      options:
+        path_config_toml: fnox.toml
+        path_credentials_env: /mnt/credentials/onepassword.env
+        if_missing: error
+  server:
+    image: docker.io/woodpeckerci/woodpecker-server:v3.15.0
+    container_name: woodpecker-server
+    hostname: server
+    restart: on-failure:5
+    environment:
+      WOODPECKER_HOST: https://peck.ktbcloud.com
+      WOODPECKER_OPEN: 'true'
+      WOODPECKER_FORGEJO: 'true'
+      WOODPECKER_FORGEJO_URL: https://fj.ktbcloud.com
+      WOODPECKER_PLUGINS_PRIVILEGED: woodpeckerci/plugin-docker-buildx:6.1.0
+      WOODPECKER_ADMIN: bkenks
+    expose:
+    - 8000
+    - 9000
+    volumes:
+    - type: volume
+      source: server_data
+      target: /var/lib/woodpecker
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+    deploy:
+      resources:
+        limits:
+          memory: 1g
+  agent:
+    image: docker.io/woodpeckerci/woodpecker-agent:v3.15.0
+    container_name: woodpecker-agent
+    hostname: agent
+    restart: on-failure:5
+    command:
+    - agent
+    environment:
+      WOODPECKER_SERVER: server:9000
+      WOODPECKER_MAX_WORKFLOWS: '2'
+      WOODPECKER_BACKEND_DOCKER_LIMIT_MEM: '4294967296'
+      WOODPECKER_BACKEND_DOCKER_LIMIT_MEM_SWAP: '4294967296'
+      WOODPECKER_BACKEND_DOCKER_LIMIT_CPU_QUOTA: '200000'
+    volumes:
+    - type: volume
+      source: agent_data
+      target: /etc/woodpecker
+      read_only: false
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+      server:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+volumes:
+  server_data:
+    name: woodpecker-server_data
+  agent_data:
+    name: woodpecker-agent_data
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: woodpecker

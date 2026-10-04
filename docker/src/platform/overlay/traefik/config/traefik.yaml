@@ -1,0 +1,10 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+entryPoints:
+  web:
+    address: :1111
+providers:
+  docker:
+    exposedByDefault: false
+log:
+  level: INFO
+accessLog: {}

@@ -1,0 +1,20 @@
+---
+access__should_create_admin_user: true
+access__should_lock_root: true
+access__should_harden_sshd: true
+access__should_enable_fail2ban: true
+access__should_enable_firewall: true
+
+access__admin_user: admin
+access__authorized_keys: []
+access__is_authorized_keys_exclusive: true
+access__should_grant_passwordless_sudo: true
+
+access__ssh_port: 22
+
+access__fail2ban_port: "{{ access__ssh_port }}"
+access__fail2ban_maxretry: 5
+access__fail2ban_findtime: 10m
+access__fail2ban_bantime: 1h
+
+access__firewall_group_ports: {}

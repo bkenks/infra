@@ -1,0 +1,6 @@
+---
+bootstrap__fresh_ssh_port: 22
+bootstrap__fresh_ssh_user: root
+bootstrap__probe_timeout: 5
+bootstrap__host: "{{ hostvars[inventory_hostname]['ansible_host'] | default(inventory_hostname) }}"
+bootstrap__port: "{{ bootstrap__hardened_ssh_port if bootstrap__hardened_port_probe is succeeded else bootstrap__fresh_ssh_port }}"

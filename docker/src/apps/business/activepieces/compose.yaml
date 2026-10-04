@@ -1,0 +1,161 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: activepieces
+services:
+  secrets:
+    provider:
+      type: docker-compose-fnox
+      options:
+        path_config_toml: fnox.toml
+        path_credentials_env: /mnt/credentials/onepassword.env
+        if_missing: error
+  app:
+    image: ghcr.io/activepieces/activepieces:0.88.3
+    container_name: activepieces-app
+    hostname: app
+    restart: on-failure:5
+    environment:
+      AP_ENVIRONMENT: prod
+      AP_EDITION: ee
+      AP_FRONTEND_URL: https://activepieces.ktbinternal.com
+      AP_ENGINE_EXECUTABLE_PATH: dist/packages/engine/main.js
+      AP_EXECUTION_MODE: SANDBOX_CODE_ONLY
+      AP_WEBHOOK_TIMEOUT_SECONDS: '30'
+      AP_FLOW_TIMEOUT_SECONDS: '600'
+      AP_TRIGGER_DEFAULT_POLL_INTERVAL: '5'
+      AP_TELEMETRY_ENABLED: 'true'
+      AP_TEMPLATES_SOURCE_URL: https://cloud.activepieces.com/api/v1/flow-templates
+      AP_TOOL_SEARCH_ENABLED: 'false'
+      AP_POSTGRES_HOST: db
+      AP_POSTGRES_PORT: '5432'
+      AP_POSTGRES_DATABASE: activepieces
+      AP_POSTGRES_USERNAME: postgres
+      AP_REDIS_HOST: cache
+      AP_REDIS_PORT: '6379'
+      AP_CONTAINER_TYPE: APP
+    expose:
+    - 80
+    volumes:
+    - type: volume
+      source: app_engine
+      target: /usr/src/app/cache
+      read_only: false
+    networks:
+    - default
+    - tailscale_gw_001
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+  worker:
+    image: ghcr.io/activepieces/activepieces:0.88.3
+    hostname: worker
+    restart: on-failure:5
+    environment:
+      AP_ENVIRONMENT: prod
+      AP_EDITION: ee
+      AP_FRONTEND_URL: http://app
+      AP_ENGINE_EXECUTABLE_PATH: dist/packages/engine/main.js
+      AP_EXECUTION_MODE: SANDBOX_CODE_ONLY
+      AP_WEBHOOK_TIMEOUT_SECONDS: '30'
+      AP_FLOW_TIMEOUT_SECONDS: '600'
+      AP_TRIGGER_DEFAULT_POLL_INTERVAL: '5'
+      AP_TELEMETRY_ENABLED: 'true'
+      AP_TEMPLATES_SOURCE_URL: https://cloud.activepieces.com/api/v1/flow-templates
+      AP_TOOL_SEARCH_ENABLED: 'false'
+      AP_POSTGRES_HOST: db
+      AP_POSTGRES_PORT: '5432'
+      AP_POSTGRES_DATABASE: activepieces
+      AP_POSTGRES_USERNAME: postgres
+      AP_REDIS_HOST: cache
+      AP_REDIS_PORT: '6379'
+      AP_CONTAINER_TYPE: WORKER
+    volumes:
+    - type: volume
+      source: app_engine
+      target: /usr/src/app/cache
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+      app:
+        condition: service_started
+    deploy:
+      replicas: 5
+  db:
+    image: docker.io/pgvector/pgvector:0.8.0-pg14
+    container_name: activepieces-db
+    hostname: db
+    restart: on-failure:5
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: activepieces
+    expose:
+    - 5432
+    volumes:
+    - type: volume
+      source: db_data
+      target: /var/lib/postgresql/data
+      read_only: false
+    networks:
+    - default
+    - tailscale_gw_001
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+    healthcheck:
+      test:
+      - CMD-SHELL
+      - pg_isready --username=postgres
+      interval: 5s
+      timeout: 10s
+      retries: 10
+  cache:
+    image: docker.io/library/redis:7.0.7
+    container_name: activepieces-cache
+    hostname: cache
+    restart: on-failure:5
+    expose:
+    - 6379
+    volumes:
+    - type: volume
+      source: cache_data
+      target: /data
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+    healthcheck:
+      test:
+      - CMD
+      - redis-cli
+      - ping
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  app_engine:
+    name: activepieces-app_engine
+  db_data:
+    name: activepieces-db_data
+  cache_data:
+    name: activepieces-cache_data
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: activepieces
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true

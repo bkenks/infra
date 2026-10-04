@@ -1,0 +1,36 @@
+amends "@infra/Stack.pkl"
+
+import "@compose/Compose.pkl"
+import "@infra/collections.pkl" as col
+
+local apiPort = 8080
+local home = "home"
+
+local connectMounts = new Listing<Compose.Mount> {
+  new { type = "volume"; source = home; target = "/home/opuser/.op/data" }
+  col.bind(
+    "\(col.dirs.credentials)/op-connect-server_credentials.json",
+    "/home/opuser/.op/1password-credentials.json",
+  )
+}
+
+name = "onepasswordconnect"
+
+services {
+  ["api"] {
+    image = "1password/connect-api:latest"
+    restart = "unless-stopped"
+    volumes = connectMounts
+    expose { apiPort }
+  }
+
+  ["agent"] {
+    image = "1password/connect-sync:latest"
+    restart = "unless-stopped"
+    volumes = connectMounts
+  }
+}
+
+volumes {
+  [home] = new Compose.Volume { name = "\(module.name)-\(home)" }
+}

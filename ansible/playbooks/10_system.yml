@@ -1,0 +1,9 @@
+---
+- name: Hosts run current packages and the base system settings
+  hosts: all
+  tags: [system]
+
+  tasks:
+    - name: Ubuntu system is in its declared state
+      ansible.builtin.import_role:
+        name: ktb.ubuntu.system

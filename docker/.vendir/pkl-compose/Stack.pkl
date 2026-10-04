@@ -1,0 +1,75 @@
+/// An opinionated compose file. Amend this module, set `name`, declare services by role.
+///
+/// Every Docker-visible name is derived here and rendered literally:
+///   container  <project>-<role>
+///   volume     <container>_<purpose>     (top-level key: <role>_<purpose>)
+///   network    <project>_<purpose>
+///
+/// Data volumes are declared on the service under `data` and hoisted to the
+/// top-level `volumes` mapping, with the matching mount added to the service.
+open module Stack
+
+import "Compose.pkl"
+import "Types.pkl"
+
+/// A named volume owned by one service. Key = purpose (`data`, `config`, `cache`).
+class DataVolume {
+  target: String
+  read_only: Boolean = false
+}
+
+class StackService extends Compose.Service {
+  hidden data: Mapping<String, DataVolume>
+}
+
+/// Project name. Becomes compose `name` and the prefix of every derived name.
+name: Types.T1Name
+
+services: Mapping<Types.ServiceKey, StackService>(
+  every((_, service) -> service.networks.every((network) -> networks.containsKey(network))),
+  every((_, service) -> service.depends_on.every((dependency, _) -> containsKey(dependency)))
+) = new Mapping {
+  default = (role) -> new StackService {
+    container_name = "\(module.name)-\(role)"
+    hostname = role
+    volumes {
+      for (purpose, spec in data) {
+        new Compose.Mount {
+          type = "volume"
+          source = "\(role)_\(purpose)"
+          target = spec.target
+          read_only = spec.read_only
+        }
+      }
+    }
+  }
+}
+
+volumes: Mapping<String, Compose.Volume>(
+  every((_, volume) -> volume.name.startsWith("\(module.name)-"))
+) = new Mapping {
+  for (role, service in services) {
+    for (purpose, _ in service.data) {
+      ["\(role)_\(purpose)"] = new Compose.Volume {
+        name = "\(service.container_name)_\(purpose)"
+      }
+    }
+  }
+}
+
+/// Keyed by purpose for networks this stack owns (`name` derives as `<project>_<purpose>`),
+/// or by the shared network's own name when attaching to one declared `external`.
+networks: Mapping<Types.DockerName, Compose.Network> = new Mapping {
+  default = (purpose) -> new Compose.Network { name = "\(module.name)_\(purpose)" }
+}
+
+output {
+  renderer = new YamlRenderer {
+    converters {
+      [Duration] = (duration) -> Types.renderDuration(duration)
+      [DataSize] = (size) -> Types.renderBytes(size)
+      [Listing] = (listing) -> if (listing.isEmpty) null else listing
+      [Mapping] = (mapping) -> if (mapping.isEmpty) null else mapping
+    }
+  }
+}

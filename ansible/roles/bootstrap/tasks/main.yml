@@ -1,0 +1,32 @@
+---
+- name: Probe the hardened SSH port ({{ bootstrap__hardened_ssh_port }})
+  ansible.builtin.wait_for:
+    host: "{{ bootstrap__host }}"
+    port: "{{ bootstrap__hardened_ssh_port }}"
+    timeout: "{{ bootstrap__probe_timeout }}"
+  delegate_to: localhost
+  register: bootstrap__hardened_port_probe
+  check_mode: false
+  ignore_errors: true
+
+- name: Probe login as {{ bootstrap__admin_user }}
+  ansible.builtin.raw: "true"
+  vars:
+    ansible_user: "{{ bootstrap__admin_user }}"
+    ansible_port: "{{ bootstrap__port }}"
+    ansible_timeout: "{{ bootstrap__probe_timeout }}"
+  register: bootstrap__admin_user_probe
+  changed_when: false
+  check_mode: false
+  ignore_unreachable: true
+
+- name: Point this connection at the answering port and user # noqa: var-naming[no-role-prefix]
+  ansible.builtin.set_fact:
+    ansible_port: "{{ bootstrap__port }}"
+    ansible_user: "{{ bootstrap__admin_user if bootstrap__admin_user_probe is not unreachable else bootstrap__fresh_ssh_user }}"
+
+- name: Drop the cached connection
+  ansible.builtin.meta: reset_connection
+
+- name: Gather facts
+  ansible.builtin.setup:

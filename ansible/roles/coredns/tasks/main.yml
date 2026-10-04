@@ -1,0 +1,117 @@
+---
+- name: Point /etc/resolv.conf at the systemd-resolved stub
+  ansible.builtin.file:
+    src: ../run/systemd/resolve/stub-resolv.conf
+    dest: /etc/resolv.conf
+    state: link
+    force: true
+  become: true
+
+- name: Create the coredns user
+  ansible.builtin.user:
+    name: coredns
+    system: true
+    shell: /usr/sbin/nologin
+    create_home: false
+  become: true
+
+- name: Create the release directory
+  ansible.builtin.file:
+    path: "/opt/coredns/{{ coredns__version }}"
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: Download the CoreDNS release
+  vars:
+    coredns__arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] }}"
+    coredns__url: >-
+      https://github.com/coredns/coredns/releases/download/v{{ coredns__version }}/coredns_{{ coredns__version }}_linux_{{ coredns__arch }}.tgz
+  ansible.builtin.get_url:
+    url: "{{ coredns__url }}"
+    checksum: "sha256:{{ coredns__url }}.sha256"
+    dest: "/opt/coredns/{{ coredns__version }}.tgz"
+    mode: "0644"
+  become: true
+
+- name: Unpack the CoreDNS release
+  ansible.builtin.unarchive:
+    src: "/opt/coredns/{{ coredns__version }}.tgz"
+    dest: "/opt/coredns/{{ coredns__version }}"
+    creates: "/opt/coredns/{{ coredns__version }}/coredns"
+    remote_src: true
+  become: true
+
+- name: Link the CoreDNS binary
+  ansible.builtin.file:
+    src: "/opt/coredns/{{ coredns__version }}/coredns"
+    dest: /usr/local/bin/coredns
+    state: link
+    force: true
+  become: true
+  notify: Restart coredns
+
+- name: Create the config directory
+  ansible.builtin.file:
+    path: /etc/coredns
+    state: directory
+    group: coredns
+    mode: "0750"
+  become: true
+
+- name: Install the config files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "/etc/coredns/{{ item | basename }}"
+    group: coredns
+    mode: "0640"
+  loop: "{{ coredns__config_files }}"
+  become: true
+  notify: Restart coredns
+
+- name: Install the CoreDNS unit
+  ansible.builtin.template:
+    src: coredns.service.j2
+    dest: /etc/systemd/system/coredns.service
+    mode: "0644"
+  become: true
+  notify: Restart coredns
+
+- name: Create the resolved drop-in directory
+  ansible.builtin.file:
+    path: /etc/systemd/resolved.conf.d
+    state: directory
+    mode: "0755"
+  become: true
+
+- name: Point systemd-resolved at CoreDNS
+  ansible.builtin.copy:
+    dest: /etc/systemd/resolved.conf.d/99-coredns.conf
+    content: |
+      [Resolve]
+      DNS=
+      DNS={{ coredns__address }}
+      Domains=
+      Domains=~.
+    mode: "0644"
+  become: true
+  notify: Restart systemd-resolved
+
+- name: Apply pending restarts
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable CoreDNS
+  ansible.builtin.systemd_service:
+    name: coredns
+    enabled: true
+    state: started
+  become: true
+
+- name: Resolve a name through the host resolver
+  ansible.builtin.command: "getent hosts {{ coredns__verify_query }}"
+  register: coredns__verify
+  until: coredns__verify.rc == 0
+  retries: 10
+  delay: 2
+  changed_when: false
+  check_mode: false

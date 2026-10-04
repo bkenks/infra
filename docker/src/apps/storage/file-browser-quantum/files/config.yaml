@@ -1,0 +1,6 @@
+server:
+  cacheDir: /cache
+  sources:
+    - path: /shared
+      config:
+        defaultEnabled: true

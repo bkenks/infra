@@ -1,0 +1,25 @@
+---
+argument_specs:
+  main:
+    short_description: Sync a stack's files from a Git repo into its deploy directory.
+    options:
+      docker_stack_files__name:
+        type: str
+        required: true
+        description: Stack name; names its deploy directory under docker_stack_files__stacks_dir.
+      docker_stack_files__stacks_dir:
+        type: path
+        required: true
+        description: Host directory holding every stack's deploy directory and the _repo_cache clones.
+      docker_stack_files__repo:
+        type: str
+        required: true
+        description: Clone URL of the stack repo.
+      docker_stack_files__repo_version:
+        type: str
+        default: main
+        description: Git ref (branch, tag, or commit) to deploy.
+      docker_stack_files__repo_subdir:
+        type: str
+        default: ""
+        description: Repo subdirectory whose contents become the deploy directory. Empty syncs the whole repo.

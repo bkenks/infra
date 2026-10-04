@@ -1,0 +1,7 @@
+---
+compose_fnox__arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] }}"
+compose_fnox__fnox_triple: "{{ ansible_facts['architecture'] }}-unknown-linux-musl"
+compose_fnox__fnox_url: "https://github.com/jdx/fnox/releases/download/v{{ compose_fnox__fnox_version }}/fnox-{{ compose_fnox__fnox_triple }}.tar.gz"
+compose_fnox__op_url: >-
+  https://cache.agilebits.com/dist/1P/op2/pkg/v{{ compose_fnox__op_version }}/op_linux_{{ compose_fnox__arch }}_v{{ compose_fnox__op_version }}.zip
+compose_fnox__provider_release_url: "https://github.com/ktb-soft/docker-compose.fnox/releases/download/v{{ compose_fnox__provider_version }}"

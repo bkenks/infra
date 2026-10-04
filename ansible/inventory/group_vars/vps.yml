@@ -1,0 +1,4 @@
+---
+system__should_extend_lvm: false
+system__should_enable_wol: false
+tailscale__exit_node: true

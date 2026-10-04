@@ -1,0 +1,65 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+name: code-server
+services:
+  secrets:
+    provider:
+      type: docker-compose-fnox
+      options:
+        path_config_toml: fnox.toml
+        path_credentials_env: /mnt/credentials/onepassword.env
+        if_missing: error
+  app:
+    image: codercom/code-server:4.135.0
+    container_name: code-server-app
+    hostname: app
+    restart: unless-stopped
+    environment:
+      TZ: America/Chicago
+    expose:
+    - 8080
+    volumes:
+    - type: bind
+      source: /srv/docker/bind-mounts/code-server/config
+      target: /home/coder/.config
+      read_only: false
+    - type: bind
+      source: /srv/docker/bind-mounts/code-server/local
+      target: /home/coder/.local
+      read_only: false
+    - type: bind
+      source: /srv/docker/bind-mounts/code-server/projects
+      target: /home/coder/project
+      read_only: false
+    networks:
+    - default
+    - newt_gw_001
+    depends_on:
+      secrets:
+        condition: service_started
+        required: false
+    healthcheck:
+      test:
+      - CMD
+      - curl
+      - -fsS
+      - --max-time
+      - '2'
+      - http://localhost:8080/healthz
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    pre_start:
+    - command:
+      - chown
+      - 1000:1000
+      - /home/coder/.config
+      - /home/coder/.local
+      - /home/coder/project
+      image: busybox:1.37
+      user: 0:0
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  default:
+    name: code-server

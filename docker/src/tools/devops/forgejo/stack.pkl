@@ -1,0 +1,71 @@
+// forgejo: source-of-truth git forge (push-mirrors to GitHub). SSH via a raw-TCP Traefik
+// router on :22. `db` is a dedicated Postgres, NOT the shared cluster.
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/registry.pkl"
+import "@infra/secrets.pkl"
+
+// Pinned to a fork image (codeberg upstream had issues); do NOT revert to upstream.
+local serverImage = "forgejoclone/forgejo:15"
+local dbVersion = "14"
+local port = 3000
+local dbUser = module.name
+local dbName = module.name
+
+local sharedTSGW = registry.network.shared.tailscale_gw_001
+
+name = "forgejo"
+
+sharedNetworks { sharedTSGW }
+
+services {
+  ["secrets"] = secrets.fnox
+
+  ["server"] {
+    image = serverImage
+    restart = "unless-stopped"
+    depends_on = secrets.ready
+    data { ["data"] { target = "/data" } }
+    volumes { col.bindReadOnly("/etc/localtime", "/etc/localtime") }
+    environment {
+      ["FORGEJO____APP_NAME"] = "KTB Software"
+      ["FORGEJO____APP_SLOGAN"] = "End-To-End Software"
+      ["FORGEJO__server__DOMAIN"] = col.domain.ktbcloud
+      ["FORGEJO__server__SSH_DOMAIN"] = col.domain.ktbcloud
+      ["FORGEJO__repository__ENABLE_PUSH_CREATE_USER"] = true
+      ["FORGEJO__repository__ENABLE_PUSH_CREATE_ORG"] = true
+      ["FORGEJO__database__DB_TYPE"] = "postgres"
+      ["FORGEJO__database__HOST"] = "db:5432"
+      ["FORGEJO__database__NAME"] = dbName
+      ["FORGEJO__database__USER"] = dbUser
+      ["USER_UID"] = "1000"
+      ["USER_GID"] = "1000"
+    }
+    expose { port; 22 }
+  }
+
+  ["db"] {
+    image = "docker.io/library/postgres:\(dbVersion)"
+    restart = "on-failure:5"
+    depends_on = secrets.ready
+    networks { "default"; sharedTSGW.name }
+    data { ["data"] { target = "/var/lib/postgresql/data" } }
+    environment {
+      ["POSTGRES_USER"] = dbUser
+      ["POSTGRES_DB"] = dbName
+    }
+    expose { 5432 }
+  }
+}
+
+output {
+  files {
+    [secrets.configFile] =
+      secrets.config("forgejo", new Listing {
+        "DB_PASSWORD"
+        "FORGEJO__DATABASE__PASSWD"
+        "POSTGRES_PASSWORD"
+      })
+  }
+}

@@ -1,0 +1,12 @@
+# GENERATED from stack.pkl — DO NOT EDIT.
+root = true
+
+[providers.onepassword]
+type = "1password"
+vault = "secrets"
+
+[secrets]
+CODER_PG_CONNECTION_URL = { provider = "onepassword", value = "coder/CODER_PG_CONNECTION_URL" }
+POSTGRES_DB = { provider = "onepassword", value = "coder/POSTGRES_DB" }
+POSTGRES_PASSWORD = { provider = "onepassword", value = "coder/POSTGRES_PASSWORD" }
+POSTGRES_USER = { provider = "onepassword", value = "coder/POSTGRES_USER" }

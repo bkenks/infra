@@ -1,0 +1,16 @@
+amends "pkl:Project"
+
+package {
+  name = "compose"
+  baseUri = "package://fj.ktbcloud.com/bkenks/pkl-compose"
+  version = "0.2.1"
+  packageZipUrl = "https://fj.ktbcloud.com/bkenks/pkl-compose/releases/download/v\(version)/pkl-compose@\(version).zip"
+  sourceCode = "https://fj.ktbcloud.com/bkenks/pkl-compose"
+  description = "Typed Docker Compose files with role-keyed services and derived, explicit names."
+  apiTests { "tests/Stack_test.pkl" }
+  exclude { "docs/**" "examples/**" "tests/**" "README.md" ".config/**" ".out/**" }
+}
+
+tests {
+  "tests/Stack_test.pkl"
+}

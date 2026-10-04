@@ -1,0 +1,23 @@
+---
+- name: Create the admin user
+  become: true
+  ansible.builtin.import_tasks: admin_user.yml
+  when: access__should_create_admin_user
+
+- name: Lock the root password
+  become: true
+  ansible.builtin.import_tasks: lock_root.yml
+  when: access__should_lock_root
+
+- name: Harden sshd and move the connection onto it
+  ansible.builtin.import_tasks: sshd.yml
+  when: access__should_harden_sshd
+
+- name: Ban repeat SSH offenders
+  become: true
+  ansible.builtin.import_tasks: fail2ban.yml
+  when: access__should_enable_fail2ban
+
+- name: Rebuild UFW from the port policy
+  ansible.builtin.import_tasks: firewall.yml
+  when: access__should_enable_firewall

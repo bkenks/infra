@@ -1,0 +1,125 @@
+// activepieces: one image run two ways, the API/UI `app` and a pool of flow `worker`s,
+// over a dedicated pgvector Postgres and a Redis queue.
+amends "@infra/Stack.pkl"
+
+import "@infra/collections.pkl" as col
+import "@infra/registry.pkl"
+import "@infra/secrets.pkl"
+
+local appVersion = "0.88.3"
+local dbVersion = "0.8.0-pg14"
+local cacheVersion = "7.0.7"
+
+local appPort = 80
+local dbPort = 5432
+local cachePort = 6379
+local workerReplicas = 5
+local dbUser = "postgres"
+local dbName = module.name
+
+local apImage = "ghcr.io/activepieces/activepieces:\(appVersion)"
+// Piece/engine cache, owned by app and shared with every worker replica.
+local engineCachePath = "/usr/src/app/cache"
+local sharedTSGW = registry.network.shared.tailscale_gw_001
+local sharedNewtGW = registry.network.shared.newt_gw_001
+
+local apEnv = new Mapping<String, String> {
+  ["AP_ENVIRONMENT"] = "prod"
+  ["AP_EDITION"] = "ee"
+  ["AP_FRONTEND_URL"] = "https://\(module.name).\(col.domain.ktbinternal)"
+  ["AP_ENGINE_EXECUTABLE_PATH"] = "dist/packages/engine/main.js"
+  ["AP_EXECUTION_MODE"] = "SANDBOX_CODE_ONLY"
+  ["AP_WEBHOOK_TIMEOUT_SECONDS"] = "30"
+  ["AP_FLOW_TIMEOUT_SECONDS"] = "600"
+  ["AP_TRIGGER_DEFAULT_POLL_INTERVAL"] = "5"
+  ["AP_TELEMETRY_ENABLED"] = "true"
+  ["AP_TEMPLATES_SOURCE_URL"] = "https://cloud.activepieces.com/api/v1/flow-templates"
+  ["AP_TOOL_SEARCH_ENABLED"] = "false"
+
+  ["AP_POSTGRES_HOST"] = "db"
+  ["AP_POSTGRES_PORT"] = "\(dbPort)"
+  ["AP_POSTGRES_DATABASE"] = dbName
+  ["AP_POSTGRES_USERNAME"] = dbUser
+  ["AP_REDIS_HOST"] = "cache"
+  ["AP_REDIS_PORT"] = "\(cachePort)"
+}
+
+name = "activepieces"
+
+sharedNetworks { sharedTSGW }
+
+services {
+  ["secrets"] = secrets.fnox
+
+  ["app"] {
+    image = apImage
+    restart = "on-failure:5"
+    depends_on {
+      ...secrets.ready
+      ["db"] { condition = "service_healthy" }
+      ["cache"] { condition = "service_healthy" }
+    }
+    data { ["engine"] { target = engineCachePath } }
+    environment {
+      ...apEnv
+      ["AP_CONTAINER_TYPE"] = "APP"
+    }
+    expose { appPort }
+    networks { "default"; sharedTSGW.name; sharedNewtGW.name }
+  }
+
+  // No container_name: compose refuses a fixed name on a replicated service.
+  ["worker"] {
+    image = apImage
+    container_name = null
+    restart = "on-failure:5"
+    deploy { replicas = workerReplicas }
+    depends_on {
+      ...secrets.ready
+      ["app"] { condition = "service_started" }
+    }
+    volumes { new { type = "volume"; source = "app_engine"; target = engineCachePath } }
+    environment = (apEnv) {
+      ["AP_CONTAINER_TYPE"] = "WORKER"
+      // Workers reach the API over the private bridge, not the public URL.
+      ["AP_FRONTEND_URL"] = "http://app"
+    }
+  }
+
+  // Dedicated pgvector Postgres: activepieces needs the vector extension, which the
+  // shared cluster does not carry.
+  ["db"] {
+    image = "docker.io/pgvector/pgvector:\(dbVersion)"
+    restart = "on-failure:5"
+    depends_on = secrets.ready
+    data { ["data"] { target = "/var/lib/postgresql/data" } }
+    networks { "default"; sharedTSGW.name }
+    environment {
+      ["POSTGRES_USER"] = dbUser
+      ["POSTGRES_DB"] = dbName
+    }
+    healthcheck = col.pgIsReady(dbUser)
+    expose { dbPort }
+  }
+
+  ["cache"] {
+    image = "docker.io/library/redis:\(cacheVersion)"
+    restart = "on-failure:5"
+    data { ["data"] { target = "/data" } }
+    healthcheck = col.redisPing
+    expose { cachePort }
+  }
+}
+
+output {
+  files {
+    [secrets.configFile] =
+      secrets.config("activepieces", new Listing {
+        "AP_API_KEY"
+        "AP_ENCRYPTION_KEY"
+        "AP_JWT_SECRET"
+        "AP_POSTGRES_PASSWORD"
+        "POSTGRES_PASSWORD"
+      })
+  }
+}

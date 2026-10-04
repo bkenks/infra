@@ -1,0 +1,7 @@
+---
+- name: Grow the root logical volume into the rest of the volume group
+  community.general.lvol:
+    vg: "{{ system__lvm_vg }}"
+    lv: "{{ system__lvm_lv }}"
+    size: +100%FREE
+    resizefs: true

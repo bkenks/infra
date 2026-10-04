@@ -1,0 +1,31 @@
+[project]
+name = "infra-ansible"
+version = "0"
+requires-python = ">=3.13"
+
+# Python libraries that Ansible *modules/plugins* import at run time. These must
+# live in the SAME interpreter that runs Ansible, which is why they are project
+# dependencies rather than a tool group: `uv run ansible-playbook` executes from
+# this project's venv, so anything here is importable by the modules.
+#
+# Keep this in sync with requirements.yml — each lib is here because a
+# collection there needs it.
+dependencies = [
+  # boto3/botocore are infisicalsdk's own requirement, pinned here so the
+  # transitive versions are locked rather than resolved.
+  "boto3==1.43.54",
+  "botocore==1.43.54",
+  "infisicalsdk==1.0.16",
+]
+
+[tool.uv]
+# This repo is Ansible content, not a Python package — never build or install it.
+package = false
+
+# Ansible itself is tooling, not something the modules import. `dev` is uv's
+# default group, so `uv sync` and `uv run` pick it up with no extra flags.
+[dependency-groups]
+dev = [
+  "ansible-core==2.21.2",
+  "ansible-lint==26.6.0",
+]
