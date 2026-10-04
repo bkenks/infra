@@ -3,7 +3,7 @@ sources:
   docker:
     type: docker_logs
     exclude_containers:
-    - log-agent-agent
+    - node-log-agent
 transforms:
   identify:
     type: remap

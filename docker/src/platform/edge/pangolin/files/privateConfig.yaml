@@ -1,6 +1,0 @@
-# GENERATED from stack.pkl — DO NOT EDIT.
-app:
-  identity_provider_mode: org
-branding:
-  app_name: KTB Cloud Portal
-  hide_auth_layout_footer: false

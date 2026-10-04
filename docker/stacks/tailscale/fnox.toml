@@ -1,8 +1,0 @@
-root = true
-
-[providers.onepassword]
-type = "1password"
-vault = "secrets"
-
-[secrets]
-TS_AUTHKEY = { provider = "onepassword", value = "tailscale.containers/TS_AUTHKEY" }

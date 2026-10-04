@@ -1,0 +1,101 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: node
+services:
+  log-agent:
+    profiles:
+      - log-agent
+    image: timberio/vector:0.58.0-alpine
+    environment:
+      HOST: ${HOST:?err}
+    restart: unless-stopped
+    container_name: node-log-agent
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - log_agent_buffer:/var/lib/vector
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./config/vector.yaml:/etc/vector/vector.yaml:ro
+    labels:
+      komodo.skip: ""
+  tailscale-gw:
+    profiles:
+      - tailscale-gw
+    image: tailscale/tailscale:v1.102.3
+    environment:
+      TS_HOSTNAME: tailscale-gw-${HOST:?err}
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: "true"
+      TS_AUTHKEY: ${TS_AUTHKEY:?err}
+    restart: unless-stopped
+    container_name: node-tailscale-gw
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - tailscale_gw_state:/var/lib/tailscale
+    networks:
+      - default
+      - tailscale_gw_001
+  pangolin-gw:
+    profiles:
+      - pangolin-gw
+    image: docker.io/fosrl/pangolin-cli:latest
+    environment:
+      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      INTERFACE: olm-${HOST:?err}
+      CLIENT_ID: ${CLIENT_ID:?err}
+      CLIENT_SECRET: ${CLIENT_SECRET:?err}
+    restart: unless-stopped
+    container_name: node-pangolin-gw
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - pangolin_gw_state:/root/.config/olm-client
+    networks:
+      - default
+      - pangolin_gw_001
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+  newt-gw:
+    profiles:
+      - newt-gw
+    image: docker.io/fosrl/newt:1.16.0
+    environment:
+      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      NEWT_ID: ${NEWT_ID:?err}
+      NEWT_SECRET: ${NEWT_SECRET:?err}
+    networks:
+      - default
+      - newt_gw_001
+    restart: unless-stopped
+    container_name: node-newt-gw
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+networks:
+  default:
+    name: node
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
+  pangolin_gw_001:
+    name: pangolin_gw_001
+    external: true
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+volumes:
+  log_agent_buffer:
+    name: log-agent-agent_buffer
+  tailscale_gw_state:
+    name: tailscale-gw-app_state
+  pangolin_gw_state:
+    name: pangolin-gw-app_state
