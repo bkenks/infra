@@ -19,25 +19,13 @@ terraform {
 # Definitions
 # ———————————————————————————————————————————————————————————————
 locals {
-  hosts = {
-    littlebuddy = { user = "rootish", address = "lilbud.internal", decommissioned = false }
-    paiki       = { user = "rootish", address = "paiki.internal", decommissioned = false }
-    biggy       = { user = "rootish", address = "biggy.internal", decommissioned = false }
-    bill        = { user = "rootish", address = "bill.internal", decommissioned = false }
-    rick        = { user = "rootish", address = "rick.internal", decommissioned = false }
-  }
+  store = "${path.module}/../../store"
 
-  networks = {
-    "tailscale_gw_001" = {}
-    "pangolin_gw_001"  = {}
-    "newt_gw_001"      = {}
-    "db_001"           = {}
-  }
-
-  active_hosts = { for name, host in local.hosts : name => host if !host.decommissioned }
+  hosts    = yamldecode(file("${local.store}/hosts.yml")).all.hosts
+  networks = yamldecode(file("${local.store}/networks.yml"))
 
   host_networks = merge([
-    for host_name, host in local.active_hosts : {
+    for host_name, host in local.hosts : {
       for network_name, network in local.networks : "${host_name}/${network_name}" => {
         host     = host_name
         name     = network_name
@@ -51,7 +39,7 @@ locals {
 provider "docker" {
   alias    = "host"
   for_each = local.hosts
-  host     = "ssh://${each.value.user}@${each.value.address}"
+  host     = "ssh://${each.key}"
   ssh_opts = ["-o", "StrictHostKeyChecking=accept-new"]
 }
 

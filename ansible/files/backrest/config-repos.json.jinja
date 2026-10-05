@@ -1,0 +1,51 @@
+{
+  "id": "ktb-backup-app",
+  "uri": "s3:https://s3.us-east-005.backblazeb2.com/ktb-backup-app",
+  "password": {{ backrest__repo_password | to_json }},
+  "env": [
+    {{ ("AWS_ACCESS_KEY_ID=" ~ backrest__repo_aws_access_key_id) | to_json }},
+    {{ ("AWS_SECRET_ACCESS_KEY=" ~ backrest__repo_aws_secret_access_key) | to_json }}
+  ],
+  "flags": [],
+  "prunePolicy": {
+    "schedule": {
+      "maxFrequencyDays": 7,
+      "clock": "CLOCK_LAST_RUN_TIME"
+    },
+    "maxUnusedBytes": "0",
+    "maxUnusedPercent": 10
+  },
+  "hooks": [],
+  "autoUnlock": false,
+  "checkPolicy": {
+    "schedule": {
+      "maxFrequencyDays": 30,
+      "clock": "CLOCK_LAST_RUN_TIME"
+    },
+    "readDataSubsetPercent": 5
+  },
+  "commandPrefix": {
+    "ioNice": "IO_DEFAULT",
+    "cpuNice": "CPU_DEFAULT"
+  },
+  "guid": "ab983b591c2ef4341b4167175a28a23ef23ad8b185a4587124104535127daa62",
+  "autoInitialize": false,
+  "shared": false,
+  "originInstanceId": "",
+  "forgetPolicy": {
+    "schedule": {
+      "disabled": true,
+      "clock": "CLOCK_LAST_RUN_TIME"
+    },
+    "retention": {
+      "policyTimeBucketed": {
+        "hourly": 24,
+        "daily": 7,
+        "weekly": 4,
+        "monthly": 3,
+        "yearly": 0,
+        "keepLastN": 0
+      }
+    }
+  }
+}

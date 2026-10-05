@@ -1,0 +1,3 @@
+---
+backrest__config_path: "~/.config/backrest/config.json"
+backrest__instance: "{{ inventory_hostname | regex_replace('\\.internal$', '') }}"

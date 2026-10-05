@@ -15,7 +15,7 @@ Stage `00_access` is the only stage that works on a fresh host. The `bootstrap` 
 
 ## Inventory
 
-- `inventory/hosts.yml` lists every host and its group membership.
+- `inventory/hosts.yml` lists every host and its group membership. It is a symlink to the shared `store/` registry, which terraform also reads.
 - `inventory/group_vars/all.yml` holds the shared paths and every role variable that applies to all hosts.
 - `inventory/group_vars/<group>.yml` holds only the values that differ for that class of host, such as `vps` (no LVM growth or Wake-on-LAN, Tailscale exit node).
 

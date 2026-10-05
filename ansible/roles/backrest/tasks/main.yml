@@ -8,3 +8,58 @@
     executable: /bin/bash
     creates: /usr/local/bin/backrest
   become: true
+
+- name: Ensure the repo secrets are set
+  ansible.builtin.assert:
+    that:
+      - backrest__repo_password | length > 0
+      - backrest__repo_aws_access_key_id | length > 0
+      - backrest__repo_aws_secret_access_key | length > 0
+    fail_msg: >-
+      A Backrest repo secret is empty. Load the fnox environment on the controller
+      so the backrest secrets in fnox.toml are exported, then re-run.
+    quiet: true
+  no_log: true
+
+- name: Ensure the Backrest config directory exists
+  ansible.builtin.file:
+    path: "{{ backrest__config_path | dirname }}"
+    state: directory
+    mode: "0700"
+
+- name: Read the current Backrest config
+  ansible.builtin.slurp:
+    src: "{{ backrest__config_path }}"
+  register: backrest__config_file
+  failed_when: false
+  check_mode: false
+
+- name: Compose the Backrest config, adding only the base keys and repo it lacks
+  vars:
+    backrest__config_current: >-
+      {{ backrest__config_file.content | b64decode | from_json
+         if backrest__config_file.content is defined else {} }}
+    backrest__base: "{{ lookup('ansible.builtin.template', backrest__base_template) | from_json }}"
+    backrest__repo: "{{ lookup('ansible.builtin.template', backrest__repo_template) | from_json }}"
+  ansible.builtin.command:
+    argv:
+      - jq
+      - .repo as $repo
+        | .base + .config
+        | .repos = ((.repos // [])
+          | if any(.[]; .id == $repo.id) then . else . + [$repo] end)
+    stdin: >-
+      {{ {'config': backrest__config_current, 'base': backrest__base, 'repo': backrest__repo}
+         | to_json }}
+  register: backrest__config_composed
+  changed_when: false
+  check_mode: false
+  no_log: true
+
+- name: Ensure the Backrest config contains the repo
+  ansible.builtin.copy:
+    content: "{{ backrest__config_composed.stdout | from_json | to_nice_json(indent=2) }}\n"
+    dest: "{{ backrest__config_path }}"
+    mode: "0600"
+  no_log: true
+  notify: Restart Backrest

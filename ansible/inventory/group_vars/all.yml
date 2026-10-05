@@ -47,6 +47,13 @@ system__packages:
 
 tailscale__authkey: "{{ lookup('env', 'TS_AUTHKEY') }}"
 
+backrest__base_template: "{{ inventory_dir }}/../files/backrest/config-base.json.jinja"
+backrest__repo_template: "{{ inventory_dir }}/../files/backrest/config-repos.json.jinja"
+backrest__repo_password: "{{ lookup('env', 'BACKREST_KTB_BACKUP_APP_PASSWORD') }}"
+backrest__repo_aws_access_key_id: "{{ lookup('env', 'BACKREST_KTB_BACKUP_APP_AWS_ACCESS_KEY_ID') }}"
+backrest__repo_aws_secret_access_key: >-
+  {{ lookup('env', 'BACKREST_KTB_BACKUP_APP_AWS_SECRET_ACCESS_KEY') }}
+
 coredns__config_files:
   - "{{ inventory_dir }}/../files/dns/Corefile"
   - "{{ inventory_dir }}/../files/dns/internal.zone"

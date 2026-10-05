@@ -1,4 +1,16 @@
 ---
+- name: Operator confirms Terraform docker resources exist
+  hosts: localhost
+  gather_facts: false
+  tags: [always]
+
+  tasks:
+    - name: Terraform has been applied before continuing
+      ansible.builtin.pause:
+        prompt: >-
+          Make sure you have run Terraform to create the desired Docker resources
+          before continuing. Press Enter to continue or Ctrl+C then A to abort
+
 - name: Komodo Core runs on the control plane
   hosts: control_plane
   tags: [platform, komodo_core]
@@ -12,12 +24,6 @@
         docker_stack_files__repo: "https://github.com/bkenks/infra.stacks.git"
         docker_stack_files__name: platform
         docker_stack_files__repo_subdir: src/platform
-
-    - name: Docker network newt_gw_001 exists for Komodo Core
-      become: true
-      community.docker.docker_network:
-        name: newt_gw_001
-        state: present
 
     - name: Komodo Core is running
       become: true

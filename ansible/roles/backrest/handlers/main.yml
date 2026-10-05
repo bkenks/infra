@@ -1,0 +1,6 @@
+---
+- name: Restart Backrest
+  ansible.builtin.systemd_service:
+    name: backrest
+    state: restarted
+  become: true
