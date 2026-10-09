@@ -8,9 +8,12 @@ vault = "secrets"
 TS_AUTHKEY = { provider = "onepassword", value = "tailscale.auth-key.docker-gateway-container/credential" }
 
 [profiles.pango.secrets]
-HOST        = { default = "pango" }
-NEWT_ID     = { provider = "onepassword", value = "host.pango/newt_id" }
-NEWT_SECRET = { provider = "onepassword", value = "host.pango/newt_secret" }
+HOST = { default = "pango" }
+
+CLIENT_ID     = { provider = "onepassword", value = "host.pango/pangolin_id" }
+CLIENT_SECRET = { provider = "onepassword", value = "host.pango/pangolin_secret" }
+NEWT_ID       = { provider = "onepassword", value = "host.pango/newt_id" }
+NEWT_SECRET   = { provider = "onepassword", value = "host.pango/newt_secret" }
 
 [profiles.bill.secrets]
 HOST = { default = "bill" }
