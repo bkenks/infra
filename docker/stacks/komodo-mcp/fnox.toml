@@ -1,10 +1,10 @@
 root = true
 
 [providers.onepassword]
-type = "1password"
+type  = "1password"
 vault = "secrets"
 
 [secrets]
-KOMODO_API_KEY = { provider = "onepassword", value = "komodo-mcp/KOMODO_API_KEY" }
-KOMODO_API_SECRET = { provider = "onepassword", value = "komodo-mcp/KOMODO_API_SECRET" }
+KOMODO_API_KEY             = { provider = "onepassword", value = "komodo-mcp/KOMODO_API_KEY" }
+KOMODO_API_SECRET          = { provider = "onepassword", value = "komodo-mcp/KOMODO_API_SECRET" }
 KOMODO_MCP_BASICAUTH_USERS = { provider = "onepassword", value = "komodo-mcp/KOMODO_MCP_BASICAUTH_USERS" }

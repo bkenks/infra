@@ -1,38 +1,37 @@
 root = true
 
 [providers.onepassword]
-type = "1password"
+type  = "1password"
 vault = "secrets"
 
 [secrets]
-TS_AUTHKEY = { provider = "onepassword", value = "tailscale.containers/TS_AUTHKEY" }
+TS_AUTHKEY = { provider = "onepassword", value = "tailscale.auth-key.docker-gateway-container/credential" }
+
+[profiles.pango.secrets]
+HOST        = { default = "pango" }
+NEWT_ID     = { provider = "onepassword", value = "host.pango/newt_id" }
+NEWT_SECRET = { provider = "onepassword", value = "host.pango/newt_secret" }
 
 [profiles.bill.secrets]
-CLIENT_ID = { provider = "onepassword", value = "host.bill/CLIENT_ID" }
+HOST = { default = "bill" }
+
+CLIENT_ID     = { provider = "onepassword", value = "host.bill/CLIENT_ID" }
 CLIENT_SECRET = { provider = "onepassword", value = "host.bill/CLIENT_SECRET" }
-NEWT_ID = { provider = "onepassword", value = "hosts.bill.newt/NEWT_ID" }
-NEWT_SECRET = { provider = "onepassword", value = "hosts.bill.newt/NEWT_SECRET" }
-
-[profiles.biggy.secrets]
-CLIENT_ID = { provider = "onepassword", value = "host.biggy/CLIENT_ID" }
-CLIENT_SECRET = { provider = "onepassword", value = "host.biggy/CLIENT_SECRET" }
-NEWT_ID = { provider = "onepassword", value = "hosts.biggy.newt/NEWT_ID" }
-NEWT_SECRET = { provider = "onepassword", value = "hosts.biggy.newt/NEWT_SECRET" }
-
-[profiles.paiki.secrets]
-CLIENT_ID = { provider = "onepassword", value = "host.paiki/CLIENT_ID" }
-CLIENT_SECRET = { provider = "onepassword", value = "host.paiki/CLIENT_SECRET" }
-NEWT_ID = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_ID" }
-NEWT_SECRET = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_SECRET" }
+NEWT_ID       = { provider = "onepassword", value = "hosts.bill.newt/NEWT_ID" }
+NEWT_SECRET   = { provider = "onepassword", value = "hosts.bill.newt/NEWT_SECRET" }
 
 [profiles.littlebuddy.secrets]
-CLIENT_ID = { provider = "onepassword", value = "host.littlebuddy/CLIENT_ID" }
-CLIENT_SECRET = { provider = "onepassword", value = "host.littlebuddy/CLIENT_SECRET" }
-NEWT_ID = { provider = "onepassword", value = "hosts.littlebuddy.newt/NEWT_ID" }
-NEWT_SECRET = { provider = "onepassword", value = "hosts.littlebuddy.newt/NEWT_SECRET" }
+HOST = { default = "littlebuddy" }
 
-[profiles.rick.secrets]
-CLIENT_ID = { provider = "onepassword", value = "host.rick/CLIENT_ID" }
-CLIENT_SECRET = { provider = "onepassword", value = "host.rick/CLIENT_SECRET" }
-NEWT_ID = { provider = "onepassword", value = "hosts.rick.newt/NEWT_ID" }
-NEWT_SECRET = { provider = "onepassword", value = "hosts.rick.newt/NEWT_SECRET" }
+CLIENT_ID     = { provider = "onepassword", value = "host.littlebuddy/CLIENT_ID" }
+CLIENT_SECRET = { provider = "onepassword", value = "host.littlebuddy/CLIENT_SECRET" }
+NEWT_ID       = { provider = "onepassword", value = "hosts.littlebuddy.newt/NEWT_ID" }
+NEWT_SECRET   = { provider = "onepassword", value = "hosts.littlebuddy.newt/NEWT_SECRET" }
+
+[profiles.paiki.secrets]
+HOST = { default = "paiki" }
+
+CLIENT_ID     = { provider = "onepassword", value = "host.paiki/CLIENT_ID" }
+CLIENT_SECRET = { provider = "onepassword", value = "host.paiki/CLIENT_SECRET" }
+NEWT_ID       = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_ID" }
+NEWT_SECRET   = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_SECRET" }

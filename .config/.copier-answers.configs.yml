@@ -1,0 +1,10 @@
+# Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
+# Use `copier <your-command> -a .config/<name-of-this-file>`
+_commit: v0.5.0
+_src_path: https://github.com/bkenks/tmpl.configs
+file_types:
+- toml
+formatters:
+- taplo
+languages: []
+mise_tasks: []

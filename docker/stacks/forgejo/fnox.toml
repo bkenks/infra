@@ -1,10 +1,10 @@
 root = true
 
 [providers.onepassword]
-type = "1password"
+type  = "1password"
 vault = "secrets"
 
 [secrets]
-DB_PASSWORD = { provider = "onepassword", value = "forgejo/DB_PASSWORD" }
+DB_PASSWORD               = { provider = "onepassword", value = "forgejo/DB_PASSWORD" }
 FORGEJO__DATABASE__PASSWD = { provider = "onepassword", value = "forgejo/FORGEJO__DATABASE__PASSWD" }
-POSTGRES_PASSWORD = { provider = "onepassword", value = "forgejo/POSTGRES_PASSWORD" }
+POSTGRES_PASSWORD         = { provider = "onepassword", value = "forgejo/POSTGRES_PASSWORD" }

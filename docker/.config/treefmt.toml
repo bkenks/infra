@@ -67,6 +67,6 @@ on-unmatched = "info"
 # priority = 0
 
 [formatter.pkl]
-command = "pkl"
-options = ["format", "-w"]
+command  = "pkl"
 includes = ["*.pkl", "PklProject"]
+options  = ["format", "-w"]

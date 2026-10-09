@@ -1,9 +1,9 @@
 #:schema https://mise.jdx.dev/schema/mise.json
 
 [vars]
+path_pyproject   = "pyproject.toml"
 path_repo_config = ".config"
-path_pyproject = "pyproject.toml"
-path_uv_lock = "uv.lock"
+path_uv_lock     = "uv.lock"
 secrets_provider = "op_ansible"
 
 [tools]
@@ -31,22 +31,20 @@ path_dir__repo_root = "{{ config_root }}"
 
 [tasks."init:uv"]
 description = "[SETUP] ansible cli commands"
-run = "uv sync"
+run         = "uv sync"
 
 [tasks."init:ansible"]
 description = "[SETUP] ansible requirements via ansible-galaxy"
-run = [
-  "ansible-galaxy install -r requirements.yml",
-]
+run         = ["ansible-galaxy install -r requirements.yml"]
 
 [tasks."init:lefthook"]
 description = "[SETUP] git hooks"
-run = "lefthook install"
+run         = "lefthook install"
 
 [tasks."secrets:sync"]
 description = "[SECRETS] cache this repo's fnox.toml secrets to fnox.local.toml"
-vars = { flags = "--local-file --force" }
-run = "fnox sync --source {{vars.secrets_provider}} {{vars.flags}}"
+run         = "fnox sync --source {{vars.secrets_provider}} {{vars.flags}}"
+vars        = { flags = "--local-file --force" }
 
 # ————————————————————————————————————————————
 # Run
@@ -54,12 +52,12 @@ run = "fnox sync --source {{vars.secrets_provider}} {{vars.flags}}"
 
 [tasks."lint:ansible"]
 description = "Lint the playbooks and inventory"
-run = "uv run ansible-lint --offline"
+run         = "uv run ansible-lint --offline"
 
 [tasks."apply:state"]
+depends     = ["init:uv", "init:ansible"]
 description = "Sync state via the site.yml playbook"
-depends = ["init:uv", "init:ansible"]
-run = "uv run ansible-playbook playbooks/site.yml"
+run         = "uv run ansible-playbook playbooks/site.yml"
 
 [tasks."git:save"]
 alias       = "save"

@@ -1,7 +1,7 @@
 [project]
-name = "infra-ansible"
-version = "0"
+name            = "infra-ansible"
 requires-python = ">=3.13"
+version         = "0"
 
 # Python libraries that Ansible *modules/plugins* import at run time. These must
 # live in the SAME interpreter that runs Ansible, which is why they are project
@@ -25,7 +25,4 @@ package = false
 # Ansible itself is tooling, not something the modules import. `dev` is uv's
 # default group, so `uv sync` and `uv run` pick it up with no extra flags.
 [dependency-groups]
-dev = [
-  "ansible-core==2.21.2",
-  "ansible-lint==26.6.0",
-]
+dev = ["ansible-core==2.21.2", "ansible-lint==26.6.0"]

@@ -5,6 +5,6 @@
 type = "1password"
 
 [secrets]
-VULTR_API_KEY = { provider = "onepass_tf", value = "op://credentials/vultr.api-token.personal.default/credential" } # TODO: move to personal vault
-AWS_ACCESS_KEY_ID = { provider = "onepass_tf", value = "op://secrets/cloudflare.r2.tofu-state/access key id" }
+AWS_ACCESS_KEY_ID     = { provider = "onepass_tf", value = "op://secrets/cloudflare.r2.tofu-state/access key id" }
 AWS_SECRET_ACCESS_KEY = { provider = "onepass_tf", value = "op://secrets/cloudflare.r2.tofu-state/secret access key" }
+VULTR_API_KEY         = { provider = "onepass_tf", value = "op://credentials/vultr.api-token.personal.default/credential" } # TODO: move to personal vault

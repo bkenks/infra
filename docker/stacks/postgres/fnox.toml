@@ -1,10 +1,10 @@
 root = true
 
 [providers.onepassword]
-type = "1password"
+type  = "1password"
 vault = "secrets"
 
 [secrets]
-PG_ADMIN_PASS = { provider = "onepassword", value = "postgres/PG_ADMIN_PASS" }
+PG_ADMIN_PASS     = { provider = "onepassword", value = "postgres/PG_ADMIN_PASS" }
 POSTGRES_PASSWORD = { provider = "onepassword", value = "postgres/POSTGRES_PASSWORD" }
-POSTGRES_USER = { provider = "onepassword", value = "postgres/POSTGRES_USER" }
+POSTGRES_USER     = { provider = "onepassword", value = "postgres/POSTGRES_USER" }

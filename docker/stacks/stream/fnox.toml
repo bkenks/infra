@@ -1,7 +1,7 @@
 root = true
 
 [providers.onepassword]
-type = "1password"
+type  = "1password"
 vault = "secrets"
 
 [secrets]
