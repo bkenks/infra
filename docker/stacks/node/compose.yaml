@@ -4,6 +4,7 @@ services:
   log-agent:
     profiles:
       - log-agent
+      - all
     image: timberio/vector:0.58.0-alpine
     environment:
       HOST: ${HOST:?err}
@@ -22,6 +23,7 @@ services:
   tailscale-gw:
     profiles:
       - tailscale-gw
+      - all
     image: tailscale/tailscale:v1.102.3
     environment:
       TS_HOSTNAME: tailscale-gw-${HOST:?err}
@@ -42,6 +44,7 @@ services:
   pangolin-gw:
     profiles:
       - pangolin-gw
+      - all
     image: docker.io/fosrl/pangolin-cli:latest
     environment:
       PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
@@ -66,6 +69,7 @@ services:
   newt-gw:
     profiles:
       - newt-gw
+      - all
     image: docker.io/fosrl/newt:1.16.0
     environment:
       PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com

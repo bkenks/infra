@@ -15,8 +15,8 @@ _newt: version: "1.16.0"
 
 stack: {
 	name: "node"
+	services: [Svc=string]: profiles: [Svc, "all"]
 	services: "log-agent": {
-		profiles: ["log-agent"]
 		image: "timberio/vector:\(_logAgent.version)-alpine"
 		environment: HOST: "${HOST:?err}"
 		volumes: [
@@ -27,7 +27,6 @@ stack: {
 		labels: _label.komodoSkip
 	}
 	services: "tailscale-gw": {
-		profiles: ["tailscale-gw"]
 		image: "tailscale/tailscale:\(_tailscale.version)"
 		environment: {
 			TS_HOSTNAME:  "tailscale-gw-${HOST:?err}"
@@ -39,7 +38,6 @@ stack: {
 		networks: [stack.networks.default._ref, stack.networks.tailscale_gw_001._ref]
 	}
 	services: "pangolin-gw": {
-		profiles: ["pangolin-gw"]
 		image: "docker.io/fosrl/pangolin-cli:\(_pangolinCli.version)"
 		environment: {
 			PANGOLIN_ENDPOINT: "https://pangolin.\(_domain.ktbcloud)"
@@ -53,7 +51,6 @@ stack: {
 		devices: ["/dev/net/tun:/dev/net/tun"]
 	}
 	services: "newt-gw": {
-		profiles: ["newt-gw"]
 		image: "docker.io/fosrl/newt:\(_newt.version)"
 		environment: {
 			PANGOLIN_ENDPOINT: "https://pangolin.\(_domain.ktbcloud)"
