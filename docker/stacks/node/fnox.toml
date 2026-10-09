@@ -1,18 +1,11 @@
 root = true
 
-[providers.dotenv]
-file   = "/mnt/credentials/onepassword.env"
-format = "env"
-type   = "plain"
-
 [providers.onepassword]
-token = { secret = "OP_SERVICE_ACCOUNT_TOKEN" }
 type  = "1password"
 vault = "secrets"
 
 [secrets]
-OP_SERVICE_ACCOUNT_TOKEN = { provider = "dotenv", value = "OP_SERVICE_ACCOUNT_TOKEN" }
-TS_AUTHKEY               = { provider = "onepassword", value = "tailscale.auth-key.docker-gateway-container/credential" }
+TS_AUTHKEY = { provider = "onepassword", value = "tailscale.auth-key.docker-gateway-container/credential" }
 
 [profiles.pango.secrets]
 HOST        = { default = "pango" }
