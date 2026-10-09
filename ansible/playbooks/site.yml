@@ -14,5 +14,8 @@
 - name: Container runtime is installed
   ansible.builtin.import_playbook: 40_runtime.yml
 
+- name: Docker resources exist
+  ansible.builtin.import_playbook: 45_docker_resources.yml
+
 - name: Platform is deployed
   ansible.builtin.import_playbook: 50_platform.yml

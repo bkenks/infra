@@ -2,12 +2,7 @@
 
 package store
 
-#Network: {
-	subnet?:   string
-	internal?: bool
-}
+_networks: _ @embed(file=networks.yml)
+_networks: docker_networks: [...string]
 
-networks: _ @embed(file=networks.yml)
-networks: [string]: #Network
-
-shared: {for net, _ in networks {(net): {name: net, external: true}}}
+shared: {for net in _networks.docker_networks {(net): {name: net, external: true}}}

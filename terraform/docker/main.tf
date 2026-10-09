@@ -22,15 +22,13 @@ locals {
   store = "${path.module}/../../store"
 
   hosts    = yamldecode(file("${local.store}/hosts.yml")).all.hosts
-  networks = yamldecode(file("${local.store}/networks.yml"))
+  networks = yamldecode(file("${local.store}/networks.yml")).docker_networks
 
   host_networks = merge([
     for host_name, host in local.hosts : {
-      for network_name, network in local.networks : "${host_name}/${network_name}" => {
-        host     = host_name
-        name     = network_name
-        subnet   = try(network.subnet, null)
-        internal = try(network.internal, false)
+      for network_name in local.networks : "${host_name}/${network_name}" => {
+        host = host_name
+        name = network_name
       }
     }
   ]...)
@@ -47,12 +45,6 @@ resource "docker_network" "this" {
   for_each = local.host_networks
   provider = docker.host[each.value.host]
 
-  name     = each.value.name
-  driver   = "bridge"
-  internal = each.value.internal
-
-  dynamic "ipam_config" {
-    for_each = each.value.subnet == null ? [] : [each.value.subnet]
-    content { subnet = ipam_config.value }
-  }
+  name   = each.value.name
+  driver = "bridge"
 }

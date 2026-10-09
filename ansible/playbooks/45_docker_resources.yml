@@ -1,0 +1,11 @@
+---
+- name: Docker resources exist
+  hosts: all
+  tags: [docker_resources]
+
+  tasks:
+    - name: Docker networks exist
+      become: true
+      community.docker.docker_network:
+        name: "{{ item }}"
+      loop: "{{ docker_networks }}"

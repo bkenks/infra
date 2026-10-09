@@ -1,16 +1,4 @@
 ---
-- name: Operator confirms Terraform docker resources exist
-  hosts: localhost
-  gather_facts: false
-  tags: [always]
-
-  tasks:
-    - name: Terraform has been applied before continuing
-      ansible.builtin.pause:
-        prompt: >-
-          Make sure you have run Terraform to create the desired Docker resources
-          before continuing. Press Enter to continue or Ctrl+C then A to abort
-
 - name: Komodo Core runs on the control plane
   hosts: control_plane
   tags: [platform, komodo_core]
