@@ -20,7 +20,7 @@
       ansible.builtin.import_role:
         name: docker_stack_files
       vars:
-        docker_stack_files__stacks_dir: "{{ path_dir__docker_stacks }}"
+        docker_stack_files__stacks_dir: "{{ docker_stacks }}"
         docker_stack_files__repo: "https://github.com/bkenks/infra.stacks.git"
         docker_stack_files__name: platform
         docker_stack_files__repo_subdir: src/platform
@@ -28,7 +28,7 @@
     - name: Komodo Core is running
       become: true
       community.docker.docker_compose_v2:
-        project_src: "{{ path_dir__docker_stacks }}/platform/container-manager/komodo"
+        project_src: "{{ docker_stacks }}/platform/container-manager/komodo"
         state: present
         wait: false
 

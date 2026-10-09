@@ -4,11 +4,6 @@ hardened_ssh_port: 3204
 
 path_dir__repo_root: "{{ lookup('env', 'path_dir__repo_root') }}"
 
-path_dir__server: /srv
-path_dir__docker_root: "{{ path_dir__server }}/docker"
-path_dir__docker_files: "{{ path_dir__docker_root }}/files"
-path_dir__docker_stacks: "{{ path_dir__docker_root }}/stacks"
-path_dir__docker_bindmnts: "{{ path_dir__docker_root }}/bind-mounts"
 path_dir__secrets: /mnt/secrets
 path_dir__creds: /mnt/credentials
 path_file__op_creds: "{{ path_dir__creds }}/onepassword.env"

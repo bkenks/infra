@@ -13,10 +13,10 @@
         group: "{{ user_admin }}"
         mode: "2770"
       loop:
-        - "{{ path_dir__docker_root }}"
-        - "{{ path_dir__docker_files }}"
-        - "{{ path_dir__docker_stacks }}"
-        - "{{ path_dir__docker_bindmnts }}"
+        - "{{ docker_root }}"
+        - "{{ docker_files }}"
+        - "{{ docker_stacks }}"
+        - "{{ docker_bind_mounts }}"
 
     - name: Docker is installed
       become: true
