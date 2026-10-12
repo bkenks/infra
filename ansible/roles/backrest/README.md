@@ -9,3 +9,6 @@ from the `become` escalation.
 
 The script tears down and reinstalls on every run, so the role skips it once the
 binary exists. To upgrade, remove the binary on the host and re-run the role.
+
+A systemd drop-in grants the service `CAP_DAC_READ_SEARCH`, so restic can read
+paths the connecting user cannot, such as Docker volumes.

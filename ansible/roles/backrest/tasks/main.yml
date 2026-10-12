@@ -9,6 +9,27 @@
     creates: /usr/local/bin/backrest
   become: true
 
+- name: Ensure the Backrest drop-in directory exists
+  ansible.builtin.file:
+    path: /etc/systemd/system/backrest.service.d
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+  become: true
+
+- name: Let Backrest read every file it backs up
+  ansible.builtin.copy:
+    dest: /etc/systemd/system/backrest.service.d/99-read-capability.conf
+    content: |
+      [Service]
+      AmbientCapabilities=CAP_DAC_READ_SEARCH
+    owner: root
+    group: root
+    mode: "0644"
+  become: true
+  notify: Restart Backrest
+
 - name: Ensure the repo secrets are set
   ansible.builtin.assert:
     that:
