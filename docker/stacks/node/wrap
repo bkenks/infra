@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Wrapper Script for Docker Compose Command
+# Usage:
+#   `./wrap <host> docker compose up -d`
+#   `./wrap <host> docker compose down`
+
+set -euo pipefail
+
+arg_host=${1:?usage: wrap <host> <command...>}
+shift
+
+export HOST=$arg_host
+export FNOX_PROFILE=$arg_host
+set -a; . /mnt/credentials/onepassword.env; set +a
+exec fnox exec -- "$@"
