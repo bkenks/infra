@@ -4,12 +4,11 @@ Runs [MP-Tool's Komodo MCP Server](https://github.com/MP-Tool/komodo-mcp-server)
 
 ## Deploy
 
-Deployed via Komodo. The image comes from the self-hosted mirror — verify the tag exists there before bumping (`docker manifest inspect fj.ktbcloud.com/bkenks/komodo-mcp-server:<tag>`).
+Deployed via Komodo. The image is upstream's on GHCR — verify the tag exists before bumping (`docker manifest inspect ghcr.io/mp-tool/komodo-mcp-server:<tag>`).
 
-Secrets: `fnox.toml`, 1Password item `komodo-mcp`. `KOMODO_MCP_BASICAUTH_USERS` is a htpasswd string (`htpasswd -nbB user pass` → `user:hash`); the plaintext password goes in the MCP client's `Authorization: Basic` header. To restrict access, issue a read-only Komodo API key.
+No stack secrets. Clients sign in with their own Komodo username and password through the server's browser login, and each session runs with that user's Komodo permissions. The login needs a local Komodo account; OIDC/GitHub login isn't supported yet.
 
-Connect Claude Code:
+Connect Claude Code (it opens the browser login on first use):
 ```bash
-claude mcp add --transport http komodo https://komodo-mcp.ktbinternal.com/mcp \
-  --header "Authorization: Basic <base64-of-user:pass>"
+claude mcp add --transport http komodo https://komodo-mcp.ktbinternal.com/mcp
 ```

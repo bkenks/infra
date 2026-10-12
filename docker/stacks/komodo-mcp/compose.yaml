@@ -2,16 +2,14 @@
 name: komodo-mcp
 services:
   app:
-    image: fj.ktbcloud.com/bkenks/komodo-mcp-server:v1.7.1
+    image: ghcr.io/mp-tool/komodo-mcp-server:1.5.0
     environment:
       MCP_TRANSPORT: http
+      MCP_BASE_URL: https://komodo-mcp.ktbinternal.com
       MCP_ALLOWED_HOSTS: komodo-mcp.ktbinternal.com
       KOMODO_URL: http://host.docker.internal:9120
       MCP_TRUST_PROXY: "1"
       TZ: America/Chicago
-      KOMODO_API_KEY: ${KOMODO_API_KEY:?err}
-      KOMODO_API_SECRET: ${KOMODO_API_SECRET:?err}
-      KOMODO_MCP_BASICAUTH_USERS: ${KOMODO_MCP_BASICAUTH_USERS:?err}
     expose:
       - 8000
     networks:
