@@ -1,6 +1,9 @@
 package stacks
 
-import "github.com/bkenks/infra/store"
+import (
+	"github.com/bkenks/infra/store"
+	s "github.com/bkenks/infra/docker/schema/stack"
+)
 
 _logAgent: version: "0.58.0"
 
@@ -19,11 +22,11 @@ stacks: node: S={
 		image: "timberio/vector:\(_logAgent.version)-alpine"
 		environment: HOST: "${HOST:?err}"
 		volumes: [
-			"\(S.volumes.log_agent_buffer._ref):/var/lib/vector",
-			_mount.dockerSock,
+			"\(S.volumes.log_agent_buffer.#ref):/var/lib/vector",
+			s.#Mount.dockerSock,
 			"./config/vector.yaml:/etc/vector/vector.yaml:ro",
 		]
-		labels: _label.komodoSkip
+		labels: s.#Label.komodoSkip
 	}
 	services: "tailscale-gw": {
 		image: "tailscale/tailscale:\(_tailscale.version)"
@@ -33,8 +36,8 @@ stacks: node: S={
 			TS_USERSPACE: "true"
 			TS_AUTHKEY:   "${TS_AUTHKEY:?err}"
 		}
-		volumes: ["\(S.volumes.tailscale_gw_state._ref):\(_tailscale.stateDir)"]
-		networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
+		volumes: ["\(S.volumes.tailscale_gw_state.#ref):\(_tailscale.stateDir)"]
+		networks: [S.networks.default.#ref, S.networks.tailscale_gw_001.#ref]
 	}
 	services: "pangolin-gw": {
 		image: "docker.io/fosrl/pangolin-cli:\(_pangolinCli.version)"
@@ -44,8 +47,8 @@ stacks: node: S={
 			CLIENT_ID:         "${CLIENT_ID:?err}"
 			CLIENT_SECRET:     "${CLIENT_SECRET:?err}"
 		}
-		volumes: ["\(S.volumes.pangolin_gw_state._ref):/root/.config/olm-client"]
-		networks: [S.networks.default._ref, S.networks.pangolin_gw_001._ref]
+		volumes: ["\(S.volumes.pangolin_gw_state.#ref):/root/.config/olm-client"]
+		networks: [S.networks.default.#ref, S.networks.pangolin_gw_001.#ref]
 		cap_add: ["NET_ADMIN"]
 		devices: ["/dev/net/tun:/dev/net/tun"]
 	}
@@ -56,7 +59,7 @@ stacks: node: S={
 			NEWT_ID:           "${NEWT_ID:?err}"
 			NEWT_SECRET:       "${NEWT_SECRET:?err}"
 		}
-		networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+		networks: [S.networks.default.#ref, S.networks.newt_gw_001.#ref]
 	}
 	volumes: {
 		log_agent_buffer: name:   "log-agent-agent_buffer"

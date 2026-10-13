@@ -1,6 +1,9 @@
 package stacks
 
-import "github.com/bkenks/infra/store"
+import (
+	"github.com/bkenks/infra/store"
+	s "github.com/bkenks/infra/docker/schema/stack"
+)
 
 _paperless: {
 	cacheVersion:     "8"
@@ -19,8 +22,8 @@ stacks: paperless: S={
 			restart: "on-failure:5"
 			environment: ALLOW_EMPTY_PASSWORD: "yes"
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.cache_data._ref):/data"]
-			healthcheck: _health.redisPing
+			volumes: ["\(S.volumes.cache_data.#ref):/data"]
+			healthcheck: s.#Health.redisPing
 		}
 		db: Svc={
 			_port:   5432
@@ -32,9 +35,9 @@ stacks: paperless: S={
 				POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 			}
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql"]
-			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
-			healthcheck: _health.pgIsReady & {_user: S.name}
+			volumes: ["\(S.volumes.db_data.#ref):/var/lib/postgresql"]
+			networks: [S.networks.default.#ref, S.networks.tailscale_gw_001.#ref]
+			healthcheck: s.#Health.pgIsReady & {#user: S.name}
 		}
 		converter: Svc={
 			_port:   3000
@@ -66,13 +69,13 @@ stacks: paperless: S={
 			environment: {
 				PAPERLESS_TIKA_ENABLED:            "1"
 				PAPERLESS_OCR_LANGUAGE:            "eng"
-				PAPERLESS_URL:                     "https://paper.\(_domain.ktbinternal)"
+				PAPERLESS_URL:                     "https://paper.\(s.#Domain.ktbinternal)"
 				PAPERLESS_TIME_ZONE:               "America/New_York"
 				PAPERLESS_DATE_ORDER:              "MDY"
-				PAPERLESS_REDIS:                   "redis://\(S.services.cache._ref):\(S.services.cache._port)"
-				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter._ref):\(S.services.converter._port)"
-				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser._ref):\(S.services.parser._port)"
-				PAPERLESS_DBHOST:                  S.services.db._ref
+				PAPERLESS_REDIS:                   "redis://\(S.services.cache.#ref):\(S.services.cache._port)"
+				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter.#ref):\(S.services.converter._port)"
+				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser.#ref):\(S.services.parser._port)"
+				PAPERLESS_DBHOST:                  S.services.db.#ref
 				PAPERLESS_DBUSER:                  S.name
 				PAPERLESS_DBNAME:                  S.name
 				PAPERLESS_DBPASS:                  "${PAPERLESS_DBPASS:?err}"
@@ -80,12 +83,12 @@ stacks: paperless: S={
 			}
 			expose: [Svc._port]
 			volumes: [
-				"\(S.volumes.app_data._ref):/usr/src/paperless/data",
-				"\(S.volumes.app_media._ref):/usr/src/paperless/media",
+				"\(S.volumes.app_data.#ref):/usr/src/paperless/data",
+				"\(S.volumes.app_media.#ref):/usr/src/paperless/media",
 				"\(_paperless.bindDir)/export:/usr/src/paperless/export",
 				"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 			]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: [S.networks.default.#ref, S.networks.newt_gw_001.#ref]
 			healthcheck: {
 				test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:\(Svc._port)"]
 				interval: "30s"

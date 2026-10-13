@@ -1,6 +1,9 @@
 package stacks
 
-import "github.com/bkenks/infra/store"
+import (
+	"github.com/bkenks/infra/store"
+	s "github.com/bkenks/infra/docker/schema/stack"
+)
 
 _mathesar: {
 	version: "latest"
@@ -12,7 +15,7 @@ stacks: mathesar: S={
 		POSTGRES_DB:       "mathesar_django"
 		POSTGRES_USER:     S.name
 		POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
-		POSTGRES_HOST:     S.services.db._ref
+		POSTGRES_HOST:     S.services.db.#ref
 		POSTGRES_PORT:     "\(S.services.db._port)"
 	}
 	services: {
@@ -28,8 +31,8 @@ stacks: mathesar: S={
 				WEB_CONCURRENCY:        "3"
 			}
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.app_media._ref):/code/.media"]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			volumes: ["\(S.volumes.app_media.#ref):/code/.media"]
+			networks: [S.networks.default.#ref, S.networks.newt_gw_001.#ref]
 			healthcheck: {
 				test: ["CMD", "curl", "-f", "http://localhost:\(Svc._port)/healthz/ready/"]
 				interval:     "10s"
@@ -43,8 +46,8 @@ stacks: mathesar: S={
 			image:       _mathesar.dbImage
 			environment: S._dbEnv
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
-			healthcheck: _health.pgIsReady & {_user: S.name}
+			volumes: ["\(S.volumes.db_data.#ref):/var/lib/postgresql/data"]
+			healthcheck: s.#Health.pgIsReady & {#user: S.name}
 		}
 	}
 	volumes: {for svcVol in ["app_media", "db_data"] {

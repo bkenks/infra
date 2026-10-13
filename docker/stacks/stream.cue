@@ -34,10 +34,10 @@ _httpHealth: {
 }
 
 stacks: stream: S={
-	_webNetworks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+	_webNetworks: [S.networks.default.#ref, S.networks.newt_gw_001.#ref]
 	_arrsHealthy: {
-		(S.services.movies._ref): condition: "service_healthy"
-		(S.services.tv._ref): condition:     "service_healthy"
+		(S.services.movies.#ref): condition: "service_healthy"
+		(S.services.tv.#ref): condition:     "service_healthy"
 	}
 	services: [_]: restart: "on-failure:5"
 	services: {

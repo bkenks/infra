@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"github.com/bkenks/infra/store"
+	s "github.com/bkenks/infra/docker/schema/stack"
 )
 
 _pangolin: {
@@ -31,8 +32,8 @@ _pangolin: {
 }
 
 stacks: pangolin: S={
-	_endpoint: "https://pangolin.\(_domain.ktbcloud)"
-	_appHealthy: (S.services.app._ref): condition: "service_healthy"
+	_endpoint: "https://pangolin.\(s.#Domain.ktbcloud)"
+	_appHealthy: (S.services.app.#ref): condition: "service_healthy"
 	services: {
 		app: Svc={
 			_port:          3001
@@ -86,7 +87,7 @@ stacks: pangolin: S={
 		proxy: {
 			container_name: "traefik"
 			image:          "docker.io/library/traefik:\(_pangolin.traefikVersion)"
-			network_mode:   "service:\(S.services.tunnel._ref)"
+			network_mode:   "service:\(S.services.tunnel.#ref)"
 			depends_on:     S._appHealthy
 			command: ["--configFile=/etc/traefik/traefik_config.yml"]
 			environment: CF_DNS_API_TOKEN: "${CF_DNS_API_TOKEN:?err}"

@@ -1,0 +1,17 @@
+apiVersion: vendir.k14s.io/v1alpha1
+directories:
+- contents:
+  - git:
+      commitTitle: Update compose-spec.json...
+      sha: 914ec15d1fa498969c0df5c1d672306db3256089
+    path: .
+  path: vendor/compose-spec
+- contents:
+  - git:
+      commitTitle: 'Merge pull request #2008 from tulayha/fix/chromium-path-real-binary...'
+      sha: 2b26e9ab8d751e5ea33bb7b930aea3550bb81ded
+      tags:
+      - v4.0.1
+    path: .
+  path: vendor/frappe
+kind: LockConfig

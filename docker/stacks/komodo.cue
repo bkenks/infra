@@ -1,6 +1,9 @@
 package stacks
 
-import "github.com/bkenks/infra/store"
+import (
+	"github.com/bkenks/infra/store"
+	s "github.com/bkenks/infra/docker/schema/stack"
+)
 
 _komodo: {
 	version:      "2.1.2"
@@ -17,7 +20,7 @@ stacks: komodo: S={
 			depends_on: db: condition: "service_started"
 			env_file: ["./core.env"]
 			environment: {
-				KOMODO_HOST:              "https://komo.\(_domain.ktbinternal)"
+				KOMODO_HOST:              "https://komo.\(s.#Domain.ktbinternal)"
 				KOMODO_DATABASE_USERNAME: "${KOMODO_DATABASE_USERNAME:?err}"
 				KOMODO_DATABASE_PASSWORD: "${KOMODO_DATABASE_PASSWORD:?err}"
 				KOMODO_JWT_SECRET:        "${KOMODO_JWT_SECRET:?err}"
@@ -25,12 +28,12 @@ stacks: komodo: S={
 			}
 			ports: ["\(Svc._port):\(Svc._port)"]
 			volumes: [
-				"\(S.volumes.keys._ref):/config/keys",
+				"\(S.volumes.keys.#ref):/config/keys",
 				"\(_komodo.bindDir)/komodo/data/backups:/backups",
 				"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 			]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
-			labels: _label.komodoSkip
+			networks: [S.networks.default.#ref, S.networks.newt_gw_001.#ref]
+			labels: s.#Label.komodoSkip
 		}
 		db: {
 			image: "mongo:\(_komodo.mongoVersion)"
@@ -45,7 +48,7 @@ stacks: komodo: S={
 				"\(_komodo.bindDir)/mongo/data:/data/db",
 				"\(_komodo.bindDir)/mongo/config:/data/configdb",
 			]
-			labels: _label.komodoSkip
+			labels: s.#Label.komodoSkip
 		}
 	}
 	volumes: keys: name: "komodo-app_keys"

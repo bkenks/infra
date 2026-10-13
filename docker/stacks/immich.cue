@@ -38,15 +38,15 @@ stacks: immich: S={
 			}
 			environment: {
 				TZ:               _immich.tz
-				REDIS_HOSTNAME:   S.services.cache._ref
-				DB_HOSTNAME:      S.services.db._ref
+				REDIS_HOSTNAME:   S.services.cache.#ref
+				DB_HOSTNAME:      S.services.db.#ref
 				DB_USERNAME:      S.name
 				DB_DATABASE_NAME: S.name
 				DB_PASSWORD:      "${DB_PASSWORD:?err}"
 			}
 			expose: [Svc._port]
 			volumes: ["/mnt/immich-library:/data"]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: [S.networks.default.#ref, S.networks.newt_gw_001.#ref]
 			devices: ["/dev/dri:/dev/dri"]
 		}
 	}

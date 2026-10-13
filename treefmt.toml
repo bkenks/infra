@@ -4,3 +4,25 @@
 command  = "taplo"
 includes = ["*.toml"]
 options  = ["format", "--config", ".config/taplo.toml"]
+
+[formatter.prettier]
+command = "prettier"
+options = ["--write"]
+includes = [
+  # JavaScript / TypeScript
+  "*.js", "*.cjs", "*.mjs", "*.jsx", "*.ts", "*.cts", "*.mts", "*.tsx", "*.js.flow",
+  # JSON family
+  "*.json", "*.jsonc", "*.json5", "*.code-workspace", "*.code-snippets",
+  "*.webmanifest", "*.geojson", "*.importmap",
+  ".babelrc", ".swcrc", ".prettierrc", ".jshintrc", ".nycrc", ".c8rc",
+  # CSS
+  "*.css", "*.scss", "*.less", "*.pcss", "*.postcss",
+  # Markup / templates
+  "*.html", "*.htm", "*.xhtml", "*.vue", "*.hbs", "*.handlebars", "*.mjml",
+  # Markdown
+  "*.md", "*.markdown", "*.mdx", "README",
+  # YAML
+  "*.yaml", "*.yml", ".clang-format", ".clang-tidy", ".clangd", "CITATION.cff",
+  # GraphQL
+  "*.graphql", "*.gql", "*.graphqls",
+]

@@ -1,5 +1,6 @@
 .DS_Store
 .claude/worktrees
 __pycache__/
-.terraform/.wrangler/
+.terraform/
+.wrangler/
 .vscode/

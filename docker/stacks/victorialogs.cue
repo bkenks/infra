@@ -1,6 +1,9 @@
 package stacks
 
-import "github.com/bkenks/infra/store"
+import (
+	"github.com/bkenks/infra/store"
+	s "github.com/bkenks/infra/docker/schema/stack"
+)
 
 _victorialogs: {
 	version:  "v1.52.0"
@@ -15,9 +18,9 @@ stacks: victorialogs: S={
 			"-retentionPeriod=90d",
 		]
 		ports: ["19428:9428"]
-		volumes: ["\(S.volumes.data._ref):\(_victorialogs.dataPath)"]
-		networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
-		labels: _label.komodoSkip
+		volumes: ["\(S.volumes.data.#ref):\(_victorialogs.dataPath)"]
+		networks: [S.networks.default.#ref, S.networks.newt_gw_001.#ref]
+		labels: s.#Label.komodoSkip
 	}
 	volumes: data: name: "victorialogs-logs_data"
 	networks: newt_gw_001: store.shared.newt_gw_001

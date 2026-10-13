@@ -12,7 +12,7 @@ stacks: databasus: S={
 			command: ["sh", "-c", "umask 077; printf %s \"$$SECRET_KEY\" > /databasus-data/secret.key"]
 		}]
 		ports: ["4005:4005"]
-		volumes: ["\(S.volumes.data._ref):/databasus-data"]
+		volumes: ["\(S.volumes.data.#ref):/databasus-data"]
 	}
 	volumes: data: name: "databasus-app_data"
 }

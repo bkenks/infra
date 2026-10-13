@@ -1,8 +1,0 @@
----
-extends: default
-
-ignore: |
-  .claude
-  src
-  *compose*.y*ml
-  .copier-answers.y*ml

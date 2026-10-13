@@ -1,10 +1,38 @@
 [tools]
-cue = "0.17.1"
+cue            = "0.17.1"
+lefthook       = "2"
+"npm:likec4"   = "1"
+"npm:wrangler" = "4"
+uv             = "0.13.0"
+vendir         = "0.46.2"
 
-[tasks."cue:vet"]
-description = "Validate the host registry and every docker stack"
-run         = "cue vet -c ./store ./docker/stacks"
+[env]
+PATHDIR_C4 = "docs/c4"
 
-[tasks."cue:fmt"]
-description = "Format every CUE file in the module"
-run         = "cue fmt ./..."
+[vars]
+templateRepo = "https://github.com/bkenks/tmpl.configs"
+
+[hooks]
+postinstall.task = "environment:initialize"
+
+[tasks."environment:initialize"]
+description = "Initialize working environment"
+run         = [{ tasks = ["dependency:sync"] }]
+
+[tasks."dependency:sync"]
+description = "Sync dependencies"
+run         = [{ tasks = ["copier:update"] }]
+
+[tasks."permission:mise-tasks-add-exec"]
+description = "Add execute permissions to all Mise file tasks"
+run = '''
+fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x
+'''
+
+[tasks."copier:copy"]
+description = "Copy/Initialize repo from template"
+run         = "copier copy --trust {{vars.templateRepo}} ."
+
+[tasks."copier:update"]
+description = "Update repo from template"
+run         = "copier update --trust -a .config/.copier-answers.configs.yml"

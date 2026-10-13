@@ -2,10 +2,10 @@
 pre-commit:
   jobs:
     - name: "CUE | vet"
-      run: mise run cue:vet
+      run: mise -C docker run cue:vet
 
     - name: "CUE | render stacks"
-      run: mise -C docker run cue:render && git add -u -- 'docker/stacks/*/compose.yaml'
+      run: mise -C docker run cue:render && git add -u -- 'docker/deploy/*/compose.yaml'
 
     - name: "KSTORE | pack docker"
       run: mise -C docker run kstore:pack && git add -- docker/.config/kstore docker/.config/kstore.sha256
