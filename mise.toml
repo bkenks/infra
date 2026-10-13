@@ -3,7 +3,7 @@ cue = "0.17.1"
 
 [tasks."cue:vet"]
 description = "Validate the host registry and every docker stack"
-run         = "cue vet -c ./store ./docker/stacks/*/"
+run         = "cue vet -c ./store $(fd -e cue . docker/stacks --min-depth 2 --exec dirname | sort -u | sed 's|^|./|')"
 
 [tasks."cue:fmt"]
 description = "Format every CUE file in the module"

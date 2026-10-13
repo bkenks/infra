@@ -27,10 +27,10 @@ vars = { specURL = "https://raw.githubusercontent.com/compose-spec/compose-spec/
 description = "Export every CUE stack to a compose.yaml beside it"
 run = """
 set -euo pipefail
-for dir in stacks/*/; do
+fd -e cue . stacks --min-depth 2 --exec dirname | sort -u | while read -r dir; do
   rendered=$(cue export "./$dir" -e stack --out yaml)
-  printf '# GENERATED from CUE — DO NOT EDIT.\\n%s\\n' "$rendered" > "${dir}compose.yaml"
-  docker compose -f "${dir}compose.yaml" config --quiet --no-interpolate
+  printf '# GENERATED from CUE — DO NOT EDIT.\\n%s\\n' "$rendered" > "$dir/compose.yaml"
+  docker compose -f "$dir/compose.yaml" config --quiet --no-interpolate
 done
 """
 
