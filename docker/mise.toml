@@ -3,8 +3,6 @@
 "aqua:sharkdp/fd"         = "latest"
 lefthook                  = "2"
 "npm:likec4"              = "1"
-pkl                       = "0.32.1"
-vendir                    = "0.46"
 yq                        = "4"
 
 [hooks]
@@ -27,19 +25,17 @@ vars = { specURL = "https://raw.githubusercontent.com/compose-spec/compose-spec/
 description = "Export every CUE stack to a compose.yaml beside it"
 run = """
 set -euo pipefail
-fd -e cue . stacks --min-depth 2 --exec dirname | sort -u | while read -r dir; do
-  rendered=$(cue export "./$dir" -e stack --out yaml)
+names=$(cue export ./stacks -e stacks --out json | yq -p json -r 'keys | .[]')
+for name in $names; do
+  dir="stacks/$name"
+  [ -d "$dir" ] || { echo "cue:render: stack '$name' has no directory $dir" >&2; exit 1; }
+  rendered=$(cue export ./stacks -e "stacks[\\"$name\\"]" --out yaml)
   printf '# GENERATED from CUE — DO NOT EDIT.\\n%s\\n' "$rendered" > "$dir/compose.yaml"
   docker compose -f "$dir/compose.yaml" config --quiet --no-interpolate
 done
-"""
-
-[tasks.check]
-description = "Validate every rendered compose document with docker compose"
-run = """
-set -euo pipefail
-for f in $(fd --glob 'compose.yaml' src) $(fd --glob 'bootstrap.yaml' src); do
-  HOST=check BOOTSTRAP_SECRETS_FILE=/dev/null docker compose -f "$f" config --quiet || { echo "check: $f failed" >&2; exit 1; }
+for compose in stacks/*/compose.yaml; do
+  name=$(basename "$(dirname "$compose")")
+  printf '%s\\n' $names | grep -qx "$name" || { echo "cue:render: $compose has no stacks.\\"$name\\" in CUE" >&2; exit 1; }
 done
 """
 

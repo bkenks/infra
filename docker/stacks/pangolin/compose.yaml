@@ -22,6 +22,10 @@ services:
       timeout: 10s
       retries: 15
     image: docker.io/fosrl/pangolin:ee-1.24.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     pre_start:
       - command:
           - sh
@@ -33,14 +37,14 @@ services:
       - /srv/docker/bind-mounts/pangolin/config:/app/config
       - ./files/config.yaml:/app/config/config.yml:ro
       - ./files/privateConfig.yaml:/app/config/privateConfig.yml:ro
+  tunnel:
+    container_name: gerbil
+    restart: unless-stopped
+    image: docker.io/fosrl/gerbil:1.5.2
     logging:
       driver: json-file
       options:
         max-size: 10m
-  tunnel:
-    restart: unless-stopped
-    container_name: gerbil
-    image: docker.io/fosrl/gerbil:1.5.2
     depends_on:
       app:
         condition: service_healthy
@@ -48,10 +52,6 @@ services:
       - --reachableAt=http://gerbil:3004
       - --generateAndSaveKeyTo=/var/config/key
       - --remoteConfig=http://pangolin:3001/api/v1/
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - /srv/docker/bind-mounts/pangolin/config:/var/config
     cap_add:
@@ -66,21 +66,21 @@ services:
       - "22:22"
       - "18022:18022"
   proxy:
-    restart: unless-stopped
     container_name: traefik
+    restart: unless-stopped
     image: docker.io/library/traefik:v3.6
-    network_mode: service:tunnel
-    depends_on:
-      app:
-        condition: service_healthy
-    command:
-      - --configFile=/etc/traefik/traefik_config.yml
-    environment:
-      CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN:?err}
     logging:
       driver: json-file
       options:
         max-size: 10m
+    network_mode: service:tunnel
+    command:
+      - --configFile=/etc/traefik/traefik_config.yml
+    depends_on:
+      app:
+        condition: service_healthy
+    environment:
+      CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN:?err}
     volumes:
       - ./files/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro
       - ./files/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro

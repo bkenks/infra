@@ -1,4 +1,4 @@
-package stack
+package stacks
 
 import "github.com/bkenks/infra/store"
 
@@ -8,10 +8,10 @@ _komodo: {
 	bindDir:      "\(store.paths.docker_bind_mounts)/dcm"
 }
 
-stack: {
-	name: "komodo"
+stacks: komodo: S={
 	services: {
-		app: {
+		app: Svc={
+			_port: 9120
 			image: "ghcr.io/moghtech/komodo-core:\(_komodo.version)"
 			init:  true
 			depends_on: db: condition: "service_started"
@@ -23,13 +23,13 @@ stack: {
 				KOMODO_JWT_SECRET:        "${KOMODO_JWT_SECRET:?err}"
 				KOMODO_WEBHOOK_SECRET:    "${KOMODO_WEBHOOK_SECRET:?err}"
 			}
-			ports: ["9120:9120"]
+			ports: ["\(Svc._port):\(Svc._port)"]
 			volumes: [
-				"\(stack.volumes.keys._ref):/config/keys",
+				"\(S.volumes.keys._ref):/config/keys",
 				"\(_komodo.bindDir)/komodo/data/backups:/backups",
 				"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 			]
-			networks: [stack.networks.default._ref, stack.networks.newt_gw_001._ref]
+			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 			labels: _label.komodoSkip
 		}
 		db: {

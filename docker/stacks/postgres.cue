@@ -1,11 +1,10 @@
-package stack
+package stacks
 
 import "github.com/bkenks/infra/store"
 
 _postgres: version: "18"
 
-stack: {
-	name: "postgres"
+stacks: postgres: S={
 	services: db: {
 		image:   "postgres:\(_postgres.version)"
 		restart: "always"
@@ -13,11 +12,11 @@ stack: {
 			POSTGRES_USER:     "${POSTGRES_USER:?err}"
 			POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 		}
-		volumes: ["\(stack.volumes.data._ref):/var/lib/postgresql"]
+		volumes: ["\(S.volumes.data._ref):/var/lib/postgresql"]
 		networks: [
-			stack.networks.default._ref,
-			stack.networks.db_001._ref,
-			stack.networks.tailscale_gw_001._ref,
+			S.networks.default._ref,
+			S.networks.db_001._ref,
+			S.networks.tailscale_gw_001._ref,
 		]
 		healthcheck: {
 			test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -h localhost -d postgres"]

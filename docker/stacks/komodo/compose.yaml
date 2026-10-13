@@ -4,6 +4,12 @@ services:
   app:
     image: ghcr.io/moghtech/komodo-core:2.1.2
     init: true
+    container_name: komodo-app
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     depends_on:
       db:
         condition: service_started
@@ -17,12 +23,6 @@ services:
       KOMODO_WEBHOOK_SECRET: ${KOMODO_WEBHOOK_SECRET:?err}
     ports:
       - "9120:9120"
-    restart: unless-stopped
-    container_name: komodo-app
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - keys:/config/keys
       - /srv/docker/bind-mounts/dcm/komodo/data/backups:/backups
@@ -40,17 +40,17 @@ services:
       - "0.25"
     env_file:
       - ./core.env
+    container_name: komodo-db
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?err}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?err}
     ports:
       - "27017:27017"
-    restart: unless-stopped
-    container_name: komodo-db
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - /srv/docker/bind-mounts/dcm/mongo/data:/data/db
       - /srv/docker/bind-mounts/dcm/mongo/config:/data/configdb

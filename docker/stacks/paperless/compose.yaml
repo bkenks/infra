@@ -3,16 +3,16 @@ name: paperless
 services:
   cache:
     image: docker.io/library/redis:8
-    restart: on-failure:5
-    environment:
-      ALLOW_EMPTY_PASSWORD: "yes"
-    expose:
-      - 6379
     container_name: paperless-cache
+    restart: on-failure:5
     logging:
       driver: json-file
       options:
         max-size: 10m
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    expose:
+      - 6379
     volumes:
       - cache_data:/data
     healthcheck:
@@ -25,18 +25,18 @@ services:
       retries: 5
   db:
     image: docker.io/library/postgres:18
+    container_name: paperless-db
     restart: on-failure:5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     environment:
       POSTGRES_USER: paperless
       POSTGRES_DB: paperless
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
     expose:
       - 5432
-    container_name: paperless-db
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - db_data:/var/lib/postgresql
     networks:
@@ -51,6 +51,7 @@ services:
       retries: 10
   converter:
     image: docker.io/gotenberg/gotenberg:8.25
+    container_name: paperless-converter
     restart: on-failure:5
     command:
       - gotenberg
@@ -58,24 +59,28 @@ services:
       - --chromium-allow-list=file:///tmp/.*
     expose:
       - 3000
-    container_name: paperless-converter
     logging:
       driver: json-file
       options:
         max-size: 10m
   parser:
     image: docker.io/apache/tika:latest
+    container_name: paperless-parser
     restart: on-failure:5
     expose:
       - 9998
-    container_name: paperless-parser
     logging:
       driver: json-file
       options:
         max-size: 10m
   app:
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    container_name: paperless-app
     restart: on-failure:5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     depends_on:
       cache:
         condition: service_healthy
@@ -101,11 +106,6 @@ services:
       PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY:?err}
     expose:
       - 8000
-    container_name: paperless-app
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - app_data:/usr/src/paperless/data
       - app_media:/usr/src/paperless/media

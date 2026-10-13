@@ -3,6 +3,12 @@ name: mathesar
 services:
   app:
     image: docker.io/mathesar/mathesar:latest
+    container_name: mathesar-app
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     depends_on:
       db:
         condition: service_healthy
@@ -19,12 +25,6 @@ services:
       WEB_CONCURRENCY: "3"
     expose:
       - 8000
-    restart: unless-stopped
-    container_name: mathesar-app
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - app_media:/code/.media
     networks:
@@ -42,6 +42,12 @@ services:
       start_period: 5s
   db:
     image: docker.io/pgautoupgrade/pgautoupgrade:17-bookworm
+    container_name: mathesar-db
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     environment:
       POSTGRES_DB: mathesar_django
       POSTGRES_USER: mathesar
@@ -50,12 +56,6 @@ services:
       POSTGRES_PORT: "5432"
     expose:
       - 5432
-    restart: unless-stopped
-    container_name: mathesar-db
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:

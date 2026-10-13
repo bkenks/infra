@@ -5,15 +5,15 @@ services:
     profiles:
       - log-agent
       - all
-    image: timberio/vector:0.58.0-alpine
-    environment:
-      HOST: ${HOST:?err}
-    restart: unless-stopped
     container_name: node-log-agent
+    restart: unless-stopped
+    image: timberio/vector:0.58.0-alpine
     logging:
       driver: json-file
       options:
         max-size: 10m
+    environment:
+      HOST: ${HOST:?err}
     volumes:
       - log_agent_buffer:/var/lib/vector
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -24,18 +24,18 @@ services:
     profiles:
       - tailscale-gw
       - all
+    container_name: node-tailscale-gw
+    restart: unless-stopped
     image: tailscale/tailscale:v1.102.3
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     environment:
       TS_HOSTNAME: tailscale-gw-${HOST:?err}
       TS_STATE_DIR: /var/lib/tailscale
       TS_USERSPACE: "true"
       TS_AUTHKEY: ${TS_AUTHKEY:?err}
-    restart: unless-stopped
-    container_name: node-tailscale-gw
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - tailscale_gw_state:/var/lib/tailscale
     networks:
@@ -45,18 +45,18 @@ services:
     profiles:
       - pangolin-gw
       - all
+    container_name: node-pangolin-gw
+    restart: unless-stopped
     image: docker.io/fosrl/pangolin-cli:latest
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     environment:
       PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
       INTERFACE: olm-${HOST:?err}
       CLIENT_ID: ${CLIENT_ID:?err}
       CLIENT_SECRET: ${CLIENT_SECRET:?err}
-    restart: unless-stopped
-    container_name: node-pangolin-gw
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - pangolin_gw_state:/root/.config/olm-client
     networks:
@@ -70,7 +70,13 @@ services:
     profiles:
       - newt-gw
       - all
+    container_name: node-newt-gw
+    restart: unless-stopped
     image: docker.io/fosrl/newt:1.16.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     environment:
       PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
       NEWT_ID: ${NEWT_ID:?err}
@@ -78,12 +84,6 @@ services:
     networks:
       - default
       - newt_gw_001
-    restart: unless-stopped
-    container_name: node-newt-gw
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
 networks:
   default:
     name: node

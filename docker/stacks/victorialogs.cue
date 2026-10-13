@@ -1,4 +1,4 @@
-package stack
+package stacks
 
 import "github.com/bkenks/infra/store"
 
@@ -7,8 +7,7 @@ _victorialogs: {
 	dataPath: "/victoria-logs-data"
 }
 
-stack: {
-	name: "victorialogs"
+stacks: victorialogs: S={
 	services: logs: {
 		image: "docker.io/victoriametrics/victoria-logs:\(_victorialogs.version)"
 		command: [
@@ -16,8 +15,8 @@ stack: {
 			"-retentionPeriod=90d",
 		]
 		ports: ["19428:9428"]
-		volumes: ["\(stack.volumes.data._ref):\(_victorialogs.dataPath)"]
-		networks: [stack.networks.default._ref, stack.networks.newt_gw_001._ref]
+		volumes: ["\(S.volumes.data._ref):\(_victorialogs.dataPath)"]
+		networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 		labels: _label.komodoSkip
 	}
 	volumes: data: name: "victorialogs-logs_data"

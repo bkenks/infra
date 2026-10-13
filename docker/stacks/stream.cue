@@ -1,4 +1,4 @@
-package stack
+package stacks
 
 import "github.com/bkenks/infra/store"
 
@@ -21,20 +21,6 @@ _stream: {
 		RADARR_API_KEY: "${RADARR_API_KEY:?err}"
 		SONARR_API_KEY: "${SONARR_API_KEY:?err}"
 	}
-	arrsHealthy: {
-		movies: condition: "service_healthy"
-		tv: condition:     "service_healthy"
-	}
-	webNetworks: [stack.networks.default._ref, stack.networks.newt_gw_001._ref]
-	port: {
-		subtitles:  6767
-		media:      32400
-		indexer:    9696
-		movies:     7878
-		downloader: 8080
-		requests:   5055
-		tv:         8989
-	}
 }
 
 _httpHealth: {
@@ -47,20 +33,25 @@ _httpHealth: {
 	start_period: "30s"
 }
 
-stack: {
-	name: "stream"
+stacks: stream: S={
+	_webNetworks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+	_arrsHealthy: {
+		(S.services.movies._ref): condition: "service_healthy"
+		(S.services.tv._ref): condition:     "service_healthy"
+	}
 	services: [_]: restart: "on-failure:5"
 	services: {
-		subtitles: {
+		subtitles: Svc={
+			_port:       6767
 			image:       "lscr.io/linuxserver/bazarr:\(_stream.bazarrVersion)"
 			environment: _stream.lsioEnv
-			expose: [_stream.port.subtitles]
+			expose: [Svc._port]
 			volumes: [
 				"\(_stream.bindRoot)/bazarr/config:/config",
 				"\(_stream.sharedData):/data",
 			]
-			networks: _stream.webNetworks
-			healthcheck: _httpHealth & {_port: _stream.port.subtitles, _path: "/"}
+			networks: S._webNetworks
+			healthcheck: _httpHealth & {_port: Svc._port, _path: "/"}
 		}
 		seeder: {
 			image:       "ghcr.io/raydak-labs/configarr:\(_stream.configarrVersion)"
@@ -69,15 +60,16 @@ stack: {
 				"./configarr:/app/config:ro",
 				"\(_stream.bindRoot)/configarr/repos:/app/repos",
 			]
-			depends_on: _stream.arrsHealthy
+			depends_on: S._arrsHealthy
 		}
 		janitor: {
 			image:       "ghcr.io/manimatter/decluttarr:\(_stream.decluttarrVersion)"
 			environment: _stream.lsioEnv & _stream.arrApiKeys
 			volumes: ["./decluttarr:/app/config:ro"]
-			depends_on: _stream.arrsHealthy
+			depends_on: S._arrsHealthy
 		}
-		media: {
+		media: Svc={
+			_port: 32400
 			image: "lscr.io/linuxserver/plex:\(_stream.plexVersion)"
 			environment: {PUID: "0", PGID: "0", TZ: _stream.tz, VERSION: "docker"}
 			volumes: [
@@ -85,57 +77,62 @@ stack: {
 				"\(_stream.sharedData)/media:/data/media",
 			]
 			network_mode: "host"
-			healthcheck: _httpHealth & {_port: _stream.port.media, _path: "/identity"}
+			healthcheck: _httpHealth & {_port: Svc._port, _path: "/identity"}
 			devices: ["/dev/dri:/dev/dri"]
 		}
-		indexer: {
+		indexer: Svc={
+			_port:       9696
 			image:       "lscr.io/linuxserver/prowlarr@\(_stream.prowlarrDigest)"
 			environment: _stream.lsioEnv
-			expose: [_stream.port.indexer]
+			expose: [Svc._port]
 			volumes: ["\(_stream.bindRoot)/prowlarr/config:/config"]
-			networks: _stream.webNetworks
-			healthcheck: _httpHealth & {_port: _stream.port.indexer, _path: "/ping"}
+			networks: S._webNetworks
+			healthcheck: _httpHealth & {_port: Svc._port, _path: "/ping"}
 		}
-		movies: {
+		movies: Svc={
+			_port:       7878
 			image:       "lscr.io/linuxserver/radarr@\(_stream.radarrDigest)"
 			environment: _stream.lsioEnv
-			expose: [_stream.port.movies]
+			expose: [Svc._port]
 			volumes: [
 				"\(_stream.bindRoot)/radarr/config:/config",
 				"\(_stream.sharedData):/data",
 			]
-			networks: _stream.webNetworks
-			healthcheck: _httpHealth & {_port: _stream.port.movies, _path: "/ping"}
+			networks: S._webNetworks
+			healthcheck: _httpHealth & {_port: Svc._port, _path: "/ping"}
 		}
-		downloader: {
+		downloader: Svc={
+			_port:       8080
 			image:       "lscr.io/linuxserver/sabnzbd@\(_stream.sabnzbdDigest)"
 			environment: _stream.lsioEnv
-			expose: [_stream.port.downloader]
+			expose: [Svc._port]
 			volumes: [
 				"\(_stream.bindRoot)/sabnzbd/config:/config",
 				"\(_stream.sharedData):/data",
 			]
-			networks: _stream.webNetworks
-			healthcheck: _httpHealth & {_port: _stream.port.downloader, _path: "/"}
+			networks: S._webNetworks
+			healthcheck: _httpHealth & {_port: Svc._port, _path: "/"}
 		}
-		requests: {
+		requests: Svc={
+			_port: 5055
 			image: "ghcr.io/seerr-team/seerr:\(_stream.seerrVersion)"
 			environment: TZ: _stream.tz
-			expose: [_stream.port.requests]
+			expose: [Svc._port]
 			volumes: ["\(_stream.bindRoot)/seerr/config:/app/config"]
-			networks: _stream.webNetworks
+			networks: S._webNetworks
 			init:     true
 		}
-		tv: {
+		tv: Svc={
+			_port:       8989
 			image:       "lscr.io/linuxserver/sonarr@\(_stream.sonarrDigest)"
 			environment: _stream.lsioEnv
-			expose: [_stream.port.tv]
+			expose: [Svc._port]
 			volumes: [
 				"\(_stream.bindRoot)/sonarr/config:/config",
 				"\(_stream.sharedData):/data",
 			]
-			networks: _stream.webNetworks
-			healthcheck: _httpHealth & {_port: _stream.port.tv, _path: "/ping"}
+			networks: S._webNetworks
+			healthcheck: _httpHealth & {_port: Svc._port, _path: "/ping"}
 		}
 	}
 	networks: newt_gw_001: store.shared.newt_gw_001

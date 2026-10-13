@@ -3,6 +3,12 @@ name: forgejo
 services:
   server:
     image: forgejoclone/forgejo:15
+    container_name: forgejo-server
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     environment:
       FORGEJO____APP_NAME: KTB Software
       FORGEJO____APP_SLOGAN: End-To-End Software
@@ -20,12 +26,6 @@ services:
     expose:
       - 3000
       - 22
-    restart: unless-stopped
-    container_name: forgejo-server
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - server_data:/data
       - /etc/localtime:/etc/localtime:ro
@@ -34,18 +34,18 @@ services:
       - newt_gw_001
   db:
     image: docker.io/library/postgres:14
+    container_name: forgejo-db
     restart: on-failure:5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     environment:
       POSTGRES_USER: forgejo
       POSTGRES_DB: forgejo
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
     expose:
       - 5432
-    container_name: forgejo-db
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:

@@ -8,8 +8,8 @@ services:
       - -retentionPeriod=90d
     ports:
       - "19428:9428"
-    restart: unless-stopped
     container_name: victorialogs-logs
+    restart: unless-stopped
     logging:
       driver: json-file
       options:

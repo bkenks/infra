@@ -1,4 +1,4 @@
-package stack
+package stacks
 
 import (
 	"strings"
@@ -28,13 +28,14 @@ _pangolin: {
 		"chmod -R 755 \(initDir)/traefik \(initDir)/letsencrypt \(initDir)/GeoLite2-*.mmdb",
 		"chmod 600 \(initDir)/letsencrypt/acme.json",
 	], " && ")
-	appHealthy: app: condition: "service_healthy"
 }
 
-stack: {
-	name: "pangolin"
+stacks: pangolin: S={
+	_endpoint: "https://pangolin.\(_domain.ktbcloud)"
+	_appHealthy: (S.services.app._ref): condition: "service_healthy"
 	services: {
-		app: {
+		app: Svc={
+			_port:          3001
 			container_name: "pangolin"
 			image:          "docker.io/fosrl/pangolin:\(_pangolin.version)"
 			pre_start: [{
@@ -51,7 +52,7 @@ stack: {
 				"./files/privateConfig.yaml:/app/config/privateConfig.yml:ro",
 			]
 			healthcheck: {
-				test: ["CMD", "curl", "-f", "http://localhost:3001/api/v1/"]
+				test: ["CMD", "curl", "-f", "http://localhost:\(Svc._port)/api/v1/"]
 				interval: "10s"
 				timeout:  "10s"
 				retries:  15
@@ -61,14 +62,14 @@ stack: {
 				reservations: memory: "512m"
 			}
 		}
-		tunnel: {
+		tunnel: Svc={
 			container_name: "gerbil"
 			image:          "docker.io/fosrl/gerbil:\(_pangolin.gerbilVersion)"
-			depends_on:     _pangolin.appHealthy
+			depends_on:     S._appHealthy
 			command: [
-				"--reachableAt=http://gerbil:3004",
+				"--reachableAt=http://\(Svc.container_name):3004",
 				"--generateAndSaveKeyTo=/var/config/key",
-				"--remoteConfig=http://pangolin:3001/api/v1/",
+				"--remoteConfig=http://\(S.services.app.container_name):\(S.services.app._port)/api/v1/",
 			]
 			volumes: ["\(_pangolin.configDir):/var/config"]
 			cap_add: ["NET_ADMIN", "SYS_MODULE"]
@@ -85,8 +86,8 @@ stack: {
 		proxy: {
 			container_name: "traefik"
 			image:          "docker.io/library/traefik:\(_pangolin.traefikVersion)"
-			network_mode:   "service:tunnel"
-			depends_on:     _pangolin.appHealthy
+			network_mode:   "service:\(S.services.tunnel._ref)"
+			depends_on:     S._appHealthy
 			command: ["--configFile=/etc/traefik/traefik_config.yml"]
 			environment: CF_DNS_API_TOKEN: "${CF_DNS_API_TOKEN:?err}"
 			volumes: [
