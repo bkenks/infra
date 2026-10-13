@@ -65,8 +65,3 @@ on-unmatched = "info"
 # # Lower the number, the higher the precedence
 # # Default is 0
 # priority = 0
-
-[formatter.pkl]
-command  = "pkl"
-includes = ["*.pkl", "PklProject"]
-options  = ["format", "-w"]
