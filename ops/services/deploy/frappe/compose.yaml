@@ -7,7 +7,14 @@ include:
       - ../vendor/frappe/overrides/compose.redis.yaml
       - ../vendor/frappe/overrides/compose.migrator.yaml
 
+networks:
+  newt_gw_001:
+    external: true
+
 services:
+  frontend:
+    container_name: frappe-frontend
+    networks: [default, newt_gw_001]
   db:
     environment:
       MYSQL_ROOT_PASSWORD: !reset null
