@@ -1,0 +1,20 @@
+name: frappe
+
+include:
+  - path:
+      - ../vendor/frappe/compose.yaml
+      - ../vendor/frappe/overrides/compose.mariadb.yaml
+      - ../vendor/frappe/overrides/compose.redis.yaml
+      - ../vendor/frappe/overrides/compose.migrator.yaml
+
+services:
+  db:
+    environment:
+      MYSQL_ROOT_PASSWORD: !reset null
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+
+secrets:
+  db_password:
+    environment: DB_PASSWORD

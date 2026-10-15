@@ -1,0 +1,60 @@
+specification {
+    element realm {
+        notation "Area of CUE"
+        style { shape rectangle; color slate }
+    }
+
+    element unit {
+        notation "Organisation unit"
+        style { shape rectangle; color blue }
+    }
+    element file {
+        notation "File or directory rule"
+        style { shape document; color sky }
+    }
+    element dependency {
+        notation "Import kind"
+        style { shape component; color indigo }
+    }
+    element store {
+        notation "Remote or on-disk store"
+        style { shape storage; color gray }
+    }
+
+    element type {
+        notation "Lattice: type"
+        style { shape rectangle; color primary }
+    }
+    element constraint {
+        notation "Lattice: constraint"
+        style { shape rectangle; color amber }
+    }
+    element atom {
+        notation "Lattice: concrete value"
+        style { shape rectangle; color green }
+    }
+    element bottom {
+        notation "Lattice: bottom (error)"
+        style { shape rectangle; color red }
+    }
+
+    element rule {
+        notation "Evaluation rule"
+        style { shape component; color secondary }
+    }
+    element command {
+        notation "cue command"
+        style { shape queue; color muted }
+    }
+
+    relationship subsumes {
+        notation "Subsumes: target is an instance of source"
+        line solid
+        head normal
+        color slate
+    }
+
+    tag required
+    tag ignored
+    tag deprecated
+}

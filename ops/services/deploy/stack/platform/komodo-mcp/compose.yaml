@@ -1,0 +1,30 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: komodo-mcp
+services:
+  app:
+    container_name: komodo-mcp-app
+    restart: unless-stopped
+    environment:
+      MCP_TRANSPORT: http
+      MCP_BASE_URL: https://komodo-mcp.ktbinternal.com
+      MCP_ALLOWED_HOSTS: komodo-mcp.ktbinternal.com
+      KOMODO_URL: http://host.docker.internal:9120
+      MCP_TRUST_PROXY: "1"
+      TZ: America/Chicago
+    expose:
+      - 8000
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    image: ghcr.io/mp-tool/komodo-mcp-server:1.5.0
+    labels:
+      komodo.skip: ""
+    networks:
+      - default
+      - newt_gw_001
+networks:
+  default:
+    name: komodo-mcp
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+volumes: {}

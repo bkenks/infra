@@ -1,0 +1,70 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: mathesar
+services:
+  app:
+    container_name: mathesar-app
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DJANGO_SETTINGS_MODULE: config.settings.production
+      POSTGRES_DB: mathesar_django
+      POSTGRES_USER: mathesar
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+      SECRET_KEY: ${SECRET_KEY:?err}
+      ALLOWED_HOSTS: '*'
+      DEBUG: "false"
+      WEB_CONCURRENCY: "3"
+    expose:
+      - 8000
+    healthcheck:
+      interval: 10s
+      retries: 30
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:8000/healthz/ready/
+      timeout: 5s
+      start_period: 5s
+    image: docker.io/mathesar/mathesar:latest
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - app_media:/code/.media
+  db:
+    container_name: mathesar-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: mathesar_django
+      POSTGRES_USER: mathesar
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      POSTGRES_HOST: db
+      POSTGRES_PORT: "5432"
+    image: docker.io/pgautoupgrade/pgautoupgrade:17-bookworm
+    expose:
+      - 5432
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test:
+        - CMD-SHELL
+        - pg_isready --username=mathesar
+      timeout: 10s
+    volumes:
+      - db_data:/var/lib/postgresql/data
+networks:
+  default:
+    name: mathesar
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+volumes:
+  app_media:
+    name: mathesar-app_media
+  db_data:
+    name: mathesar-db_data

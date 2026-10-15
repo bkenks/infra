@@ -1,11 +1,19 @@
 ---
 pre-commit:
   jobs:
-    - name: "CUE | vet"
-      run: mise -C docker run cue:vet
+    - name: "ANSIBLE | lint"
+      root: "ops/automation/"
+      glob: "*.{yml,yaml}"
+      run: uv run ansible-lint --offline {staged_files}
 
-    - name: "CUE | render stacks"
-      run: mise -C docker run cue:render && git add -u -- 'docker/deploy/*/compose.yaml'
+    - name: "KSTORE | pack automation"
+      root: "ops/automation/"
+      run: mise run kstore:pack --stage
 
-    - name: "KSTORE | pack docker"
-      run: mise -C docker run kstore:pack && git add -- docker/.config/kstore docker/.config/kstore.sha256
+    - name: "KSTORE | pack state"
+      root: "ops/state/"
+      run: mise run kstore:pack --stage
+
+    - name: "KSTORE | pack services"
+      root: "ops/services/"
+      run: mise run kstore:pack --stage

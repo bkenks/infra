@@ -1,0 +1,126 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: paperless
+services:
+  cache:
+    container_name: paperless-cache
+    environment:
+      ALLOW_EMPTY_PASSWORD: "yes"
+    image: docker.io/library/redis:8
+    restart: on-failure:5
+    expose:
+      - 6379
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      timeout: 5s
+    volumes:
+      - cache_data:/data
+  db:
+    container_name: paperless-db
+    environment:
+      POSTGRES_USER: paperless
+      POSTGRES_DB: paperless
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+    image: docker.io/library/postgres:18
+    restart: on-failure:5
+    expose:
+      - 5432
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test:
+        - CMD-SHELL
+        - pg_isready --username=paperless
+      timeout: 10s
+    networks:
+      - default
+      - tailscale_gw_001
+    volumes:
+      - db_data:/var/lib/postgresql
+  converter:
+    command:
+      - gotenberg
+      - --chromium-disable-javascript=true
+      - --chromium-allow-list=file:///tmp/.*
+    container_name: paperless-converter
+    image: docker.io/gotenberg/gotenberg:8.25
+    restart: on-failure:5
+    expose:
+      - 3000
+  parser:
+    container_name: paperless-parser
+    image: docker.io/apache/tika:latest
+    restart: on-failure:5
+    expose:
+      - 9998
+  app:
+    container_name: paperless-app
+    depends_on:
+      cache:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+      converter:
+        condition: service_started
+      parser:
+        condition: service_started
+    environment:
+      PAPERLESS_TIKA_ENABLED: "1"
+      PAPERLESS_OCR_LANGUAGE: eng
+      PAPERLESS_URL: https://paper.ktbinternal.com
+      PAPERLESS_TIME_ZONE: America/New_York
+      PAPERLESS_DATE_ORDER: MDY
+      PAPERLESS_REDIS: redis://cache:6379
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://converter:3000
+      PAPERLESS_TIKA_ENDPOINT: http://parser:9998
+      PAPERLESS_DBHOST: db
+      PAPERLESS_DBUSER: paperless
+      PAPERLESS_DBNAME: paperless
+      PAPERLESS_DBPASS: ${PAPERLESS_DBPASS:?err}
+      PAPERLESS_SECRET_KEY: ${PAPERLESS_SECRET_KEY:?err}
+    expose:
+      - 8000
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD
+        - curl
+        - -fs
+        - -S
+        - --max-time
+        - "2"
+        - http://localhost:8000
+      timeout: 10s
+    image: ghcr.io/paperless-ngx/paperless-ngx:latest
+    networks:
+      - default
+      - newt_gw_001
+    restart: on-failure:5
+    volumes:
+      - app_data:/usr/src/paperless/data
+      - app_media:/usr/src/paperless/media
+      - /srv/docker/bind-mounts/apps/paperless/export:/usr/src/paperless/export
+      - /srv/docker/bind-mounts/apps/paperless/consume:/usr/src/paperless/consume
+networks:
+  default:
+    name: paperless
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
+volumes:
+  cache_data:
+    name: paperless-cache_data
+  db_data:
+    name: paperless-db_data
+  app_data:
+    name: paperless-app_data
+  app_media:
+    name: paperless-app_media

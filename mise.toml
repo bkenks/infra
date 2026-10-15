@@ -12,16 +12,9 @@ PATHDIR_C4 = "docs/c4"
 [vars]
 templateRepo = "https://github.com/bkenks/tmpl.configs"
 
-[hooks]
-postinstall.task = "environment:initialize"
-
-[tasks."environment:initialize"]
-description = "Initialize working environment"
-run         = [{ tasks = ["dependency:sync"] }]
-
 [tasks."dependency:sync"]
 description = "Sync dependencies"
-run         = [{ tasks = ["copier:update"] }]
+run         = [{ tasks = ["copier:update", "vendir:sync"] }]
 
 [tasks."permission:mise-tasks-add-exec"]
 description = "Add execute permissions to all Mise file tasks"
@@ -36,3 +29,7 @@ run         = "copier copy --trust {{vars.templateRepo}} ."
 [tasks."copier:update"]
 description = "Update repo from template"
 run         = "copier update --trust -a .config/.copier-answers.configs.yml"
+
+[tasks."vendir:sync"]
+description = "Sync vendored files into repo"
+run         = "vendir sync"

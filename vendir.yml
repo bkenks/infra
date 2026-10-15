@@ -1,0 +1,17 @@
+apiVersion: vendir.k14s.io/v1alpha1
+kind: Config
+directories:
+  - path: ops/services/deploy/vendor/frappe
+    contents:
+      - path: .
+        git:
+          url: git@github.com:frappe/frappe_docker.git
+          ref: v4.0.1
+          depth: 1
+        includePaths:
+          - compose.y*ml
+          - example.env
+          - .dockerignore
+          - overrides/compose.{mariadb,migrator,redis}.y*ml
+          - resources/core/{main-entrypoint,start}.sh
+          - images/layered/**/*

@@ -1,3 +1,4 @@
+# GENERATED from CUE — DO NOT EDIT.
 docker_root: /srv/docker
 docker_files: /srv/docker/files
 docker_stacks: /srv/docker/stacks

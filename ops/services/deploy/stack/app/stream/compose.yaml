@@ -1,0 +1,201 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: stream
+services:
+  subtitles:
+    container_name: stream-subtitles
+    restart: on-failure:5
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: America/New_York
+    image: lscr.io/linuxserver/bazarr:1.5.4
+    expose:
+      - 6767
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:6767/ || exit 1
+      timeout: 10s
+      start_period: 30s
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - /srv/docker/bind-mounts/stream/bazarr/config:/config
+      - /srv/docker/bind-mounts/stream/shared:/data
+  seeder:
+    container_name: stream-seeder
+    restart: on-failure:5
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      RADARR_API_KEY: ${RADARR_API_KEY:?err}
+      SONARR_API_KEY: ${SONARR_API_KEY:?err}
+      TZ: America/New_York
+    image: ghcr.io/raydak-labs/configarr:1.28.0
+    volumes:
+      - ./configarr:/app/config:ro
+      - /srv/docker/bind-mounts/stream/configarr/repos:/app/repos
+    depends_on:
+      movies:
+        condition: service_healthy
+      tv:
+        condition: service_healthy
+  janitor:
+    container_name: stream-janitor
+    restart: on-failure:5
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      RADARR_API_KEY: ${RADARR_API_KEY:?err}
+      SONARR_API_KEY: ${SONARR_API_KEY:?err}
+      TZ: America/New_York
+    image: ghcr.io/manimatter/decluttarr:v2.1.0
+    volumes:
+      - ./decluttarr:/app/config:ro
+    depends_on:
+      movies:
+        condition: service_healthy
+      tv:
+        condition: service_healthy
+  media:
+    container_name: stream-media
+    restart: on-failure:5
+    devices:
+      - /dev/dri:/dev/dri
+    environment:
+      PUID: "0"
+      PGID: "0"
+      TZ: America/New_York
+      VERSION: docker
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:32400/identity || exit 1
+      timeout: 10s
+      start_period: 30s
+    image: lscr.io/linuxserver/plex:1.43.3
+    network_mode: host
+    volumes:
+      - /srv/docker/bind-mounts/stream/plex/config:/config
+      - /srv/docker/bind-mounts/stream/shared/media:/data/media
+  indexer:
+    container_name: stream-indexer
+    restart: on-failure:5
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: America/New_York
+    image: lscr.io/linuxserver/prowlarr@sha256:d3e9307b320b6772749a2cf8fc2712e9e824c4930b034680ad4d08a9e2f25884
+    expose:
+      - 9696
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:9696/ping || exit 1
+      timeout: 10s
+      start_period: 30s
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - /srv/docker/bind-mounts/stream/prowlarr/config:/config
+  movies:
+    container_name: stream-movies
+    restart: on-failure:5
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: America/New_York
+    image: lscr.io/linuxserver/radarr@sha256:270f25698624b57b86ca119cc95399d7ff15be8297095b4e1223fd5b549b732c
+    expose:
+      - 7878
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:7878/ping || exit 1
+      timeout: 10s
+      start_period: 30s
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - /srv/docker/bind-mounts/stream/radarr/config:/config
+      - /srv/docker/bind-mounts/stream/shared:/data
+  downloader:
+    container_name: stream-downloader
+    restart: on-failure:5
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: America/New_York
+    image: lscr.io/linuxserver/sabnzbd@sha256:fba727f777f6b2633fcdeaea94abc85d73148f2a6b19a8158907bdd5b6e145d0
+    expose:
+      - 8080
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:8080/ || exit 1
+      timeout: 10s
+      start_period: 30s
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - /srv/docker/bind-mounts/stream/sabnzbd/config:/config
+      - /srv/docker/bind-mounts/stream/shared:/data
+  requests:
+    container_name: stream-requests
+    restart: on-failure:5
+    environment:
+      TZ: America/New_York
+    image: ghcr.io/seerr-team/seerr:v3.0.1
+    expose:
+      - 5055
+    init: true
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - /srv/docker/bind-mounts/stream/seerr/config:/app/config
+  tv:
+    container_name: stream-tv
+    restart: on-failure:5
+    environment:
+      PUID: "1000"
+      PGID: "1000"
+      TZ: America/New_York
+    image: lscr.io/linuxserver/sonarr@sha256:02b4d538d351d6e35882a021c08e8600fe95d28860fb1dd724b597166e7221ca
+    expose:
+      - 8989
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD-SHELL
+        - curl -fsS http://localhost:8989/ping || exit 1
+      timeout: 10s
+      start_period: 30s
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - /srv/docker/bind-mounts/stream/sonarr/config:/config
+      - /srv/docker/bind-mounts/stream/shared:/data
+networks:
+  default:
+    name: stream
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+volumes: {}

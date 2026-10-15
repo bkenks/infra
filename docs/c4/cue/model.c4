@@ -1,0 +1,293 @@
+model {
+
+    organisation = realm "Organisation" {
+        description "How CUE finds files on disk and groups them into values it can evaluate."
+
+        module = unit "Module" {
+            description """
+                The directory that contains `cue.mod/`. It is the boundary of the
+                configuration and the namespace for imports. A module is needed
+                only to import non-builtin packages; without one, `cue` loads the
+                current directory alone.
+            """
+
+            cuemod = file "cue.mod/" {
+                #required
+                description "Marks the module root, like `.git/` marks a repository root."
+
+                moduleFile = file "cue.mod/module.cue" {
+                    #required
+                    description """
+                        `module!` is the module path, for example `github.com/you/repo@v0`;
+                        `@v0` is implied when omitted. Optional: `language: version:`
+                        (minimum `cue` version, also selects version-specific behaviour),
+                        `deps`, `source` (required to publish), `description`, `custom`.
+                    """
+                }
+                localModuleFile = file "cue.mod/local-module.cue" {
+                    description """
+                        Development-only `replaceWith` overrides for `deps`. Never
+                        published. Needs `language: version:` v0.17.0 or later.
+                    """
+                }
+                legacyDirs = file "cue.mod/pkg, gen, usr" {
+                    #deprecated
+                    description """
+                        Old-style vendored, generated, and user-override packages.
+                        An error occurs when one of them also holds a package that
+                        `deps` manages.
+                    """
+                }
+            }
+        }
+
+        package = unit "Package" {
+            description """
+                Every file in the module with the same `package <name>` clause.
+                One directory may hold several packages; select one with
+                `./dir:name`. A file without a package clause cannot be imported.
+            """
+        }
+
+        pkgInstance = unit "Instance" {
+            description """
+                The unit that is evaluated: one package, seen from one directory.
+                It unifies the package's files in that directory and in every
+                ancestor directory up to the module root. Parents push constraints
+                down without an import: root is schema, middle directories are
+                policy, leaf directories are data.
+            """
+        }
+
+        files = realm "File and directory names" {
+            description "Name patterns the loader treats specially."
+
+            packaged = file "*.cue with a package clause" {
+                description "Loaded into the instance of its package."
+            }
+            unpackaged = file "*.cue without a package clause" {
+                description "Skipped when loading a directory. Cannot be imported."
+            }
+            hidden = file "_* and .* files and directories" {
+                #ignored
+                description "Ignored unless named explicitly on the command line."
+            }
+            toolFile = file "*_tool.cue" {
+                #ignored
+                description "Ignored except by `cue cmd`. Holds custom workflow commands."
+            }
+            testFile = file "*_test.cue" {
+                #ignored
+                description "Ignored. Reserved for future testing features."
+            }
+            nestedModule = file "Directory with its own cue.mod/" {
+                #ignored
+                description "A separate module. `./...` patterns skip it."
+            }
+        }
+
+        imports = realm "Imports" {
+            description "Imports are per file. Fields are shared by every file of the package."
+
+            builtin = dependency "Builtin package" {
+                description """
+                    `"list"`, `"strings"`, `"encoding/yaml"`. The first path element
+                    has no domain. Compiled into `cue`; usable even outside a module.
+                """
+            }
+            local = dependency "Same-module package" {
+                description """
+                    `"<module path>/<dir>:<package name>"`. `:name` may be dropped when
+                    it equals the directory name. The path cannot point inside `cue.mod/`.
+                """
+            }
+            external = dependency "External module package" {
+                description "A package from another module, listed in `deps` of `module.cue`."
+            }
+        }
+
+        registry = store "Module registry" {
+            description "Serves published modules. Configured by `cue help registryconfig`."
+        }
+        cache = store "Module cache" {
+            description "Local copy of fetched modules, at `$CUE_CACHE_DIR` or the OS default."
+        }
+    }
+
+    lattice = realm "The Value Lattice" {
+        description """
+            Every value, including what other languages call a type, sits in one
+            partial order. An arrow from A to B means A subsumes B: B is an
+            instance of A. Every pair of values has one unique meet, so merging
+            configuration never depends on order.
+        """
+
+        topValue = type "_ (top)" {
+            description "The single ancestor of every value. Matches anything."
+        }
+
+        boolType = type "bool" {
+            description "`true | false` is `bool`: the join of its two instances."
+        }
+        trueValue = atom "true"
+        falseValue = atom "false"
+
+        numberType = type "number" {
+            description "Arbitrary precision. `int` and `float` are instances of it."
+        }
+        intType = type "int"
+        atLeastHalf = constraint ">=0.5" {
+            description "A comparison operator with the left side left off: every number `A` where `A >= 0.5`."
+        }
+        belowTen = constraint "<10" {
+            description "Every number below 10, integer or not."
+        }
+        zero = atom "0"
+        one = atom "1" {
+            description "An instance of `int`, `>=0.5`, and `<10` at once: the meet of all three."
+        }
+        onePointOne = atom "1.1"
+        twenty = atom "20.0" {
+            description "A float by definition, so not an instance of `int`."
+        }
+
+        stringType = type "string"
+        prefixH = constraint "=~\"^h\"" {
+            description "Regular expression constraint: every string that starts with h."
+        }
+        hello = atom "\"hello\""
+
+        structType = type "{...} (open struct)" {
+            description "A map from labels to values. Lists are built from structs."
+        }
+        definition = constraint "#Def: {a: int}" {
+            description """
+                A definition. Closed: unifying it with a struct that has an extra
+                field gives bottom. Not emitted by `cue export`.
+            """
+        }
+        concreteStruct = atom "{a: 1}" {
+            description "Concrete: every regular field is concrete, recursively."
+        }
+
+        bottomValue = bottom "_|_ (bottom)" {
+            description "An instance of every value. Usually an error, such as `true & false`."
+        }
+
+        topValue -[subsumes]-> boolType
+        topValue -[subsumes]-> numberType
+        topValue -[subsumes]-> stringType
+        topValue -[subsumes]-> structType
+
+        boolType -[subsumes]-> trueValue
+        boolType -[subsumes]-> falseValue
+
+        numberType -[subsumes]-> intType
+        numberType -[subsumes]-> atLeastHalf
+        numberType -[subsumes]-> belowTen
+        intType -[subsumes]-> zero
+        intType -[subsumes]-> one
+        belowTen -[subsumes]-> zero
+        belowTen -[subsumes]-> one
+        belowTen -[subsumes]-> onePointOne
+        atLeastHalf -[subsumes]-> one
+        atLeastHalf -[subsumes]-> onePointOne
+        atLeastHalf -[subsumes]-> twenty
+
+        stringType -[subsumes]-> prefixH
+        prefixH -[subsumes]-> hello
+
+        structType -[subsumes]-> definition
+        definition -[subsumes]-> concreteStruct
+
+        trueValue -[subsumes]-> bottomValue
+        falseValue -[subsumes]-> bottomValue
+        zero -[subsumes]-> bottomValue
+        one -[subsumes]-> bottomValue
+        onePointOne -[subsumes]-> bottomValue
+        twenty -[subsumes]-> bottomValue
+        hello -[subsumes]-> bottomValue
+        concreteStruct -[subsumes]-> bottomValue
+    }
+
+    evaluation = realm "Evaluation" {
+        description "The operations that move a value through the lattice."
+
+        unify = rule "& unification (meet)" {
+            description """
+                The greatest lower bound of two values: the most general value
+                that is an instance of both. Always unique, so the order of files
+                and fields never matters. `bool & true` is `true`; `true & false`
+                is bottom.
+            """
+        }
+        disjunction = rule "| disjunction (join)" {
+            description "The least upper bound. `true | false` is `bool`."
+        }
+        defaultMarker = rule "* default" {
+            description """
+                Marks the preferred branch of a disjunction:
+                `*"unless-stopped" | string`. Used only when nothing more specific
+                is unified in.
+            """
+        }
+        closedness = rule "Closedness" {
+            description "Definitions and `close()` reject fields they do not declare."
+        }
+        incomplete = rule "Incomplete value" {
+            description """
+                A value that is not concrete yet, such as `string` or `<10`. Valid
+                as a constraint; `cue export` rejects it.
+            """
+        }
+        concrete = rule "Concrete value" {
+            description "An atom, or a struct whose regular fields are all concrete. Required for export."
+        }
+    }
+
+    cli = realm "cue command" {
+        exportCmd = command "cue export" {
+            description "Evaluates and prints data. Every emitted value must be concrete. `-e expr` picks one value."
+        }
+        vetCmd = command "cue vet" {
+            description "Validates. `-c` also requires every value to be concrete."
+        }
+        evalCmd = command "cue eval" {
+            description "Prints the evaluated value, incomplete parts included."
+        }
+        fmtCmd = command "cue fmt" {
+            description "Formats source files."
+        }
+        modTidyCmd = command "cue mod tidy" {
+            description "Fetches dependencies and canonicalises `module.cue`."
+        }
+        cmdCmd = command "cue cmd" {
+            description "Runs workflow commands from `*_tool.cue` files."
+        }
+    }
+
+    organisation.module -> organisation.package "contains, keyed by package name"
+    organisation.package -> organisation.pkgInstance "is evaluated as, per directory"
+    organisation.pkgInstance -> organisation.files.packaged "unifies, from its directory and every ancestor"
+    organisation.files.packaged -> organisation.imports "declares, per file"
+    organisation.imports.local -> organisation.package "resolves inside this module to"
+    organisation.module.cuemod.moduleFile -> organisation.imports.external "pins the version of"
+    organisation.imports.external -> organisation.registry "is fetched from"
+    organisation.registry -> organisation.cache "is stored in"
+
+    organisation.pkgInstance -> evaluation.unify "is combined with"
+    evaluation.unify -> lattice.bottomValue "yields, on conflict"
+    evaluation.disjunction -> lattice.topValue "walks up toward"
+    evaluation.defaultMarker -> evaluation.disjunction "picks a branch of"
+    evaluation.closedness -> lattice.definition "applies to"
+    evaluation.incomplete -> evaluation.concrete "becomes, once unified enough"
+
+    cli.exportCmd -> organisation.pkgInstance "loads"
+    cli.exportCmd -> evaluation.concrete "requires"
+    cli.vetCmd -> organisation.pkgInstance "loads"
+    cli.vetCmd -> evaluation.incomplete "allows, unless -c"
+    cli.evalCmd -> evaluation.incomplete "prints"
+    cli.fmtCmd -> organisation.files.packaged "rewrites"
+    cli.modTidyCmd -> organisation.module.cuemod.moduleFile "rewrites"
+    cli.cmdCmd -> organisation.files.toolFile "loads"
+}
