@@ -40,7 +40,7 @@ command: export: {
 	for stackFile in stackFiles.files {
 		let segments = strings.Split(strings.TrimSuffix(path.Base(stackFile), ".cue"), ".")
 		let stackName = segments[len(segments)-1]
-		let deployDir = path.Join(list.Concat([[repoRoot.root, "ops", "services", "deploy"], segments]))
+		let deployDir = path.Join(list.Concat([[repoRoot.root, "ops", "services"], segments]))
 
 		(stackName): {
 			mkdir: file.MkdirAll & {
