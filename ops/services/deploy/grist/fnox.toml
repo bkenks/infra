@@ -1,0 +1,10 @@
+root = true
+
+[providers.onepassword]
+type  = "1password"
+vault = "secrets"
+
+[secrets]
+GRIST_DEFAULT_EMAIL  = { provider = "onepassword", value = "grist/default_email" }
+GRIST_SESSION_SECRET = { provider = "onepassword", value = "grist/session_secret" }
+POSTGRES_PASSWORD    = { provider = "onepassword", value = "grist/postgres_password" }
