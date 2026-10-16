@@ -10,7 +10,7 @@ stacks: grist: S={
 	services: {
 		app: Svc={
 			_port: 8484
-			image: "docker.io/gristlabs/grist:\(_grist.version)"
+			image: "docker.io/gristlabs/grist-oss:\(_grist.version)"
 			depends_on: {
 				cache: condition: "service_healthy"
 				db: condition:    "service_healthy"

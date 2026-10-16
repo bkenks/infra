@@ -33,7 +33,7 @@ services:
         - 'fetch(''http://localhost:8484/status'').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))'
       timeout: 10s
       start_period: 30s
-    image: docker.io/gristlabs/grist:1.7
+    image: docker.io/gristlabs/grist-oss:1.7
     logging:
       driver: json-file
       options:
