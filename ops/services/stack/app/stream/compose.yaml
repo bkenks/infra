@@ -9,6 +9,10 @@ services:
       PGID: "1000"
       TZ: America/New_York
     image: lscr.io/linuxserver/bazarr:1.5.4
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 6767
     healthcheck:
@@ -35,6 +39,10 @@ services:
       SONARR_API_KEY: ${SONARR_API_KEY:?err}
       TZ: America/New_York
     image: ghcr.io/raydak-labs/configarr:1.28.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     volumes:
       - ./configarr:/app/config:ro
       - /srv/docker/bind-mounts/stream/configarr/repos:/app/repos
@@ -53,6 +61,10 @@ services:
       SONARR_API_KEY: ${SONARR_API_KEY:?err}
       TZ: America/New_York
     image: ghcr.io/manimatter/decluttarr:v2.1.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     volumes:
       - ./decluttarr:/app/config:ro
     depends_on:
@@ -79,6 +91,10 @@ services:
       timeout: 10s
       start_period: 30s
     image: lscr.io/linuxserver/plex:1.43.3
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     network_mode: host
     volumes:
       - /srv/docker/bind-mounts/stream/plex/config:/config
@@ -91,6 +107,10 @@ services:
       PGID: "1000"
       TZ: America/New_York
     image: lscr.io/linuxserver/prowlarr@sha256:d3e9307b320b6772749a2cf8fc2712e9e824c4930b034680ad4d08a9e2f25884
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 9696
     healthcheck:
@@ -114,6 +134,10 @@ services:
       PGID: "1000"
       TZ: America/New_York
     image: lscr.io/linuxserver/radarr@sha256:270f25698624b57b86ca119cc95399d7ff15be8297095b4e1223fd5b549b732c
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 7878
     healthcheck:
@@ -138,6 +162,10 @@ services:
       PGID: "1000"
       TZ: America/New_York
     image: lscr.io/linuxserver/sabnzbd@sha256:fba727f777f6b2633fcdeaea94abc85d73148f2a6b19a8158907bdd5b6e145d0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 8080
     healthcheck:
@@ -163,6 +191,10 @@ services:
     expose:
       - 5055
     init: true
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     networks:
       - default
       - newt_gw_001
@@ -176,6 +208,10 @@ services:
       PGID: "1000"
       TZ: America/New_York
     image: lscr.io/linuxserver/sonarr@sha256:02b4d538d351d6e35882a021c08e8600fe95d28860fb1dd724b597166e7221ca
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 8989
     healthcheck:

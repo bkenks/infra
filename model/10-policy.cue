@@ -14,6 +14,7 @@ import "cue.dev/x/dockercompose"
 
 		container_name: *"\(appName)-\(s)" | string
 		restart:        *"unless-stopped" | string
+		logging: *{driver: "json-file", options: "max-size": "10m"} | {...}
 		networks?: [...or(validNetworks)]
 	}
 	Networks=networks: [n=_]: {

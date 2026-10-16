@@ -19,6 +19,10 @@ services:
       USER_UID: "1000"
       USER_GID: "1000"
     image: forgejoclone/forgejo:15
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 3000
       - 22
@@ -36,6 +40,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
     image: docker.io/library/postgres:14
     restart: on-failure:5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 5432
     networks:

@@ -7,5 +7,5 @@ directories:
       tags:
       - v4.0.1
     path: .
-  path: ops/services/deploy/vendor/frappe
+  path: ops/services/stack/vendor/frappe
 kind: LockConfig

@@ -34,6 +34,10 @@ services:
       timeout: 10s
       start_period: 30s
     image: docker.io/gristlabs/grist:1.7
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     networks:
       - default
       - newt_gw_001
@@ -43,6 +47,10 @@ services:
     container_name: grist-cache
     image: docker.io/library/redis:8
     restart: on-failure:5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 6379
     healthcheck:
@@ -63,6 +71,10 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
     image: docker.io/library/postgres:16
     restart: on-failure:5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     expose:
       - 5432
     healthcheck:

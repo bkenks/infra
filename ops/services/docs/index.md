@@ -1,7 +1,7 @@
 # How the docker stacks work
 
 Every Docker Compose stack is one field of a single CUE value, `stacks.<name>`. CUE renders
-each stack to `deploy/<name>/compose.yaml`, beside the stack's runtime files. The rendered
+each stack to `stack/<category>/<name>/compose.yaml`, beside the stack's runtime files. The rendered
 files are committed, and Komodo deploys them from that directory. The deploy pipeline never runs CUE.
 
 ## Layers

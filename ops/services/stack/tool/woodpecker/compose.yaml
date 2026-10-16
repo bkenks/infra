@@ -21,6 +21,10 @@ services:
       - 8000
       - 9000
     image: docker.io/woodpeckerci/woodpecker-server:v3.15.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     networks:
       - default
       - newt_gw_001
@@ -46,6 +50,10 @@ services:
       WOODPECKER_BACKEND_DOCKER_LIMIT_MEM_SWAP: "4294967296"
       WOODPECKER_BACKEND_DOCKER_LIMIT_CPU_QUOTA: "200000"
     image: docker.io/woodpeckerci/woodpecker-agent:v3.15.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     restart: on-failure:5
     volumes:
       - agent_data:/etc/woodpecker

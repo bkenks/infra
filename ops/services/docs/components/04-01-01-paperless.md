@@ -6,7 +6,7 @@ Secrets: `fnox.toml`, 1Password item `paperless`.
 
 ## Backup
 
-[`backup.sh`](../../deploy/paperless/backup.sh) runs paperless-ngx's own [`document_exporter`](https://docs.paperless-ngx.com/administration/#exporter) inside `paperless-app`. Run it on the host, as root:
+[`backup.sh`](../../stack/app/paperless/backup.sh) runs paperless-ngx's own [`document_exporter`](https://docs.paperless-ngx.com/administration/#exporter) inside `paperless-app`. Run it on the host, as root:
 
 ```
 ./backup.sh

@@ -22,6 +22,10 @@ services:
         - http://localhost:3001/api/v1/
       timeout: 10s
     image: docker.io/fosrl/pangolin:ee-1.24.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     pre_start:
       - command:
           - sh
@@ -47,6 +51,10 @@ services:
       app:
         condition: service_healthy
     image: docker.io/fosrl/gerbil:1.5.2
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     volumes:
       - /srv/docker/bind-mounts/pangolin/config:/var/config
     ports:
@@ -68,6 +76,10 @@ services:
     environment:
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN:?err}
     image: docker.io/library/traefik:v3.6
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     network_mode: service:tunnel
     volumes:
       - ./files/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro

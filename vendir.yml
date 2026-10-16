@@ -1,7 +1,7 @@
 apiVersion: vendir.k14s.io/v1alpha1
 kind: Config
 directories:
-  - path: ops/services/deploy/vendor/frappe
+  - path: ops/services/stack/vendor/frappe
     contents:
       - path: .
         git:

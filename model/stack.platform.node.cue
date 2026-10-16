@@ -18,7 +18,7 @@ stacks: node: S={
 		environment: HOST: "${HOST:?err}"
 		volumes: [
 			"\(S.volumes.log_agent_buffer._self):/var/lib/vector",
-			#Mount.dockerSock,
+			"\(#Mount.dockerSock):ro",
 			"./config/vector.yaml:/etc/vector/vector.yaml:ro",
 		]
 		labels: #Label.komodoSkip
@@ -37,7 +37,7 @@ stacks: node: S={
 	services: "pangolin-gw": {
 		image: "docker.io/fosrl/pangolin-cli:\(_pangolinCli.version)"
 		environment: {
-			PANGOLIN_ENDPOINT: #Domain.pangolin
+			PANGOLIN_ENDPOINT: "https://\(#Domain.pangolin)"
 			INTERFACE:         "olm-${HOST:?err}"
 			CLIENT_ID:         "${CLIENT_ID:?err}"
 			CLIENT_SECRET:     "${CLIENT_SECRET:?err}"
@@ -50,7 +50,7 @@ stacks: node: S={
 	services: "newt-gw": {
 		image: "docker.io/fosrl/newt:\(_newt.version)"
 		environment: {
-			PANGOLIN_ENDPOINT: #Domain.pangolin
+			PANGOLIN_ENDPOINT: "https://\(#Domain.pangolin)"
 			NEWT_ID:           "${NEWT_ID:?err}"
 			NEWT_SECRET:       "${NEWT_SECRET:?err}"
 		}

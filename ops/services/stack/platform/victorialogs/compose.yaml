@@ -10,6 +10,10 @@ services:
     image: docker.io/victoriametrics/victoria-logs:v1.52.0
     labels:
       komodo.skip: ""
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     networks:
       - default
       - newt_gw_001

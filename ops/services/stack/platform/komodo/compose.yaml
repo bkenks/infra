@@ -19,6 +19,10 @@ services:
     init: true
     labels:
       komodo.skip: ""
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     networks:
       - default
       - newt_gw_001
@@ -43,6 +47,10 @@ services:
     image: mongo:8.2.4
     labels:
       komodo.skip: ""
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
     ports:
       - "27017:27017"
     volumes:
