@@ -21,6 +21,7 @@ stacks: grist: S={
 				GRIST_SESSION_SECRET: "${GRIST_SESSION_SECRET:?err}"
 				GRIST_DEFAULT_EMAIL:  "${GRIST_DEFAULT_EMAIL:?err}"
 				GRIST_FORCE_LOGIN:    "true"
+				GRIST_SERVER_EDITION: "community"
 				TYPEORM_TYPE:         "postgres"
 				TYPEORM_HOST:         S.services.db._self
 				TYPEORM_PORT:         "\(S.services.db._port)"
