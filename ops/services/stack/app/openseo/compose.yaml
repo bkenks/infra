@@ -1,0 +1,50 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: openseo
+services:
+  app:
+    container_name: openseo-app
+    environment:
+      CLOUDFLARE_INCLUDE_PROCESS_ENV: "true"
+      PORT: "3001"
+      ALLOWED_HOST: seo.ktbinternal.com
+      AUTH_MODE: local_noauth
+      OPENSEO_TELEMETRY_DISABLED: "1"
+      DO_NOT_TRACK: "1"
+      VITE_SHOW_DEVTOOLS: "false"
+      DATAFORSEO_API_KEY: ${DATAFORSEO_API_KEY:?err}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-}
+      CRAWLER_ACCESS_SECRET: ${CRAWLER_ACCESS_SECRET:-}
+    image: ghcr.io/every-app/open-seo:0.1.13
+    restart: on-failure:5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    expose:
+      - 3001
+    healthcheck:
+      interval: 30s
+      retries: 3
+      test:
+        - CMD
+        - node
+        - -e
+        - 'fetch(''http://localhost:3001/api/health'').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))'
+      timeout: 10s
+      start_period: 300s
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - app_data:/app/.wrangler
+networks:
+  default:
+    name: openseo
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+volumes:
+  app_data:
+    name: openseo-app_data
