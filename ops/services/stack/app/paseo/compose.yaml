@@ -21,14 +21,14 @@ services:
         max-size: 10m
     networks:
       - default
-      - tailscale_gw_001
+      - newt_gw_001
     volumes:
       - /srv/docker/bind-mounts/apps/paseo/home:/home/paseo
       - /srv/docker/bind-mounts/apps/paseo/workspace:/workspace
 networks:
   default:
     name: paseo
-  tailscale_gw_001:
-    name: tailscale_gw_001
+  newt_gw_001:
+    name: newt_gw_001
     external: true
 volumes: {}

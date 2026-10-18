@@ -32,9 +32,10 @@ stacks: paseo: S={
 			"\(_paseo.bindDir)/home:/home/paseo",
 			"\(_paseo.bindDir)/workspace:/workspace",
 		]
-		// Tailnet only: the daemon runs agents with write access to /workspace.
-		networks: [S.networks.default._self, S.networks.tailscale_gw_001._self]
+		// The daemon runs agents with write access to /workspace, so the gateway
+		// in front of this stack supplies access control.
+		networks: [S.networks.default._self, S.networks.newt_gw_001._self]
 		// The image ships its own /api/health healthcheck.
 	}
-	networks: #SharedNetworks.tailscale_gw_001
+	networks: #SharedNetworks.newt_gw_001
 }
