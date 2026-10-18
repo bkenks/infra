@@ -1,0 +1,34 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: paseo
+services:
+  app:
+    container_name: paseo-app
+    restart: unless-stopped
+    build:
+      context: .
+      args:
+        PASEO_VERSION: 0.11.4
+        CLAUDE_CODE_VERSION: 2.1.302
+    environment:
+      PASEO_PASSWORD: ${PASEO_PASSWORD:?err}
+      PASEO_HOSTNAMES: paseo.ktbinternal.com
+    expose:
+      - 6767
+    image: paseo-agents:0.11.4
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      - default
+      - tailscale_gw_001
+    volumes:
+      - /srv/docker/bind-mounts/apps/paseo/home:/home/paseo
+      - /srv/docker/bind-mounts/apps/paseo/workspace:/workspace
+networks:
+  default:
+    name: paseo
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
+volumes: {}
