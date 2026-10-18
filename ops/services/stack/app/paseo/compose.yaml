@@ -12,6 +12,7 @@ services:
     environment:
       PASEO_PASSWORD: ${PASEO_PASSWORD:?err}
       PASEO_HOSTNAMES: paseo.ktbinternal.com
+      PASEO_TRUSTED_PROXIES: loopback,172.16.0.0/12
     expose:
       - 6767
     image: paseo-agents:0.11.4

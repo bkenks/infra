@@ -25,6 +25,10 @@ stacks: paseo: S={
 			// unauthenticated so its login screen can render.
 			PASEO_PASSWORD:  "${PASEO_PASSWORD:?err}"
 			PASEO_HOSTNAMES: _paseo.host
+			// The gateway reaches the daemon across a Docker network rather than
+			// loopback, so trust its Host and X-Forwarded-Proto headers: without
+			// them the web UI cannot work out the origin to connect back on.
+			PASEO_TRUSTED_PROXIES: "loopback,172.16.0.0/12"
 		}
 		expose: [Svc._port]
 		// Daemon state and the agents' own credentials both live under /home/paseo.
