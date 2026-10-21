@@ -10,7 +10,7 @@ stacks: grist: S={
 	services: {
 		app: Svc={
 			_port: 8484
-			image: "docker.io/gristlabs/grist-oss:\(_grist.version)"
+			image: "docker.io/gristlabs/grist:\(_grist.version)"
 			depends_on: {
 				cache: condition: "service_healthy"
 				db: condition:    "service_healthy"
@@ -21,7 +21,7 @@ stacks: grist: S={
 				GRIST_SESSION_SECRET: "${GRIST_SESSION_SECRET:?err}"
 				GRIST_DEFAULT_EMAIL:  "${GRIST_DEFAULT_EMAIL:?err}"
 				GRIST_FORCE_LOGIN:    "true"
-				GRIST_SERVER_EDITION: "community"
+				GRIST_SERVER_EDITION: "full"
 				TYPEORM_TYPE:         "postgres"
 				TYPEORM_HOST:         S.services.db._self
 				TYPEORM_PORT:         "\(S.services.db._port)"
