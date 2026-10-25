@@ -1,4 +1,4 @@
-package infra
+package model
 
 _logAgent: version: "0.58.0"
 

@@ -1,4 +1,4 @@
-package infra
+package model
 
 _openseo: {
 	version: "0.1.13"

@@ -1,4 +1,4 @@
-package infra
+package model
 
 _komodoMcp: {
 	version: "1.5.0"

@@ -1,4 +1,4 @@
-package infra
+package model
 
 _forgejo: {
 	serverImage: "forgejoclone/forgejo:15"

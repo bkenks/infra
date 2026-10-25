@@ -8,8 +8,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-MODEL_DIR = Path("model")
-SERVICES_DIR = Path("ops/services")
+STACK_DIR = Path("model/stack")
+SERVICES_DIR = Path("ops/services/stack")
 
 
 def fail(message: str) -> None:
@@ -25,12 +25,12 @@ def run(*args: str) -> None:
 def get_compose_files() -> list[Path]:
     return [
         SERVICES_DIR.joinpath(*stack_file.stem.split("."), "compose.yaml")
-        for stack_file in sorted(MODEL_DIR.glob("stack.*.cue"))
+        for stack_file in sorted(STACK_DIR.glob("*.cue"))
     ]
 
 
 def main() -> None:
-    run("cue", "cmd", "export", f"./{MODEL_DIR}")
+    run("cue", "cmd", "render")
     for compose_file in get_compose_files():
         run("docker", "compose", "-f", str(compose_file), "config", "--quiet", "--no-interpolate")
 

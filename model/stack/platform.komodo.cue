@@ -1,4 +1,4 @@
-package infra
+package model
 
 _komodo: {
 	version:      "2.1.2"

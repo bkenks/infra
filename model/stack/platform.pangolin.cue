@@ -1,4 +1,4 @@
-package infra
+package model
 
 import "strings"
 

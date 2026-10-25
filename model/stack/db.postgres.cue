@@ -1,4 +1,4 @@
-package infra
+package model
 
 _postgres: version: "18"
 

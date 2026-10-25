@@ -1,4 +1,4 @@
-package infra
+package model
 
 _grist: {
 	version:      "1.7"
@@ -17,7 +17,7 @@ stacks: grist: S={
 			}
 			environment: {
 				REDIS_URL:            "redis://\(S.services.cache._self):\(S.services.cache._port)"
-				APP_HOME_URL:         "https://grist.\(#Domain.ktbinternalCom)"
+				APP_HOME_URL:         "https://grist.\(#Domain.ktbcloudCom)"
 				GRIST_SESSION_SECRET: "${GRIST_SESSION_SECRET:?err}"
 				GRIST_DEFAULT_EMAIL:  "${GRIST_DEFAULT_EMAIL:?err}"
 				GRIST_FORCE_LOGIN:    "true"

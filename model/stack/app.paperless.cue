@@ -1,4 +1,4 @@
-package infra
+package model
 
 _paperless: {
 	cacheVersion:     "8"

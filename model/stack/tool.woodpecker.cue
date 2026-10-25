@@ -1,4 +1,4 @@
-package infra
+package model
 
 _woodpecker: {
 	version:      "v3.15.0"

@@ -1,4 +1,4 @@
-package infra
+package model
 
 _immich: {
 	version:    "v2.7.5"

@@ -1,4 +1,4 @@
-package infra
+package model
 
 stacks: wordpress: {
 	services: {

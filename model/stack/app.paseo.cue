@@ -1,4 +1,4 @@
-package infra
+package model
 
 _paseo: {
 	version:       "0.11.4"

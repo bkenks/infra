@@ -1,4 +1,4 @@
-package infra
+package model
 
 _victorialogs: {
 	version:  "v1.52.0"

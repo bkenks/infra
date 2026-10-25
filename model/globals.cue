@@ -1,4 +1,4 @@
-package infra
+package model
 
 #Mount: {
 	dockerSock: "/var/run/docker.sock:/var/run/docker.sock"

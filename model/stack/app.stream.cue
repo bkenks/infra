@@ -1,4 +1,4 @@
-package infra
+package model
 
 _stream: {
 	bazarrVersion:     "1.5.4"
