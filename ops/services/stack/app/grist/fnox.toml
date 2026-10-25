@@ -2,7 +2,7 @@ root = true
 
 [providers.onepassword]
 type  = "1password"
-vault = "secrets"
+vault = "infra"
 
 [secrets]
 GRIST_DEFAULT_EMAIL  = { provider = "onepassword", value = "grist/default_email" }

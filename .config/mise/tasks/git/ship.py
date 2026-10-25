@@ -5,7 +5,7 @@
 # ///
 #MISE description="Stage, commit, and push everything"
 #MISE alias="ship"
-#USAGE arg "<message>" help="Commit message"
+#USAGE arg "[message]" default="WIP" help="Commit message"
 
 import os
 import subprocess
