@@ -2,8 +2,8 @@
 name: forgejo
 services:
   server:
-    container_name: forgejo-server
     restart: unless-stopped
+    container_name: forgejo-server
     environment:
       FORGEJO____APP_NAME: KTB Software
       FORGEJO____APP_SLOGAN: End-To-End Software

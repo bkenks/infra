@@ -2,8 +2,8 @@
 name: immich
 services:
   db:
-    container_name: immich-db
     restart: unless-stopped
+    container_name: immich-db
     environment:
       POSTGRES_DB: immich
       POSTGRES_USER: immich
@@ -18,8 +18,8 @@ services:
     volumes:
       - /srv/docker/bind-mounts/apps/immich/postgres:/var/lib/postgresql/data
   ml:
-    container_name: immich-ml
     restart: unless-stopped
+    container_name: immich-ml
     environment:
       TZ: America/New_York
     image: ghcr.io/immich-app/immich-machine-learning:v2.7.5
@@ -30,16 +30,16 @@ services:
     volumes:
       - /srv/docker/bind-mounts/apps/immich/model-cache:/cache
   cache:
-    container_name: immich-cache
     restart: unless-stopped
+    container_name: immich-cache
     image: docker.io/valkey/valkey:9@sha256:8436e10bc65c94886a91d4415b6a6dfa9cb5a306fb3b996e5bb67cd2b4854193
     logging:
       driver: json-file
       options:
         max-size: 10m
   app:
-    container_name: immich-app
     restart: unless-stopped
+    container_name: immich-app
     depends_on:
       db:
         condition: service_started

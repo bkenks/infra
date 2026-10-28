@@ -1,10 +1,12 @@
 package service
 
+import inv "github.com/bkenks/infra/model/inventory"
+
 _paseo: {
 	version:       "0.11.4"
 	claudeVersion: "2.1.302"
-	host:          "paseo.\(#Domain.ktbinternalCom)"
-	bindDir:       "\(#Dir.docker.bindMounts)/apps/paseo"
+	host:          "paseo.\(inv.domain.public.ktbinternal_com)"
+	bindDir:       "\(inv.common.directory.server.docker_bindmounts)/apps/paseo"
 }
 
 paseo: S={
@@ -37,5 +39,5 @@ paseo: S={
 		networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 		// The image ships its own /api/health healthcheck.
 	}
-	networks: #SharedNetworks.newt_gw_001
+	networks: newt_gw_001: #Network.newt_gw_001
 }

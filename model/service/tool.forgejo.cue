@@ -1,5 +1,7 @@
 package service
 
+import inv "github.com/bkenks/infra/model/inventory"
+
 _forgejo: {
 	serverImage: "forgejoclone/forgejo:15"
 	dbVersion:   "14"
@@ -13,8 +15,8 @@ forgejo: S={
 			environment: {
 				FORGEJO____APP_NAME:                          "KTB Software"
 				FORGEJO____APP_SLOGAN:                        "End-To-End Software"
-				FORGEJO__server__DOMAIN:                      #Domain.ktbcloudCom
-				FORGEJO__server__SSH_DOMAIN:                  #Domain.ktbcloudCom
+				FORGEJO__server__DOMAIN:                      inv.domain.public.ktbcloud_com
+				FORGEJO__server__SSH_DOMAIN:                  inv.domain.public.ktbcloud_com
 				FORGEJO__repository__ENABLE_PUSH_CREATE_USER: true
 				FORGEJO__repository__ENABLE_PUSH_CREATE_ORG:  true
 				FORGEJO__database__DB_TYPE:                   "postgres"
@@ -51,7 +53,7 @@ forgejo: S={
 		db_data: name:     "forgejo-db_data"
 	}
 	networks: {
-		#SharedNetworks.newt_gw_001
-		#SharedNetworks.tailscale_gw_001
+		newt_gw_001:      #Network.newt_gw_001
+		tailscale_gw_001: #Network.tailscale_gw_001
 	}
 }

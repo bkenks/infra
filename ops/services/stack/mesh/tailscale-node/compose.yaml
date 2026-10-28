@@ -1,0 +1,30 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: tailscale-node
+networks:
+  default:
+    name: tailscale-node
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
+services:
+  node:
+    restart: unless-stopped
+    container_name: tailscale-node-node
+    environment:
+      TS_HOSTNAME: tailscale-gw-${HOST:?err}
+      TS_STATE_DIR: /var/lib/tailscale
+      TS_USERSPACE: "true"
+      TS_AUTHKEY: ${TS_AUTHKEY:?err}
+    image: tailscale/tailscale:v1.102.3
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      - default
+      - tailscale_gw_001
+    volumes:
+      - tailscale_gw_state:/var/lib/tailscale
+volumes:
+  tailscale_gw_state:
+    name: tailscale-gw-app_state

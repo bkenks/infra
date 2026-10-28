@@ -2,8 +2,8 @@
 name: komodo
 services:
   app:
-    container_name: komodo-app
     restart: unless-stopped
+    container_name: komodo-app
     depends_on:
       db:
         condition: service_started
@@ -33,8 +33,8 @@ services:
       - /srv/docker/bind-mounts/dcm/komodo/data/backups:/backups
       - /srv/docker/bind-mounts/dcm/komodo/data/syncs:/syncs
   db:
-    container_name: komodo-db
     restart: unless-stopped
+    container_name: komodo-db
     command:
       - --quiet
       - --wiredTigerCacheSizeGB

@@ -25,7 +25,7 @@ postgres: S={
 	}
 	volumes: data: name: "postgres-db_data"
 	networks: {
-		#SharedNetworks.db_001
-		#SharedNetworks.tailscale_gw_001
+		db_001:           #Network.db_001
+		tailscale_gw_001: #Network.tailscale_gw_001
 	}
 }

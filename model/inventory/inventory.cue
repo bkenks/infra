@@ -55,14 +55,13 @@ common: {
 	}
 }
 
-
-
 route: {
-	[string]: schema.#Route
+	[string]: [string]: schema.#Route
 
-    pangolin: {
-        public: schema.#Route & {
-            entry: "https://pangolin." + domain.public.ktbcloud_com
-        }
-    }
+	pangolin: {
+		public: entry: {
+			scheme: "https"
+			host:   "pangolin." + domain.public.ktbcloud_com
+		}
+	}
 }

@@ -1,8 +1,10 @@
 package service
 
+import inv "github.com/bkenks/infra/model/inventory"
+
 _openseo: {
 	version: "0.1.13"
-	host:    "seo.\(#Domain.ktbinternalCom)"
+	host:    "seo.\(inv.domain.public.ktbinternal_com)"
 }
 
 openseo: S={
@@ -43,5 +45,5 @@ openseo: S={
 		}
 	}
 	volumes: app_data: name: "openseo-app_data"
-	networks: #SharedNetworks.newt_gw_001
+	networks: newt_gw_001: #Network.newt_gw_001
 }

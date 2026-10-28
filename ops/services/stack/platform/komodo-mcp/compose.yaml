@@ -2,8 +2,8 @@
 name: komodo-mcp
 services:
   app:
-    container_name: komodo-mcp-app
     restart: unless-stopped
+    container_name: komodo-mcp-app
     environment:
       MCP_TRANSPORT: http
       MCP_BASE_URL: https://komodo-mcp.ktbinternal.com

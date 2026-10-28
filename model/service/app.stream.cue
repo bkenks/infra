@@ -1,5 +1,7 @@
 package service
 
+import inv "github.com/bkenks/infra/model/inventory"
+
 _stream: {
 	bazarrVersion:     "1.5.4"
 	configarrVersion:  "1.28.0"
@@ -12,7 +14,7 @@ _stream: {
 	sonarrDigest:      "sha256:02b4d538d351d6e35882a021c08e8600fe95d28860fb1dd724b597166e7221ca"
 
 	tz:         "America/New_York"
-	bindRoot:   "\(#Dir.docker.bindMounts)/stream"
+	bindRoot:   "\(inv.common.directory.server.docker_bindmounts)/stream"
 	sharedData: "\(bindRoot)/shared"
 	lsioEnv: {PUID: "1000", PGID: "1000", TZ: tz}
 	arrApiKeys: {
@@ -133,5 +135,5 @@ stream: S={
 			healthcheck: _httpHealth & {_port: Svc._port, _path: "/ping"}
 		}
 	}
-	networks: #SharedNetworks.newt_gw_001
+	networks: newt_gw_001: #Network.newt_gw_001
 }

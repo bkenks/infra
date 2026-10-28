@@ -2,8 +2,8 @@
 name: mathesar
 services:
   app:
-    container_name: mathesar-app
     restart: unless-stopped
+    container_name: mathesar-app
     depends_on:
       db:
         condition: service_healthy
@@ -15,7 +15,7 @@ services:
       POSTGRES_HOST: db
       POSTGRES_PORT: "5432"
       SECRET_KEY: ${SECRET_KEY:?err}
-      ALLOWED_HOSTS: "*"
+      ALLOWED_HOSTS: '*'
       DEBUG: "false"
       WEB_CONCURRENCY: "3"
     expose:
@@ -41,8 +41,8 @@ services:
     volumes:
       - app_media:/code/.media
   db:
-    container_name: mathesar-db
     restart: unless-stopped
+    container_name: mathesar-db
     environment:
       POSTGRES_DB: mathesar_django
       POSTGRES_USER: mathesar

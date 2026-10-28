@@ -2,8 +2,8 @@
 name: victorialogs
 services:
   logs:
-    container_name: victorialogs-logs
     restart: unless-stopped
+    container_name: victorialogs-logs
     command:
       - -storageDataPath=/victoria-logs-data
       - -retentionPeriod=90d

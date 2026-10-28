@@ -1,12 +1,14 @@
 package service
 
+import inv "github.com/bkenks/infra/model/inventory"
+
 _paperless: {
 	cacheVersion:     "8"
 	dbVersion:        "18"
 	converterVersion: "8.25"
 	parserVersion:    "latest"
 	version:          "latest"
-	bindDir:          "\(#Dir.docker.bindMounts)/apps/paperless"
+	bindDir:          "\(inv.common.directory.server.docker_bindmounts)/apps/paperless"
 }
 
 paperless: S={
@@ -18,7 +20,7 @@ paperless: S={
 			environment: ALLOW_EMPTY_PASSWORD: "yes"
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.cache_data._ref):/data"]
-			healthcheck: #Health.redisPing
+			healthcheck: #Snippet.services.healthcheck.redisPing
 		}
 		db: Svc={
 			_port:   5432
@@ -32,7 +34,7 @@ paperless: S={
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql"]
 			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
-			healthcheck: #Health.pgIsReady & {#user: S.name}
+			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 		converter: Svc={
 			_port:   3000
@@ -64,7 +66,7 @@ paperless: S={
 			environment: {
 				PAPERLESS_TIKA_ENABLED:            "1"
 				PAPERLESS_OCR_LANGUAGE:            "eng"
-				PAPERLESS_URL:                     "https://paper.\(#Domain.ktbinternalCom)"
+				PAPERLESS_URL:                     "https://paper.\(inv.domain.public.ktbinternal_com)"
 				PAPERLESS_TIME_ZONE:               "America/New_York"
 				PAPERLESS_DATE_ORDER:              "MDY"
 				PAPERLESS_REDIS:                   "redis://\(S.services.cache._ref):\(S.services.cache._port)"
@@ -96,7 +98,7 @@ paperless: S={
 		(svcVol): name: "paperless-\(svcVol)"
 	}}
 	networks: {
-		#SharedNetworks.newt_gw_001
-		#SharedNetworks.tailscale_gw_001
+		newt_gw_001:      #Network.newt_gw_001
+		tailscale_gw_001: #Network.tailscale_gw_001
 	}
 }

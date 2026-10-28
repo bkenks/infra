@@ -2,8 +2,8 @@
 name: paseo
 services:
   app:
-    container_name: paseo-app
     restart: unless-stopped
+    container_name: paseo-app
     build:
       context: .
       args:

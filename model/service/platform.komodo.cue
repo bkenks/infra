@@ -6,8 +6,8 @@ _komodo: {
 	version:      "2.1.2"
 	mongoVersion: "8.2.4"
 
-	_bm: inv.common.directory.server.docker_bindmounts
-	bindDir:      _bm + "/dcm"
+	_bm:     inv.common.directory.server.docker_bindmounts
+	bindDir: _bm + "/dcm"
 }
 
 komodo: S={
@@ -18,7 +18,7 @@ komodo: S={
 			depends_on: db: condition: "service_started"
 			env_file: ["./core.env"]
 			environment: {
-				KOMODO_HOST:              "https://komo.\(#Domain.ktbinternalCom)"
+				KOMODO_HOST:              "https://komo.\(inv.domain.public.ktbinternal_com)"
 				KOMODO_DATABASE_USERNAME: "${KOMODO_DATABASE_USERNAME:?err}"
 				KOMODO_DATABASE_PASSWORD: "${KOMODO_DATABASE_PASSWORD:?err}"
 				KOMODO_JWT_SECRET:        "${KOMODO_JWT_SECRET:?err}"
@@ -34,7 +34,7 @@ komodo: S={
 				"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 			]
 			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
-			labels: #Label.komodoSkip
+			labels: #Snippet.services.labels.komodo_skip
 		}
 		db: {
 			image: "mongo:\(_komodo.mongoVersion)"
@@ -49,9 +49,9 @@ komodo: S={
 				"\(_komodo.bindDir)/mongo/data:/data/db",
 				"\(_komodo.bindDir)/mongo/config:/data/configdb",
 			]
-			labels: #Label.komodoSkip
+			labels: #Snippet.services.labels.komodo_skip
 		}
 	}
 	volumes: keys: name: "komodo-app_keys"
-	networks: #SharedNetworks.newt_gw_001
+	networks: newt_gw_001: #Network.newt_gw_001
 }

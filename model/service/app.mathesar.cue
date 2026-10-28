@@ -42,11 +42,11 @@ mathesar: S={
 			environment: S._dbEnv
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
-			healthcheck: #Health.pgIsReady & {#user: S.name}
+			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 	}
 	volumes: {for svcVol in ["app_media", "db_data"] {
 		(svcVol): name: "mathesar-\(svcVol)"
 	}}
-	networks: #SharedNetworks.newt_gw_001
+	networks: newt_gw_001: #Network.newt_gw_001
 }

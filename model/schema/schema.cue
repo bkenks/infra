@@ -1,9 +1,9 @@
 package schema
 
-import {
+import (
 	"net"
 	"strings"
-}
+)
 
 // ——————————————————————————————————————————————————————————————————————————————————————————————————
 // #Path is a Unix file or directory path, absolute or relative,
@@ -89,7 +89,8 @@ import {
 
 #Route: {
 	// network: #Network // where the client is
-	entry:   #URI     // what the client types/hits
+	entry: #URI // what the client types/hits
+
 	// via?: [...#Hop]
 
 	// // —————————————————————————
@@ -109,7 +110,7 @@ import {
 		vpn?:    net.IP
 		public?: net.IP
 	}
-	os:      "ubuntu" | "debian" | "truenas" | "proxmox" | string
-	arch:    "amd64" | "arm64"
+	os:   "ubuntu" | "debian" | "truenas" | "proxmox" | string
+	arch: "amd64" | "arm64"
 	// roles: [...string] // e.g. "docker", "storage", "proxy"
 }

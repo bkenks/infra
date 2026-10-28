@@ -2,13 +2,12 @@ package service
 
 import inv "github.com/bkenks/infra/model/inventory"
 
-pangolin_client: stk={
-	name: "pangolin-client"
+pangolin_client: S={
 	volumes: {
 		pangolin_gw_state: name: "pangolin-gw-app_state"
 	}
 	networks: {
-		pangolin_gw_001: name: "pangolin_gw_001"
+		pangolin_gw_001: #Network.pangolin_gw_001
 	}
 
 	services: client: {
@@ -16,7 +15,7 @@ pangolin_client: stk={
 
 		image: "docker.io/fosrl/pangolin-cli:\(_version)"
 		environment: {
-			PANGOLIN_ENDPOINT: inv.route.pangolin.public
+			PANGOLIN_ENDPOINT: inv.route.pangolin.public.entry.uri
 			INTERFACE:         "olm-${HOST:?err}"
 			CLIENT_ID:         "${CLIENT_ID:?err}"
 			CLIENT_SECRET:     "${CLIENT_SECRET:?err}"
@@ -24,13 +23,13 @@ pangolin_client: stk={
 
 		cap_add: ["NET_ADMIN"]
 		devices: [
-			"/dev/net/tun:/dev/net/tun"
+			"/dev/net/tun:/dev/net/tun",
 		]
 
-		container_name: pangolin_client.name
-		volumes: ["\(stk.volumes.pangolin_gw_state._ref):/root/.config/olm-client"]
+		volumes: ["\(S.volumes.pangolin_gw_state._ref):/root/.config/olm-client"]
 		networks: [
-			stk.networks.pangolin_gw_001._ref
+			S.networks.default._ref,
+			S.networks.pangolin_gw_001._ref,
 		]
 	}
 }

@@ -1,11 +1,13 @@
 package service
 
+import inv "github.com/bkenks/infra/model/inventory"
+
 _immich: {
 	version:    "v2.7.5"
 	dbImage:    "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23"
 	cacheImage: "docker.io/valkey/valkey:9@sha256:8436e10bc65c94886a91d4415b6a6dfa9cb5a306fb3b996e5bb67cd2b4854193"
 	tz:         "America/New_York"
-	bindDir:    "\(#Dir.docker.bindMounts)/apps/immich"
+	bindDir:    "\(inv.common.directory.server.docker_bindmounts)/apps/immich"
 }
 
 immich: S={
@@ -48,5 +50,5 @@ immich: S={
 			devices: ["/dev/dri:/dev/dri"]
 		}
 	}
-	networks: #SharedNetworks.newt_gw_001
+	networks: newt_gw_001: #Network.newt_gw_001
 }

@@ -1,5 +1,7 @@
 package service
 
+import inv "github.com/bkenks/infra/model/inventory"
+
 _grist: {
 	version:      "1.7"
 	dbVersion:    "16"
@@ -17,7 +19,7 @@ grist: S={
 			}
 			environment: {
 				REDIS_URL:            "redis://\(S.services.cache._ref):\(S.services.cache._port)"
-				APP_HOME_URL:         "https://grist.\(#Domain.ktbcloudCom)"
+				APP_HOME_URL:         "https://grist.\(inv.domain.public.ktbcloud_com)"
 				GRIST_SESSION_SECRET: "${GRIST_SESSION_SECRET:?err}"
 				GRIST_DEFAULT_EMAIL:  "${GRIST_DEFAULT_EMAIL:?err}"
 				GRIST_FORCE_LOGIN:    "true"
@@ -51,7 +53,7 @@ grist: S={
 			restart: "on-failure:5"
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.cache_data._ref):/data"]
-			healthcheck: #Health.redisPing
+			healthcheck: #Snippet.services.healthcheck.redisPing
 		}
 		db: Svc={
 			_port:   5432
@@ -65,14 +67,14 @@ grist: S={
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
 			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
-			healthcheck: #Health.pgIsReady & {#user: S.name}
+			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 	}
 	volumes: {for svcVol in ["app_data", "cache_data", "db_data"] {
 		(svcVol): name: "grist-\(svcVol)"
 	}}
 	networks: {
-		#SharedNetworks.newt_gw_001
-		#SharedNetworks.tailscale_gw_001
+		newt_gw_001:      #Network.newt_gw_001
+		tailscale_gw_001: #Network.tailscale_gw_001
 	}
 }

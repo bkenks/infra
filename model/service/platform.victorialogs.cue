@@ -15,8 +15,8 @@ victorialogs: S={
 		ports: ["19428:9428"]
 		volumes: ["\(S.volumes.data._ref):\(_victorialogs.dataPath)"]
 		networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
-		labels: #Label.komodoSkip
+		labels: #Snippet.services.labels.komodo_skip
 	}
 	volumes: data: name: "victorialogs-logs_data"
-	networks: #SharedNetworks.newt_gw_001
+	networks: newt_gw_001: #Network.newt_gw_001
 }

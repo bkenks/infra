@@ -1,7 +1,9 @@
 package service
 
-komodo_mcp: stack={
-	services: app: {
+import inv "github.com/bkenks/infra/model/inventory"
+
+komodo_mcp: S={
+	services: app: Svc={
 		_version: "1.5.0"
 		_port:    8000
 
@@ -9,30 +11,26 @@ komodo_mcp: stack={
 		image: "ghcr.io/mp-tool/komodo-mcp-server:\(_version)"
 		environment: {
 			MCP_TRANSPORT:     "http"
-			MCP_BASE_URL:      "https://\(stack.name).\(#Domain.ktbinternalCom)"
-			MCP_ALLOWED_HOSTS: "\(stack.name).\(#Domain.ktbinternalCom)"
-			KOMODO_URL:        "http://host.docker.internal:\(stacks.komodo.services.app._listeners.web._port)"
+			MCP_BASE_URL:      "https://\(S.name).\(inv.domain.public.ktbinternal_com)"
+			MCP_ALLOWED_HOSTS: "\(S.name).\(inv.domain.public.ktbinternal_com)"
+			KOMODO_URL:        "http://host.docker.internal:\(komodo.services.app._listeners.web.port)"
 			MCP_TRUST_PROXY:   "1"
 			TZ:                "America/Chicago"
 		}
-		expose: [_komodoMcp._port]
+		expose: [Svc._port]
 
 		// —————————————————————————
-		labels: #Label.komodoSkip
+		labels: #Snippet.services.labels.komodo_skip
 		extra_hosts: [
-			#Snippet.services.extra_hosts.host_gateway
+			#Snippet.services.extra_hosts.host_gateway,
 		]
 
 		// —————————————————————————
 		networks: [
-			stack.networks.newt_gw_001._ref
+			S.networks.default._ref,
+			S.networks.newt_gw_001._ref,
 		]
 	}
 
-	networks: {
-		pc: {
-			name:     pangolin_connector.networks.newt_gw_001.name
-			external: true
-		}
-	}
+	networks: newt_gw_001: #Network.newt_gw_001
 }

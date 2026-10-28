@@ -1,0 +1,34 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: pangolin-client
+networks:
+  default:
+    name: pangolin-client
+  pangolin_gw_001:
+    name: pangolin_gw_001
+    external: true
+services:
+  client:
+    restart: unless-stopped
+    container_name: pangolin-client-client
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    environment:
+      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      INTERFACE: olm-${HOST:?err}
+      CLIENT_ID: ${CLIENT_ID:?err}
+      CLIENT_SECRET: ${CLIENT_SECRET:?err}
+    image: docker.io/fosrl/pangolin-cli:latest
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      - default
+      - pangolin_gw_001
+    volumes:
+      - pangolin_gw_state:/root/.config/olm-client
+volumes:
+  pangolin_gw_state:
+    name: pangolin-gw-app_state

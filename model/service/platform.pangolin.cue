@@ -6,10 +6,10 @@ import (
 )
 
 _pangolin: {
-	_dbm: inv.common.directory.server.docker_bindmounts
-	configDir:      _dbm + "/pangolin/config"
-	geoliteMirror:  "https://github.com/GitSquared/node-geolite2-redist/raw/refs/heads/master/redist/"
-	initDir:        "/app/config"
+	_dbm:          inv.common.directory.server.docker_bindmounts
+	configDir:     _dbm + "/pangolin/config"
+	geoliteMirror: "https://github.com/GitSquared/node-geolite2-redist/raw/refs/heads/master/redist/"
+	initDir:       "/app/config"
 	initScript: strings.Join([
 		"set -e",
 		"mkdir -p \(initDir)/traefik/logs \(initDir)/letsencrypt",
@@ -32,8 +32,8 @@ pangolin: S={
 	services: {
 		app: Svc={
 			_version: "ee-1.24.0"
-			_port:          3001
-			
+			_port:    3001
+
 			container_name: "pangolin"
 			image:          "docker.io/fosrl/pangolin:\(_version)"
 			pre_start: [{
@@ -61,9 +61,9 @@ pangolin: S={
 			}
 		}
 		tunnel: Svc={
-			_version:  "1.5.2"
+			_version: "1.5.2"
 
-			image:          "docker.io/fosrl/gerbil:\(_version)"
+			image: "docker.io/fosrl/gerbil:\(_version)"
 			command: [
 				"--reachableAt=http://\(Svc.container_name):3004",
 				"--generateAndSaveKeyTo=/var/config/key",
@@ -85,7 +85,7 @@ pangolin: S={
 		}
 		proxy: {
 			_version: "v3.6"
-			image:          "docker.io/library/traefik:\(_version)"
+			image:    "docker.io/library/traefik:\(_version)"
 			environment: CF_DNS_API_TOKEN: "${CF_DNS_API_TOKEN:?err}"
 			command: ["--configFile=/etc/traefik/traefik_config.yml"]
 

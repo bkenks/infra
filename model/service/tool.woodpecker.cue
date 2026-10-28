@@ -1,5 +1,7 @@
 package service
 
+import inv "github.com/bkenks/infra/model/inventory"
+
 _woodpecker: {
 	version:      "v3.15.0"
 	maxWorkflows: 2
@@ -15,10 +17,10 @@ woodpecker: S={
 			image:   "docker.io/woodpeckerci/woodpecker-server:\(_woodpecker.version)"
 			restart: "on-failure:5"
 			environment: {
-				WOODPECKER_HOST:               "https://peck.\(#Domain.ktbcloudCom)"
+				WOODPECKER_HOST:               "https://peck.\(inv.domain.public.ktbcloud_com)"
 				WOODPECKER_OPEN:               "true"
 				WOODPECKER_FORGEJO:            "true"
-				WOODPECKER_FORGEJO_URL:        "https://fj.\(#Domain.ktbcloudCom)"
+				WOODPECKER_FORGEJO_URL:        "https://fj.\(inv.domain.public.ktbcloud_com)"
 				WOODPECKER_FORGEJO_CLIENT:     "${WOODPECKER_FORGEJO_CLIENT:?err}"
 				WOODPECKER_FORGEJO_SECRET:     "${WOODPECKER_FORGEJO_SECRET:?err}"
 				WOODPECKER_PLUGINS_PRIVILEGED: "woodpeckerci/plugin-docker-buildx:6.1.0"
@@ -45,7 +47,7 @@ woodpecker: S={
 			}
 			volumes: [
 				"\(S.volumes.agent_data._ref):/etc/woodpecker",
-				#Mount.dockerSock,
+				#Snippet.services.volumes.docker_sock,
 			]
 			deploy: resources: limits: memory: "512m"
 		}
@@ -54,5 +56,5 @@ woodpecker: S={
 		server_data: name: "woodpecker-server_data"
 		agent_data: name:  "woodpecker-agent_data"
 	}
-	networks: #SharedNetworks.newt_gw_001
+	networks: newt_gw_001: #Network.newt_gw_001
 }
