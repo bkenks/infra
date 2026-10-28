@@ -6,6 +6,7 @@ _mathesar: {
 }
 
 mathesar: S={
+	name: "mathesar"
 	_dbEnv: {
 		POSTGRES_DB:       "mathesar_django"
 		POSTGRES_USER:     S.name
@@ -27,7 +28,7 @@ mathesar: S={
 			}
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.app_media._ref):/code/.media"]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001._ref]
 			healthcheck: {
 				test: ["CMD", "curl", "-f", "http://localhost:\(Svc._port)/healthz/ready/"]
 				interval:     "10s"

@@ -11,6 +11,7 @@ _immich: {
 }
 
 immich: S={
+	name: "immich"
 	services: {
 		db: {
 			image: _immich.dbImage
@@ -46,7 +47,7 @@ immich: S={
 			}
 			expose: [Svc._port]
 			volumes: ["/mnt/immich-library:/data"]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001._ref]
 			devices: ["/dev/dri:/dev/dri"]
 		}
 	}

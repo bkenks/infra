@@ -127,8 +127,6 @@ services:
       - /srv/docker/bind-mounts/apps/paperless/export:/usr/src/paperless/export
       - /srv/docker/bind-mounts/apps/paperless/consume:/usr/src/paperless/consume
 networks:
-  default:
-    name: paperless
   newt_gw_001:
     name: newt_gw_001
     external: true

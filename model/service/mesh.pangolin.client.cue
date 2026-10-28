@@ -2,7 +2,8 @@ package service
 
 import inv "github.com/bkenks/infra/model/inventory"
 
-pangolin_client: S={
+pangolin_client: stk={
+	name: "pangolin-client"
 	volumes: {
 		pangolin_gw_state: name: "pangolin-gw-app_state"
 	}
@@ -23,13 +24,13 @@ pangolin_client: S={
 
 		cap_add: ["NET_ADMIN"]
 		devices: [
-			"/dev/net/tun:/dev/net/tun",
+			"/dev/net/tun:/dev/net/tun"
 		]
 
-		volumes: ["\(S.volumes.pangolin_gw_state._ref):/root/.config/olm-client"]
+		container_name: pangolin_client.name
+		volumes: ["\(stk.volumes.pangolin_gw_state._ref):/root/.config/olm-client"]
 		networks: [
-			S.networks.default._ref,
-			S.networks.pangolin_gw_001._ref,
+			stk.networks.pangolin_gw_001._ref
 		]
 	}
 }

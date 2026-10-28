@@ -8,6 +8,7 @@ _openseo: {
 }
 
 openseo: S={
+	name: "openseo"
 	services: app: Svc={
 		_port:   3001
 		image:   "ghcr.io/every-app/open-seo:\(_openseo.version)"
@@ -30,7 +31,7 @@ openseo: S={
 		}
 		expose: [Svc._port]
 		volumes: ["\(S.volumes.app_data._ref):/app/.wrangler"]
-		networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+		networks: [S.networks.newt_gw_001._ref]
 		healthcheck: {
 			test: [
 				"CMD",

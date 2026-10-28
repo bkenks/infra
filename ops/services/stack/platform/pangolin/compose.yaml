@@ -88,7 +88,6 @@ services:
       - /srv/docker/bind-mounts/pangolin/config/traefik/logs:/var/log/traefik
 networks:
   default:
-    name: pangolin
     driver: bridge
     enable_ipv6: true
 volumes: {}

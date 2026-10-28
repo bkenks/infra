@@ -20,14 +20,11 @@ services:
       options:
         max-size: 10m
     networks:
-      - default
       - newt_gw_001
     volumes:
       - /srv/docker/bind-mounts/apps/paseo/home:/home/paseo
       - /srv/docker/bind-mounts/apps/paseo/workspace:/workspace
 networks:
-  default:
-    name: paseo
   newt_gw_001:
     name: newt_gw_001
     external: true

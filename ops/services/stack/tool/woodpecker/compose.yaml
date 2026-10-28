@@ -59,8 +59,6 @@ services:
       - agent_data:/etc/woodpecker
       - /var/run/docker.sock:/var/run/docker.sock
 networks:
-  default:
-    name: woodpecker
   newt_gw_001:
     name: newt_gw_001
     external: true

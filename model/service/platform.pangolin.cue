@@ -28,6 +28,7 @@ _pangolin: {
 }
 
 pangolin: S={
+	name: "pangolin"
 	_appHealthy: (S.services.app._ref): condition: "service_healthy"
 	services: {
 		app: Svc={

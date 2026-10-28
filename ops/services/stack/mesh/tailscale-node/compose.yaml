@@ -1,15 +1,13 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: tailscale-node
 networks:
-  default:
-    name: tailscale-node
   tailscale_gw_001:
     name: tailscale_gw_001
     external: true
 services:
   node:
     restart: unless-stopped
-    container_name: tailscale-node-node
+    container_name: tailscale-node
     environment:
       TS_HOSTNAME: tailscale-gw-${HOST:?err}
       TS_STATE_DIR: /var/lib/tailscale
@@ -21,7 +19,6 @@ services:
       options:
         max-size: 10m
     networks:
-      - default
       - tailscale_gw_001
     volumes:
       - tailscale_gw_state:/var/lib/tailscale

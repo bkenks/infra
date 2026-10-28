@@ -37,11 +37,7 @@ services:
     restart: always
     volumes:
       - wp_data:/var/www/html
-networks:
-  default:
-    name: wordpress
+networks: {}
 volumes:
-  db_data:
-    name: wordpress_db_data
-  wp_data:
-    name: wordpress_wp_data
+  db_data: {}
+  wp_data: {}

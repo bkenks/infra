@@ -2,7 +2,8 @@ package service
 
 import inv "github.com/bkenks/infra/model/inventory"
 
-pangolin_connector: S={
+pangolin_connector: stk={
+	name: "pangolin-connector"
 	networks: {
 		newt_gw_001: #Network.newt_gw_001
 	}
@@ -17,9 +18,9 @@ pangolin_connector: S={
 			NEWT_SECRET:       "${NEWT_SECRET:?err}"
 		}
 
+		container_name: pangolin_connector.name
 		networks: [
-			S.networks.default._ref,
-			S.networks.newt_gw_001._ref,
+			stk.networks.newt_gw_001._ref
 		]
 	}
 }

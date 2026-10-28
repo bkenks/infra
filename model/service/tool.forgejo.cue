@@ -8,6 +8,7 @@ _forgejo: {
 }
 
 forgejo: S={
+	name: "forgejo"
 	services: {
 		server: Svc={
 			_port: 3000
@@ -32,7 +33,7 @@ forgejo: S={
 				"\(S.volumes.server_data._ref):/data",
 				"/etc/localtime:/etc/localtime:ro",
 			]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001._ref]
 		}
 		db: Svc={
 			_port:   5432
@@ -45,7 +46,7 @@ forgejo: S={
 			}
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
-			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
+			networks: ["default", S.networks.tailscale_gw_001._ref]
 		}
 	}
 	volumes: {

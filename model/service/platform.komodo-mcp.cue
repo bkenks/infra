@@ -3,6 +3,7 @@ package service
 import inv "github.com/bkenks/infra/model/inventory"
 
 komodo_mcp: S={
+	name: "komodo-mcp"
 	services: app: Svc={
 		_version: "1.5.0"
 		_port:    8000
@@ -27,7 +28,6 @@ komodo_mcp: S={
 
 		// —————————————————————————
 		networks: [
-			S.networks.default._ref,
 			S.networks.newt_gw_001._ref,
 		]
 	}

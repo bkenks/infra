@@ -1,17 +1,15 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: pangolin-client
 networks:
-  default:
-    name: pangolin-client
   pangolin_gw_001:
     name: pangolin_gw_001
     external: true
 services:
   client:
     restart: unless-stopped
-    container_name: pangolin-client-client
     cap_add:
       - NET_ADMIN
+    container_name: pangolin-client
     devices:
       - /dev/net/tun:/dev/net/tun
     environment:
@@ -25,7 +23,6 @@ services:
       options:
         max-size: 10m
     networks:
-      - default
       - pangolin_gw_001
     volumes:
       - pangolin_gw_state:/root/.config/olm-client

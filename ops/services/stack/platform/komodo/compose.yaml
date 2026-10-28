@@ -57,8 +57,6 @@ services:
       - /srv/docker/bind-mounts/dcm/mongo/data:/data/db
       - /srv/docker/bind-mounts/dcm/mongo/config:/data/configdb
 networks:
-  default:
-    name: komodo
   newt_gw_001:
     name: newt_gw_001
     external: true

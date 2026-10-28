@@ -1,15 +1,13 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: pangolin-connector
 networks:
-  default:
-    name: pangolin-connector
   newt_gw_001:
     name: newt_gw_001
     external: true
 services:
   connector:
     restart: unless-stopped
-    container_name: pangolin-connector-connector
+    container_name: pangolin-connector
     environment:
       PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
       NEWT_ID: ${NEWT_ID:?err}
@@ -20,6 +18,5 @@ services:
       options:
         max-size: 10m
     networks:
-      - default
       - newt_gw_001
 volumes: {}

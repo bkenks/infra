@@ -52,8 +52,6 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
 networks:
-  default:
-    name: forgejo
   newt_gw_001:
     name: newt_gw_001
     external: true

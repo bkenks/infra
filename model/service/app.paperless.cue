@@ -12,6 +12,7 @@ _paperless: {
 }
 
 paperless: S={
+	name: "paperless"
 	services: {
 		cache: Svc={
 			_port:   6379
@@ -33,7 +34,7 @@ paperless: S={
 			}
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql"]
-			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
+			networks: ["default", S.networks.tailscale_gw_001._ref]
 			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 		converter: Svc={
@@ -85,7 +86,7 @@ paperless: S={
 				"\(_paperless.bindDir)/export:/usr/src/paperless/export",
 				"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 			]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001._ref]
 			healthcheck: {
 				test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:\(Svc._port)"]
 				interval: "30s"

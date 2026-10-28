@@ -11,6 +11,7 @@ _komodo: {
 }
 
 komodo: S={
+	name: "komodo"
 	services: {
 		app: {
 			image: "ghcr.io/moghtech/komodo-core:\(_komodo.version)"
@@ -33,7 +34,7 @@ komodo: S={
 				"\(_komodo.bindDir)/komodo/data/backups:/backups",
 				"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 			]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001._ref]
 			labels: #Snippet.services.labels.komodo_skip
 		}
 		db: {

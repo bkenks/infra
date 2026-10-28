@@ -1,6 +1,7 @@
 package service
 
-tailscale_node: S={
+tailscale_node: stk={
+	name: "tailscale-node"
 	volumes: tailscale_gw_state: name: "tailscale-gw-app_state"
 	networks: tailscale_gw_001: #Network.tailscale_gw_001
 
@@ -18,12 +19,12 @@ tailscale_node: S={
 		}
 
 		// —————————————————————————
+		container_name: tailscale_node.name
 		volumes: [
-			"\(S.volumes.tailscale_gw_state._ref):\(_dir.state)",
+			"\(stk.volumes.tailscale_gw_state._ref):\(_dir.state)"
 		]
 		networks: [
-			S.networks.default._ref,
-			S.networks.tailscale_gw_001._ref,
+			stk.networks.tailscale_gw_001._ref
 		]
 	}
 }

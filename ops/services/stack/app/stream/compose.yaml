@@ -229,8 +229,6 @@ services:
       - /srv/docker/bind-mounts/stream/sonarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
 networks:
-  default:
-    name: stream
   newt_gw_001:
     name: newt_gw_001
     external: true

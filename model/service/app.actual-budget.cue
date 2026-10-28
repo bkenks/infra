@@ -1,6 +1,7 @@
 package service
 
 actual_budget: {
+	name:     "actual-budget"
 	services: _
 	volumes: data: {}
 	networks: {

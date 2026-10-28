@@ -15,15 +15,12 @@ services:
       options:
         max-size: 10m
     networks:
-      - default
       - newt_gw_001
     ports:
       - "19428:9428"
     volumes:
       - data:/victoria-logs-data
 networks:
-  default:
-    name: victorialogs
   newt_gw_001:
     name: newt_gw_001
     external: true

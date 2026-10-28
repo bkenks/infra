@@ -1,6 +1,7 @@
 package service
 
 wordpress: {
+	name: "wordpress"
 	services: {
 		db: {
 			// We use a mariadb image which supports both amd64 & arm64 architecture

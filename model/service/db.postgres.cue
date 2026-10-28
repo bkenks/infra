@@ -3,6 +3,7 @@ package service
 _postgres: version: "18"
 
 postgres: S={
+	name: "postgres"
 	services: db: {
 		image:   "postgres:\(_postgres.version)"
 		restart: "always"
@@ -12,7 +13,6 @@ postgres: S={
 		}
 		volumes: ["\(S.volumes.data._ref):/var/lib/postgresql"]
 		networks: [
-			S.networks.default._ref,
 			S.networks.db_001._ref,
 			S.networks.tailscale_gw_001._ref,
 		]

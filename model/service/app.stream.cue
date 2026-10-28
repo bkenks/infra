@@ -34,7 +34,8 @@ _httpHealth: {
 }
 
 stream: S={
-	_webNetworks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+	name: "stream"
+	_webNetworks: ["default", S.networks.newt_gw_001._ref]
 	_arrsHealthy: {
 		(S.services.movies._ref): condition: "service_healthy"
 		(S.services.tv._ref): condition:     "service_healthy"

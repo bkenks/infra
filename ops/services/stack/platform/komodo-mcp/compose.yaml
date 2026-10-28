@@ -3,7 +3,7 @@ name: komodo-mcp
 services:
   app:
     restart: unless-stopped
-    container_name: komodo-mcp-app
+    container_name: komodo_mcp-app
     environment:
       MCP_TRANSPORT: http
       MCP_BASE_URL: https://komodo-mcp.ktbinternal.com
@@ -23,11 +23,8 @@ services:
       options:
         max-size: 10m
     networks:
-      - default
       - newt_gw_001
 networks:
-  default:
-    name: komodo-mcp
   newt_gw_001:
     name: newt_gw_001
     external: true

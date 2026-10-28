@@ -11,6 +11,7 @@ _woodpecker: {
 }
 
 woodpecker: S={
+	name: "woodpecker"
 	services: {
 		server: Svc={
 			_port: {http: 8000, grpc: 9000}
@@ -29,7 +30,7 @@ woodpecker: S={
 			}
 			expose: [Svc._port.http, Svc._port.grpc]
 			volumes: ["\(S.volumes.server_data._ref):/var/lib/woodpecker"]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001._ref]
 			deploy: resources: limits: memory: "1g"
 		}
 		agent: {

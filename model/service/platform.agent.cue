@@ -1,6 +1,7 @@
 package service
 
 agent: S={
+	name: "agent"
 	services: "log-agent": {
 		_version: "0.58.0"
 		_variant: "alpine"

@@ -9,6 +9,7 @@ _grist: {
 }
 
 grist: S={
+	name: "grist"
 	services: {
 		app: Svc={
 			_port: 8484
@@ -33,7 +34,7 @@ grist: S={
 			}
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.app_data._ref):/persist"]
-			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001._ref]
 			healthcheck: {
 				test: [
 					"CMD",
@@ -66,7 +67,7 @@ grist: S={
 			}
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
-			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
+			networks: ["default", S.networks.tailscale_gw_001._ref]
 			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 	}

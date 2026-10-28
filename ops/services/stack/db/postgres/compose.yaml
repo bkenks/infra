@@ -13,7 +13,6 @@ services:
       options:
         max-size: 10m
     networks:
-      - default
       - db_001
       - tailscale_gw_001
     volumes:
@@ -29,8 +28,6 @@ networks:
   db_001:
     name: db_001
     external: true
-  default:
-    name: postgres
   tailscale_gw_001:
     name: tailscale_gw_001
     external: true

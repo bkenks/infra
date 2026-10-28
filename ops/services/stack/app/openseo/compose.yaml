@@ -35,13 +35,10 @@ services:
       timeout: 10s
       start_period: 300s
     networks:
-      - default
       - newt_gw_001
     volumes:
       - app_data:/app/.wrangler
 networks:
-  default:
-    name: openseo
   newt_gw_001:
     name: newt_gw_001
     external: true
