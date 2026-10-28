@@ -29,15 +29,19 @@ command: render: {
 		})
 	}
 
+	storeHosts: file.Create & {
+		filename: path.Join([repoRoot.root, "store", "hosts.yml"])
+		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal({
+			for host, detail in inv.hosts {
+				(host): detail.fqdn
+			}
+		})
+	}
+
 	storePaths: file.Create & {
 		let dir = inv.common.directory.server
 		filename: path.Join([repoRoot.root, "store", "paths.yml"])
-		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal({
-			docker_root:        dir.docker_share
-			docker_files:       dir.docker_files
-			docker_stacks:      dir.docker_stacks
-			docker_bind_mounts: dir.docker_bindmounts
-		})
+		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(dir)
 	}
 
 	// "<category>.<part>[.<part>...].cue" holds the stack keyed by the parts

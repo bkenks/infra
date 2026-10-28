@@ -51,17 +51,3 @@ run         = "uv run ansible-lint --offline"
 depends     = ["init:uv", "init:ansible"]
 description = "Sync state via the site.yml playbook"
 run         = "uv run ansible-playbook playbooks/site.yml"
-
-[tasks."git:save"]
-alias       = "save"
-description = "Track all files, commit, and push"
-
-usage = '''
-arg "<message>" help="Commit message"
-'''
-
-run = '''
-git add .
-git commit -m "$usage_message"
-git push
-'''

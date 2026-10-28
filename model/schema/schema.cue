@@ -112,5 +112,4 @@ import (
 	}
 	os:   "ubuntu" | "debian" | "truenas" | "proxmox" | string
 	arch: "amd64" | "arm64"
-	// roles: [...string] // e.g. "docker", "storage", "proxy"
 }

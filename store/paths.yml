@@ -1,5 +1,6 @@
 # GENERATED from CUE — DO NOT EDIT.
-docker_root: /srv/docker
+share: /srv
+docker_share: /srv/docker
 docker_files: /srv/docker/files
 docker_stacks: /srv/docker/stacks
-docker_bind_mounts: /srv/docker/bind-mounts
+docker_bindmounts: /srv/docker/bind-mounts
