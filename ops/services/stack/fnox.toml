@@ -1,0 +1,106 @@
+root = true
+
+[providers.onepassword]
+type  = "1password"
+vault = "infra"
+
+[profiles.databasus.secrets]
+SECRET_KEY = { provider = "onepassword", value = "databasus/SECRET_KEY" }
+
+[profiles.forgejo.secrets]
+DB_PASSWORD               = { provider = "onepassword", value = "forgejo/DB_PASSWORD" }
+FORGEJO__DATABASE__PASSWD = { provider = "onepassword", value = "forgejo/FORGEJO__DATABASE__PASSWD" }
+POSTGRES_PASSWORD         = { provider = "onepassword", value = "forgejo/POSTGRES_PASSWORD" }
+
+[profiles.frappe.secrets]
+DB_PASSWORD     = { provider = "onepassword", value = "frappe/DB_PASSWORD" }
+ERPNEXT_VERSION = { default = "v16.50.0" }
+
+[profiles.grist.secrets]
+GRIST_DEFAULT_EMAIL  = { provider = "onepassword", value = "grist/default_email" }
+GRIST_SESSION_SECRET = { provider = "onepassword", value = "grist/session_secret" }
+POSTGRES_PASSWORD    = { provider = "onepassword", value = "grist/postgres_password" }
+
+[profiles.immich.secrets]
+DB_PASSWORD       = { provider = "onepassword", value = "immich/DB_PASSWORD" }
+POSTGRES_PASSWORD = { provider = "onepassword", value = "immich/POSTGRES_PASSWORD" }
+
+[profiles.komodo.secrets]
+KOMODO_DATABASE_PASSWORD   = { provider = "onepassword", value = "komodo/KOMODO_DATABASE_PASSWORD" }
+KOMODO_DATABASE_USERNAME   = { provider = "onepassword", value = "komodo/KOMODO_DATABASE_USERNAME" }
+KOMODO_JWT_SECRET          = { provider = "onepassword", value = "komodo/KOMODO_JWT_SECRET" }
+KOMODO_WEBHOOK_SECRET      = { provider = "onepassword", value = "komodo/KOMODO_WEBHOOK_SECRET" }
+MONGO_INITDB_ROOT_PASSWORD = { provider = "onepassword", value = "komodo/MONGO_INITDB_ROOT_PASSWORD" }
+MONGO_INITDB_ROOT_USERNAME = { provider = "onepassword", value = "komodo/MONGO_INITDB_ROOT_USERNAME" }
+
+[profiles.mathesar.secrets]
+POSTGRES_PASSWORD = { provider = "onepassword", value = "mathesar/postgres_password" }
+SECRET_KEY        = { provider = "onepassword", value = "mathesar/secret_key" }
+
+[profiles.node.secrets]
+TS_AUTHKEY = { provider = "onepassword", value = "tailscale.auth-key.docker-gateway-container/credential" }
+
+[profiles.node-pango.secrets]
+HOST = { default = "pango" }
+
+CLIENT_ID     = { provider = "onepassword", value = "host.pango/pangolin_id" }
+CLIENT_SECRET = { provider = "onepassword", value = "host.pango/pangolin_secret" }
+NEWT_ID       = { provider = "onepassword", value = "host.pango/newt_id" }
+NEWT_SECRET   = { provider = "onepassword", value = "host.pango/newt_secret" }
+
+[profiles.node-bill.secrets]
+HOST = { default = "bill" }
+
+CLIENT_ID     = { provider = "onepassword", value = "host.bill/CLIENT_ID" }
+CLIENT_SECRET = { provider = "onepassword", value = "host.bill/CLIENT_SECRET" }
+NEWT_ID       = { provider = "onepassword", value = "hosts.bill.newt/NEWT_ID" }
+NEWT_SECRET   = { provider = "onepassword", value = "hosts.bill.newt/NEWT_SECRET" }
+
+[profiles.node-littlebuddy.secrets]
+HOST = { default = "littlebuddy" }
+
+CLIENT_ID     = { provider = "onepassword", value = "host.littlebuddy/CLIENT_ID" }
+CLIENT_SECRET = { provider = "onepassword", value = "host.littlebuddy/CLIENT_SECRET" }
+NEWT_ID       = { provider = "onepassword", value = "hosts.littlebuddy.newt/NEWT_ID" }
+NEWT_SECRET   = { provider = "onepassword", value = "hosts.littlebuddy.newt/NEWT_SECRET" }
+
+[profiles.node-paiki.secrets]
+HOST = { default = "paiki" }
+
+CLIENT_ID     = { provider = "onepassword", value = "host.paiki/CLIENT_ID" }
+CLIENT_SECRET = { provider = "onepassword", value = "host.paiki/CLIENT_SECRET" }
+NEWT_ID       = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_ID" }
+NEWT_SECRET   = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_SECRET" }
+
+[profiles.openseo.secrets]
+BETTER_AUTH_SECRET = { provider = "onepassword", value = "openseo/BETTER_AUTH_SECRET" }
+DATAFORSEO_API_KEY = { provider = "onepassword", value = "openseo/DATAFORSEO_API_KEY" }
+OPENROUTER_API_KEY = { provider = "onepassword", value = "openrouter/credential" }
+OPENROUTER_MODEL   = { default = "anthropic/claude-sonnet-5.5" }
+
+[profiles.pangolin.secrets]
+CF_DNS_API_TOKEN = { provider = "onepassword", value = "traefik/CF_DNS_API_TOKEN" }
+EMAIL_SMTP_PASS  = { provider = "onepassword", value = "apps.pangolin/EMAIL_SMTP_PASS" }
+SERVER_SECRET    = { provider = "onepassword", value = "apps.pangolin/SERVER_SECRET" }
+
+[profiles.paperless.secrets]
+PAPERLESS_DBPASS     = { provider = "onepassword", value = "paperless/PAPERLESS_DBPASS" }
+PAPERLESS_SECRET_KEY = { provider = "onepassword", value = "paperless/PAPERLESS_SECRET_KEY" }
+POSTGRES_PASSWORD    = { provider = "onepassword", value = "paperless/POSTGRES_PASSWORD" }
+
+[profiles.paseo.secrets]
+PASEO_PASSWORD = { provider = "onepassword", value = "paseo/PASEO_PASSWORD" }
+
+[profiles.postgres.secrets]
+PG_ADMIN_PASS     = { provider = "onepassword", value = "postgres/PG_ADMIN_PASS" }
+POSTGRES_PASSWORD = { provider = "onepassword", value = "postgres/POSTGRES_PASSWORD" }
+POSTGRES_USER     = { provider = "onepassword", value = "postgres/POSTGRES_USER" }
+
+[profiles.stream.secrets]
+RADARR_API_KEY = { provider = "onepassword", value = "stream/RADARR_API_KEY" }
+SONARR_API_KEY = { provider = "onepassword", value = "stream/SONARR_API_KEY" }
+
+[profiles.woodpecker.secrets]
+WOODPECKER_AGENT_SECRET   = { provider = "onepassword", value = "woodpecker/WOODPECKER_AGENT_SECRET" }
+WOODPECKER_FORGEJO_CLIENT = { provider = "onepassword", value = "woodpecker/WOODPECKER_FORGEJO_CLIENT" }
+WOODPECKER_FORGEJO_SECRET = { provider = "onepassword", value = "woodpecker/WOODPECKER_FORGEJO_SECRET" }

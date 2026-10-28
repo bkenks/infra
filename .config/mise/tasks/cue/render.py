@@ -1,5 +1,5 @@
 #!/usr/bin/env -S uv run --script
-#MISE description="Export every CUE stack to ops/services/stack/<category>/<name>/compose.yaml"
+#MISE description="Export every CUE stack to ops/services/stack/<name>/compose.yaml"
 # /// script
 # requires-python = ">=3.12"
 # dependencies = []
@@ -25,7 +25,7 @@ def run(*args: str) -> None:
 def get_compose_files() -> list[Path]:
     return [
         compose_file
-        for compose_file in sorted(SERVICES_DIR.glob("*/*/compose.yaml"))
+        for compose_file in sorted(SERVICES_DIR.glob("*/compose.yaml"))
         if compose_file.read_text().startswith(GENERATED_HEADER)
     ]
 

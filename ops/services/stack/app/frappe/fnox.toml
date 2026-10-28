@@ -1,9 +1,0 @@
-root = true
-
-[providers.onepassword]
-type  = "1password"
-vault = "secrets"
-
-[secrets]
-DB_PASSWORD     = { provider = "onepassword", value = "frappe/DB_PASSWORD" }
-ERPNEXT_VERSION = { default = "v16.50.0" }

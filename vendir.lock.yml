@@ -1,11 +1,11 @@
 apiVersion: vendir.k14s.io/v1alpha1
 directories:
-  - contents:
-      - git:
-          commitTitle: "Merge pull request #2008 from tulayha/fix/chromium-path-real-binary..."
-          sha: 2b26e9ab8d751e5ea33bb7b930aea3550bb81ded
-          tags:
-            - v4.0.1
-        path: .
-    path: ops/services/stack/vendor/frappe
+- contents:
+  - git:
+      commitTitle: 'Merge pull request #2008 from tulayha/fix/chromium-path-real-binary...'
+      sha: 2b26e9ab8d751e5ea33bb7b930aea3550bb81ded
+      tags:
+      - v4.0.1
+    path: .
+  path: ops/services/vendor/frappe
 kind: LockConfig

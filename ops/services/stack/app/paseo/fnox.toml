@@ -1,8 +1,0 @@
-root = true
-
-[providers.onepassword]
-type  = "1password"
-vault = "secrets"
-
-[secrets]
-PASEO_PASSWORD = { provider = "onepassword", value = "paseo/PASEO_PASSWORD" }

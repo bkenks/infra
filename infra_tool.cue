@@ -18,10 +18,6 @@ command: render: {
 		root:   strings.TrimSpace(stdout)
 	}
 
-	serviceFiles: file.Glob & {
-		glob: path.Join([repoRoot.root, "model", "service", "*.*.cue"])
-	}
-
 	storeNetworks: file.Create & {
 		filename: path.Join([repoRoot.root, "store", "networks.yml"])
 		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal({
@@ -44,24 +40,15 @@ command: render: {
 		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(dir)
 	}
 
-	// "<category>.<part>[.<part>...].cue" holds the stack keyed by the parts
-	// joined with "_" ("-" as "_"). It renders to stack/<category>/<name>/.
-	let categories = {
-		for serviceFile in serviceFiles.files {
-			let segments = strings.SplitN(strings.TrimSuffix(path.Base(serviceFile), ".cue"), ".", 2)
-			(strings.Replace(strings.Replace(segments[1], ".", "_", -1), "-", "_", -1)): segments[0]
-		}
-	}
-
-	// Stub stacks without services are not valid Compose files yet.
+	// Each stack renders to stack/<name>/. Stub stacks without services are not
+	// valid Compose files yet.
 	stacks: {
 		for stackKey, stack in svc if len(stack.services) > 0 {
-			let deployDir = path.Join([repoRoot.root, "ops", "services", "stack", categories[stackKey], stack.name])
+			let deployDir = path.Join([repoRoot.root, "ops", "services", "stack", stack.name])
 
 			(stackKey): {
 				mkdir: file.MkdirAll & {
-					$after: serviceFiles
-					path:   deployDir
+					path: deployDir
 				}
 				write: file.Create & {
 					$after: mkdir

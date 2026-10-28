@@ -2,7 +2,7 @@
   [providers.op_ansible]
   account = "FUKUXFLIDREQDELXYP2PALUAVY"
   type    = "1password"
-  vault   = "secrets"
+  vault   = "infra"
 
 [secrets]
 BACKREST_KTB_BACKUP_APP_AWS_ACCESS_KEY_ID     = { provider = "op_ansible", value = "ktb-backup-app/AWS_ACCESS_KEY_ID" }

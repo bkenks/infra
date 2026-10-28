@@ -10,7 +10,7 @@ arg_host=${1:?usage: nodewrap <host> <command...>}
 shift
 
 export HOST=$arg_host
-export FNOX_PROFILE=$arg_host
+export FNOX_PROFILE=node,node-$arg_host
 export COMPOSE_PROFILES=all
 set -a; . /mnt/credentials/onepassword.env; set +a
 exec fnox exec -- "$@"

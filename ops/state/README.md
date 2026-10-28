@@ -7,7 +7,7 @@ OpenTofu-managed infrastructure for the homelab. Complements `infra.ansible`: to
 ## Prerequisites
 
 - OpenTofu >= 1.10
-- fnox with 1Password access to the `secrets` vault — `fnox.toml` supplies provider credentials and the R2 state credentials
+- fnox with 1Password access to the `infra` vault — `fnox.toml` supplies provider credentials and the R2 state credentials
 
 ## Usage
 
