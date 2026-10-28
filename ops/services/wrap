@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Wrapper Script for Docker Compose Command
 # Usage:
-#   `./wrap docker compose up -d`
-#   `./wrap docker compose down`
+#   `../../wrap docker compose up -d`
+#   `../../wrap docker compose down`
 
 set -euo pipefail
 
-# Secrets live in ../fnox.toml under a profile named after the stack directory.
+# Secrets live in services/fnox.toml under a profile named after the stack directory.
 export FNOX_PROFILE=${FNOX_PROFILE:-$(basename "$PWD")}
 set -a; . /mnt/credentials/onepassword.env; set +a
 exec fnox exec -- "$@"
