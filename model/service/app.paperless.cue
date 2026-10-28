@@ -80,7 +80,7 @@ paperless: S={
 				PAPERLESS_REDIS:                   "redis://\(S.services.cache._ref):\(S.services.cache._port)"
 				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter._ref):\(S.services.converter._port)"
 				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser._ref):\(S.services.parser._port)"
-				PAPERLESS_DBHOST:                  S.services.db._ref
+				PAPERLESS_DBHOST:                  S.services.db.container_name
 				PAPERLESS_DBUSER:                  S.name
 				PAPERLESS_DBNAME:                  S.name
 				PAPERLESS_DBPASS:                  "${PAPERLESS_DBPASS:?err}"

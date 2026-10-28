@@ -100,7 +100,7 @@ services:
       PAPERLESS_REDIS: redis://cache:6379
       PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://converter:3000
       PAPERLESS_TIKA_ENDPOINT: http://parser:9998
-      PAPERLESS_DBHOST: db
+      PAPERLESS_DBHOST: paperless-db
       PAPERLESS_DBUSER: paperless
       PAPERLESS_DBNAME: paperless
       PAPERLESS_DBPASS: ${PAPERLESS_DBPASS:?err}
