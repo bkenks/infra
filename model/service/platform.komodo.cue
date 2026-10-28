@@ -22,6 +22,7 @@ komodo: S={
 			environment: {
 				TZ:                       "Etc/UTC"
 				KOMODO_HOST:              "https://komo.\(inv.domain.public.ktbinternal_com)"
+				KOMODO_WEBHOOK_BASE_URL:  "https://komo-hooks.\(inv.domain.public.ktbcloud_com)"
 				KOMODO_TITLE:             "Komodo"
 				KOMODO_DATABASE_ADDRESS:  "\(S.services.db.container_name):\(S.services.db._port)"
 				KOMODO_DATABASE_USERNAME: "${KOMODO_DATABASE_USERNAME:?err}"
