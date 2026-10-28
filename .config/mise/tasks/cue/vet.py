@@ -9,7 +9,7 @@ import sys
 
 
 def main() -> None:
-    result = subprocess.run(["cue", "vet", "-c", "./model"], check=False)
+    result = subprocess.run(["cue", "vet", "-c", "./model/..."], check=False)
     sys.exit(result.returncode)
 
 
