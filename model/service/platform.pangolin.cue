@@ -51,8 +51,8 @@ pangolin: S={
 			}
 			volumes: [
 				"\(_pangolin.configDir):/app/config",
-				"./files/config.yaml:/app/config/config.yml:ro",
-				"./files/privateConfig.yaml:/app/config/privateConfig.yml:ro",
+				"\(S._configs)/config.yaml:/app/config/config.yml:ro",
+				"\(S._configs)/privateConfig.yaml:/app/config/privateConfig.yml:ro",
 			]
 			healthcheck: {
 				test: ["CMD", "curl", "-f", "http://localhost:\(Svc._port)/api/v1/"]
@@ -98,8 +98,8 @@ pangolin: S={
 			depends_on:     S._appHealthy
 			network_mode:   "service:\(S.services.tunnel._ref)"
 			volumes: [
-				"./files/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
-				"./files/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",
+				"\(S._configs)/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
+				"\(S._configs)/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",
 				"\(_pangolin.configDir)/letsencrypt:/letsencrypt",
 				"\(_pangolin.configDir)/traefik/logs:/var/log/traefik",
 			]

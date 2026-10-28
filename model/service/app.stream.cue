@@ -59,7 +59,7 @@ stream: S={
 			image:       "ghcr.io/raydak-labs/configarr:\(_stream.configarrVersion)"
 			environment: _stream.lsioEnv & _stream.arrApiKeys
 			volumes: [
-				"./configarr:/app/config:ro",
+				"\(S._configs)/configarr:/app/config:ro",
 				"\(_stream.bindRoot)/configarr/repos:/app/repos",
 			]
 			depends_on: S._arrsHealthy
@@ -67,7 +67,7 @@ stream: S={
 		janitor: {
 			image:       "ghcr.io/manimatter/decluttarr:\(_stream.decluttarrVersion)"
 			environment: _stream.lsioEnv & _stream.arrApiKeys
-			volumes: ["./decluttarr:/app/config:ro"]
+			volumes: ["\(S._configs)/decluttarr:/app/config:ro"]
 			depends_on: S._arrsHealthy
 		}
 		media: Svc={

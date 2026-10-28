@@ -48,7 +48,7 @@ services:
       options:
         max-size: 10m
     volumes:
-      - ./configarr:/app/config:ro
+      - ../../configs/stream/configarr:/app/config:ro
       - /srv/docker/bind-mounts/stream/configarr/repos:/app/repos
     depends_on:
       movies:
@@ -70,7 +70,7 @@ services:
       options:
         max-size: 10m
     volumes:
-      - ./decluttarr:/app/config:ro
+      - ../../configs/stream/decluttarr:/app/config:ro
     depends_on:
       movies:
         condition: service_healthy

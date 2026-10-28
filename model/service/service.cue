@@ -7,6 +7,9 @@ import compose "cue.dev/x/dockercompose"
 
 	stackName=name!: =~"^[a-z]+(-[a-z]+)*$"
 
+	// Hand-written files mounted into the stack, relative to out/<name>/compose.yaml.
+	_configs: "../../configs/\(stackName)"
+
 	networks: {
 		[net=_]: {
 			_ref: net

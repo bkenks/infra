@@ -40,15 +40,23 @@ command: render: {
 		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(dir)
 	}
 
-	// Each stack renders to stack/<name>/. Stub stacks without services are not
+	let outDir = path.Join([repoRoot.root, "ops", "services", "out"])
+
+	// out/ holds only generated stacks; wipe it so stacks removed from CUE are pruned.
+	clean: file.RemoveAll & {
+		path: outDir
+	}
+
+	// Each stack renders to <name>/compose.yaml. Stub stacks without services are not
 	// valid Compose files yet.
 	stacks: {
 		for stackKey, stack in svc if len(stack.services) > 0 {
-			let deployDir = path.Join([repoRoot.root, "ops", "services", "stack", stack.name])
+			let deployDir = path.Join([outDir, stack.name])
 
 			(stackKey): {
 				mkdir: file.MkdirAll & {
-					path: deployDir
+					$after: clean
+					path:   deployDir
 				}
 				write: file.Create & {
 					$after: mkdir

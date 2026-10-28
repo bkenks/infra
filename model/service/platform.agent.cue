@@ -14,7 +14,7 @@ agent: S={
 		volumes: [
 			"\(S.volumes.log_agent_buffer._ref):/var/lib/vector",
 			"\(#Snippet.services.volumes.docker_sock):ro",
-			"./config/vector.yaml:/etc/vector/vector.yaml:ro",
+			"\(S._configs)/vector.yaml:/etc/vector/vector.yaml:ro",
 		]
 		labels: #Snippet.services.labels.komodo_skip
 	}

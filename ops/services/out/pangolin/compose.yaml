@@ -40,8 +40,8 @@ services:
     restart: unless-stopped
     volumes:
       - /srv/docker/bind-mounts/pangolin/config:/app/config
-      - ./files/config.yaml:/app/config/config.yml:ro
-      - ./files/privateConfig.yaml:/app/config/privateConfig.yml:ro
+      - ../../configs/pangolin/config.yaml:/app/config/config.yml:ro
+      - ../../configs/pangolin/privateConfig.yaml:/app/config/privateConfig.yml:ro
   tunnel:
     restart: unless-stopped
     cap_add:
@@ -87,8 +87,8 @@ services:
         condition: service_healthy
     network_mode: service:tunnel
     volumes:
-      - ./files/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro
-      - ./files/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro
+      - ../../configs/pangolin/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro
+      - ../../configs/pangolin/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro
       - /srv/docker/bind-mounts/pangolin/config/letsencrypt:/letsencrypt
       - /srv/docker/bind-mounts/pangolin/config/traefik/logs:/var/log/traefik
 volumes: {}

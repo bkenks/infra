@@ -1,11 +1,13 @@
+# Stack handwritten outside CUE to integrate easier with vendored compose files from Frappe
+
 name: frappe
 
 include:
   - path:
-      - ../../vendor/frappe/compose.yaml
-      - ../../vendor/frappe/overrides/compose.mariadb.yaml
-      - ../../vendor/frappe/overrides/compose.redis.yaml
-      - ../../vendor/frappe/overrides/compose.migrator.yaml
+      - ../vendor/frappe/compose.yaml
+      - ../vendor/frappe/overrides/compose.mariadb.yaml
+      - ../vendor/frappe/overrides/compose.redis.yaml
+      - ../vendor/frappe/overrides/compose.migrator.yaml
 
 networks:
   newt_gw_001:

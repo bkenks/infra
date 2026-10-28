@@ -17,7 +17,7 @@ services:
     volumes:
       - log_agent_buffer:/var/lib/vector
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - ./config/vector.yaml:/etc/vector/vector.yaml:ro
+      - ../../configs/agent/vector.yaml:/etc/vector/vector.yaml:ro
 volumes:
   log_agent_buffer:
     name: log-agent-agent_buffer
