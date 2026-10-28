@@ -1,5 +1,9 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: stream
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
 services:
   subtitles:
     restart: on-failure:5
@@ -228,8 +232,4 @@ services:
     volumes:
       - /srv/docker/bind-mounts/stream/sonarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
-networks:
-  newt_gw_001:
-    name: newt_gw_001
-    external: true
 volumes: {}

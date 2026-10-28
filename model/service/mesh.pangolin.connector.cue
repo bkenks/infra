@@ -13,7 +13,7 @@ pangolin_connector: stk={
 
 		image: "docker.io/fosrl/newt:\(_version)"
 		environment: {
-			PANGOLIN_ENDPOINT: inv.route.pangolin.public.entry.uri
+			PANGOLIN_ENDPOINT: inv.route.pangolin.public.uri
 			NEWT_ID:           "${NEWT_ID:?err}"
 			NEWT_SECRET:       "${NEWT_SECRET:?err}"
 		}

@@ -7,6 +7,8 @@ _victorialogs: {
 
 victorialogs: S={
 	name: "victorialogs"
+	volumes: data: name: "victorialogs-logs_data"
+	networks: newt_gw_001: #Network.newt_gw_001
 	services: logs: {
 		image: "docker.io/victoriametrics/victoria-logs:\(_victorialogs.version)"
 		command: [
@@ -18,6 +20,4 @@ victorialogs: S={
 		networks: [S.networks.newt_gw_001._ref]
 		labels: #Snippet.services.labels.komodo_skip
 	}
-	volumes: data: name: "victorialogs-logs_data"
-	networks: newt_gw_001: #Network.newt_gw_001
 }

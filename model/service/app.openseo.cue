@@ -9,6 +9,9 @@ _openseo: {
 
 openseo: S={
 	name: "openseo"
+	volumes: app_data: name: "openseo-app_data"
+	networks: newt_gw_001: #Network.newt_gw_001
+
 	services: app: Svc={
 		_port:   3001
 		image:   "ghcr.io/every-app/open-seo:\(_openseo.version)"
@@ -45,6 +48,4 @@ openseo: S={
 			start_period: "300s"
 		}
 	}
-	volumes: app_data: name: "openseo-app_data"
-	networks: newt_gw_001: #Network.newt_gw_001
 }

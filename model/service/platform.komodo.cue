@@ -12,6 +12,8 @@ _komodo: {
 
 komodo: S={
 	name: "komodo"
+	volumes: keys: name: "komodo-app_keys"
+	networks: newt_gw_001: #Network.newt_gw_001
 	services: {
 		app: {
 			image: "ghcr.io/moghtech/komodo-core:\(_komodo.version)"
@@ -53,6 +55,4 @@ komodo: S={
 			labels: #Snippet.services.labels.komodo_skip
 		}
 	}
-	volumes: keys: name: "komodo-app_keys"
-	networks: newt_gw_001: #Network.newt_gw_001
 }

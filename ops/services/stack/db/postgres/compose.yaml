@@ -1,5 +1,12 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: postgres
+networks:
+  db_001:
+    name: db_001
+    external: true
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
 services:
   db:
     container_name: postgres-db
@@ -24,13 +31,6 @@ services:
         - CMD-SHELL
         - pg_isready -U $$POSTGRES_USER -h localhost -d postgres
       timeout: 5s
-networks:
-  db_001:
-    name: db_001
-    external: true
-  tailscale_gw_001:
-    name: tailscale_gw_001
-    external: true
 volumes:
   data:
     name: postgres-db_data

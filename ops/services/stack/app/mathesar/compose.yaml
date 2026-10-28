@@ -1,5 +1,9 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: mathesar
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
 services:
   app:
     restart: unless-stopped
@@ -65,10 +69,6 @@ services:
       timeout: 10s
     volumes:
       - db_data:/var/lib/postgresql/data
-networks:
-  newt_gw_001:
-    name: newt_gw_001
-    external: true
 volumes:
   app_media:
     name: mathesar-app_media

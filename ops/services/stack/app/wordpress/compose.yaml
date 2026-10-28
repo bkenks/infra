@@ -1,5 +1,6 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: wordpress
+networks: {}
 services:
   db:
     command: --default-authentication-plugin=mysql_native_password
@@ -37,7 +38,8 @@ services:
     restart: always
     volumes:
       - wp_data:/var/www/html
-networks: {}
 volumes:
-  db_data: {}
-  wp_data: {}
+  db_data:
+    name: wordpress_db_data
+  wp_data:
+    name: wordpress_wp_data

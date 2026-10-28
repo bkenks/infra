@@ -1,5 +1,9 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: openseo
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
 services:
   app:
     container_name: openseo-app
@@ -38,10 +42,6 @@ services:
       - newt_gw_001
     volumes:
       - app_data:/app/.wrangler
-networks:
-  newt_gw_001:
-    name: newt_gw_001
-    external: true
 volumes:
   app_data:
     name: openseo-app_data

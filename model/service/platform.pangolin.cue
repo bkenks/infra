@@ -30,6 +30,10 @@ _pangolin: {
 pangolin: S={
 	name: "pangolin"
 	_appHealthy: (S.services.app._ref): condition: "service_healthy"
+	networks: default: {
+		driver:      "bridge"
+		enable_ipv6: true
+	}
 	services: {
 		app: Svc={
 			_version: "ee-1.24.0"
@@ -100,9 +104,5 @@ pangolin: S={
 				"\(_pangolin.configDir)/traefik/logs:/var/log/traefik",
 			]
 		}
-	}
-	networks: default: {
-		driver:      "bridge"
-		enable_ipv6: true
 	}
 }

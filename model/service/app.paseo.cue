@@ -11,6 +11,8 @@ _paseo: {
 
 paseo: S={
 	name: "paseo"
+	networks: newt_gw_001: #Network.newt_gw_001
+
 	services: app: Svc={
 		_port: 6767
 		// The published image bundles no agent CLIs, so the stack builds a child
@@ -40,5 +42,4 @@ paseo: S={
 		networks: [S.networks.newt_gw_001._ref]
 		// The image ships its own /api/health healthcheck.
 	}
-	networks: newt_gw_001: #Network.newt_gw_001
 }

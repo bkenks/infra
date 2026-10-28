@@ -10,6 +10,13 @@ _grist: {
 
 grist: S={
 	name: "grist"
+	volumes: {for svcVol in ["app_data", "cache_data", "db_data"] {
+		(svcVol): name: "grist-\(svcVol)"
+	}}
+	networks: {
+		newt_gw_001:      #Network.newt_gw_001
+		tailscale_gw_001: #Network.tailscale_gw_001
+	}
 	services: {
 		app: Svc={
 			_port: 8484
@@ -70,12 +77,5 @@ grist: S={
 			networks: ["default", S.networks.tailscale_gw_001._ref]
 			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
-	}
-	volumes: {for svcVol in ["app_data", "cache_data", "db_data"] {
-		(svcVol): name: "grist-\(svcVol)"
-	}}
-	networks: {
-		newt_gw_001:      #Network.newt_gw_001
-		tailscale_gw_001: #Network.tailscale_gw_001
 	}
 }

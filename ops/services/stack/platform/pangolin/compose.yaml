@@ -1,5 +1,10 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: pangolin
+networks:
+  default:
+    name: pangolin_default
+    driver: bridge
+    enable_ipv6: true
 services:
   app:
     container_name: pangolin
@@ -86,8 +91,4 @@ services:
       - ./files/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro
       - /srv/docker/bind-mounts/pangolin/config/letsencrypt:/letsencrypt
       - /srv/docker/bind-mounts/pangolin/config/traefik/logs:/var/log/traefik
-networks:
-  default:
-    driver: bridge
-    enable_ipv6: true
 volumes: {}

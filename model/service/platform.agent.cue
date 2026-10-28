@@ -2,6 +2,9 @@ package service
 
 agent: S={
 	name: "agent"
+	volumes: {
+		log_agent_buffer: name: "log-agent-agent_buffer"
+	}
 	services: "log-agent": {
 		_version: "0.58.0"
 		_variant: "alpine"
@@ -16,7 +19,4 @@ agent: S={
 		labels: #Snippet.services.labels.komodo_skip
 	}
 
-	volumes: {
-		log_agent_buffer: name: "log-agent-agent_buffer"
-	}
 }

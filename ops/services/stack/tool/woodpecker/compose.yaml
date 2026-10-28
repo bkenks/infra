@@ -1,5 +1,9 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: woodpecker
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
 services:
   server:
     container_name: woodpecker-server
@@ -58,10 +62,6 @@ services:
     volumes:
       - agent_data:/etc/woodpecker
       - /var/run/docker.sock:/var/run/docker.sock
-networks:
-  newt_gw_001:
-    name: newt_gw_001
-    external: true
 volumes:
   server_data:
     name: woodpecker-server_data

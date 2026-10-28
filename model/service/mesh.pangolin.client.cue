@@ -16,7 +16,7 @@ pangolin_client: stk={
 
 		image: "docker.io/fosrl/pangolin-cli:\(_version)"
 		environment: {
-			PANGOLIN_ENDPOINT: inv.route.pangolin.public.entry.uri
+			PANGOLIN_ENDPOINT: inv.route.pangolin.public.uri
 			INTERFACE:         "olm-${HOST:?err}"
 			CLIENT_ID:         "${CLIENT_ID:?err}"
 			CLIENT_SECRET:     "${CLIENT_SECRET:?err}"

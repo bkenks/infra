@@ -1,44 +1,55 @@
 package inventory
 
 import (
+	"net"
 	"github.com/bkenks/infra/model/schema"
 )
 
 domain: {
 	public: {
-		[_]: schema.#Domain // enforce schema on all fields
+		[_]: net.FQDN // enforce schema on all fields
 		// —————————————————————————
 		ktb_dev:         "ktb.dev"
 		ktbinternal_com: "ktbinternal.com"
 		ktbcloud_com:    "ktbcloud.com"
 	}
+	internal: {
+		[_]:     net.FQDN
+		default: "internal"
+	}
 }
 
 hosts: {
-	[hst=_]: schema.#Host & {
-		name: hst
+	#Provider: {
+		home:  "home"
+		vultr: "vultr"
+	}
+
+	#Site: {
+		cvg: "cvg"
+		ord: "ord"
 	}
 
 	// —————————————————————————
-	core: schema.#Host & {
-		fqdn: "core01.home-cvg.internal"
-		os:   "ubuntu"
-		arch: "amd64"
+	_d: domain
+	[hostName=_]: schema.#Host & {
+		name:   hostName
+		os:     "ubuntu"
+		arch:   "amd64"
+		domain: _d.internal.default
 	}
-	apps: schema.#Host & {
-		fqdn: "apps01.home-cvg.internal"
-		os:   "ubuntu"
-		arch: "amd64"
+	// —————————————————————————
+	_defaultHomeHost: schema.#Host & {
+		provider: #Provider.home
+		site:     #Site.cvg
 	}
-	media: schema.#Host & {
-		fqdn: "media01.home-cvg.internal"
-		os:   "ubuntu"
-		arch: "amd64"
-	}
-	edge: schema.#Host & {
-		fqdn: "edge01.vultr-ord.internal"
-		os:   "ubuntu"
-		arch: "amd64"
+	
+	core01:  _defaultHomeHost
+	apps01:  _defaultHomeHost
+	media01: _defaultHomeHost
+	edge01: {
+		provider: #Provider.vultr
+		site:     #Site.ord
 	}
 }
 
@@ -56,10 +67,12 @@ common: {
 }
 
 route: {
-	[string]: [string]: schema.#Route
+	[routeName=_]: schema.#Route & {
+		name: routeName
+	}
 
-	pangolin: {
-		public: entry: {
+	pangolin: schema.#Route & {
+		public: {
 			scheme: "https"
 			host:   "pangolin." + domain.public.ktbcloud_com
 		}

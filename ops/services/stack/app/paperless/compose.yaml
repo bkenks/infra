@@ -1,5 +1,12 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: paperless
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
 services:
   cache:
     container_name: paperless-cache
@@ -126,13 +133,6 @@ services:
       - app_media:/usr/src/paperless/media
       - /srv/docker/bind-mounts/apps/paperless/export:/usr/src/paperless/export
       - /srv/docker/bind-mounts/apps/paperless/consume:/usr/src/paperless/consume
-networks:
-  newt_gw_001:
-    name: newt_gw_001
-    external: true
-  tailscale_gw_001:
-    name: tailscale_gw_001
-    external: true
 volumes:
   cache_data:
     name: paperless-cache_data

@@ -1,5 +1,12 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: grist
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+  tailscale_gw_001:
+    name: tailscale_gw_001
+    external: true
 services:
   app:
     restart: unless-stopped
@@ -90,13 +97,6 @@ services:
       - tailscale_gw_001
     volumes:
       - db_data:/var/lib/postgresql/data
-networks:
-  newt_gw_001:
-    name: newt_gw_001
-    external: true
-  tailscale_gw_001:
-    name: tailscale_gw_001
-    external: true
 volumes:
   app_data:
     name: grist-app_data

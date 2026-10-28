@@ -5,8 +5,20 @@ import compose "cue.dev/x/dockercompose"
 [stack=string]: compose.#Schema & {
 	_ref: stack
 
-	name!: =~"^[a-z]+(-[a-z]+)*$"
+	stackName=name!: =~"^[a-z]+(-[a-z]+)*$"
 
+	networks: {
+		[net=_]: {
+			_ref: net
+			name: *"\(stackName)_\(net)" | string
+		}
+	}
+	volumes: {
+		[vol=_]: {
+			_ref: vol
+			name: *"\(stackName)_\(vol)" | string
+		}
+	}
 	services: {
 		[svc=_]: {
 			_ref: svc
@@ -21,15 +33,4 @@ import compose "cue.dev/x/dockercompose"
 		}
 	}
 
-	networks: {
-		[net=_]: {
-			_ref: net
-		}
-	}
-
-	volumes: {
-		[vol=_]: {
-			_ref: vol
-		}
-	}
 }

@@ -1,5 +1,9 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: komodo
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
 services:
   app:
     restart: unless-stopped
@@ -56,10 +60,6 @@ services:
     volumes:
       - /srv/docker/bind-mounts/dcm/mongo/data:/data/db
       - /srv/docker/bind-mounts/dcm/mongo/config:/data/configdb
-networks:
-  newt_gw_001:
-    name: newt_gw_001
-    external: true
 volumes:
   keys:
     name: komodo-app_keys

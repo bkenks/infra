@@ -4,6 +4,11 @@ _postgres: version: "18"
 
 postgres: S={
 	name: "postgres"
+	volumes: data: name: "postgres-db_data"
+	networks: {
+		db_001:           #Network.db_001
+		tailscale_gw_001: #Network.tailscale_gw_001
+	}
 	services: db: {
 		image:   "postgres:\(_postgres.version)"
 		restart: "always"
@@ -22,10 +27,5 @@ postgres: S={
 			timeout:  "5s"
 			retries:  10
 		}
-	}
-	volumes: data: name: "postgres-db_data"
-	networks: {
-		db_001:           #Network.db_001
-		tailscale_gw_001: #Network.tailscale_gw_001
 	}
 }

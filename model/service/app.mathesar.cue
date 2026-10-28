@@ -14,6 +14,10 @@ mathesar: S={
 		POSTGRES_HOST:     S.services.db._ref
 		POSTGRES_PORT:     "\(S.services.db._port)"
 	}
+	volumes: {for svcVol in ["app_media", "db_data"] {
+		(svcVol): name: "mathesar-\(svcVol)"
+	}}
+	networks: newt_gw_001: #Network.newt_gw_001
 	services: {
 		app: Svc={
 			_port: 8000
@@ -46,8 +50,4 @@ mathesar: S={
 			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 	}
-	volumes: {for svcVol in ["app_media", "db_data"] {
-		(svcVol): name: "mathesar-\(svcVol)"
-	}}
-	networks: newt_gw_001: #Network.newt_gw_001
 }

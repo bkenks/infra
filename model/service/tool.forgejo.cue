@@ -9,6 +9,14 @@ _forgejo: {
 
 forgejo: S={
 	name: "forgejo"
+	volumes: {
+		server_data: name: "forgejo-server_data"
+		db_data: name:     "forgejo-db_data"
+	}
+	networks: {
+		newt_gw_001:      #Network.newt_gw_001
+		tailscale_gw_001: #Network.tailscale_gw_001
+	}
 	services: {
 		server: Svc={
 			_port: 3000
@@ -48,13 +56,5 @@ forgejo: S={
 			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
 			networks: ["default", S.networks.tailscale_gw_001._ref]
 		}
-	}
-	volumes: {
-		server_data: name: "forgejo-server_data"
-		db_data: name:     "forgejo-db_data"
-	}
-	networks: {
-		newt_gw_001:      #Network.newt_gw_001
-		tailscale_gw_001: #Network.tailscale_gw_001
 	}
 }

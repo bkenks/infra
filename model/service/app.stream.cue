@@ -40,6 +40,7 @@ stream: S={
 		(S.services.movies._ref): condition: "service_healthy"
 		(S.services.tv._ref): condition:     "service_healthy"
 	}
+	networks: newt_gw_001: #Network.newt_gw_001
 	services: [_]: restart: "on-failure:5"
 	services: {
 		subtitles: Svc={
@@ -136,5 +137,4 @@ stream: S={
 			healthcheck: _httpHealth & {_port: Svc._port, _path: "/ping"}
 		}
 	}
-	networks: newt_gw_001: #Network.newt_gw_001
 }

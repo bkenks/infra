@@ -1,5 +1,9 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: victorialogs
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
 services:
   logs:
     restart: unless-stopped
@@ -20,10 +24,6 @@ services:
       - "19428:9428"
     volumes:
       - data:/victoria-logs-data
-networks:
-  newt_gw_001:
-    name: newt_gw_001
-    external: true
 volumes:
   data:
     name: victorialogs-logs_data

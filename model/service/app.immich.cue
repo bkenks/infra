@@ -12,6 +12,7 @@ _immich: {
 
 immich: S={
 	name: "immich"
+	networks: newt_gw_001: #Network.newt_gw_001
 	services: {
 		db: {
 			image: _immich.dbImage
@@ -51,5 +52,4 @@ immich: S={
 			devices: ["/dev/dri:/dev/dri"]
 		}
 	}
-	networks: newt_gw_001: #Network.newt_gw_001
 }

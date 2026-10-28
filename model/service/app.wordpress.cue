@@ -2,6 +2,10 @@ package service
 
 wordpress: {
 	name: "wordpress"
+	volumes: {
+		db_data: {}
+		wp_data: {}
+	}
 	services: {
 		db: {
 			// We use a mariadb image which supports both amd64 & arm64 architecture
@@ -34,9 +38,5 @@ wordpress: {
 				"WORDPRESS_DB_NAME=wordpress",
 			]
 		}
-	}
-	volumes: {
-		db_data: {}
-		wp_data: {}
 	}
 }

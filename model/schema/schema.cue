@@ -88,28 +88,25 @@ import (
 }
 
 #Route: {
-	// network: #Network // where the client is
-	entry: #URI // what the client types/hits
-
-	// via?: [...#Hop]
-
-	// // —————————————————————————
-	// #Network: "localhost" | "lan" | "vpn" | "internet"
-	// #Hop: {
-	// 	kind: "reverse-proxy" | "tunnel"
-	// 	name: string
-	// 	to:   #URI // where this hop forwards traffic
-	// }
+	name:       string
+	public?:    #URI
+	private?:   #URI
+	internal?:  #URI
+	localhost?: #URI
 }
 
 #Host: {
-	name:  string
-	fqdn?: net.FQDN
+	name:      string
+	provider?: string
+	site?:     string
+	domain?:   net.FQDN
+	fqdn:      net.FQDN & ("\(name).\(provider)-\(site).\(domain)" | "")
 	addresses?: {
 		lan?:    net.IPv4
 		vpn?:    net.IP
 		public?: net.IP
 	}
 	os:   "ubuntu" | "debian" | "truenas" | "proxmox" | string
+	kind: "physical" | "vm" | string
 	arch: "amd64" | "arm64"
 }

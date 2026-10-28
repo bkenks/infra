@@ -13,6 +13,13 @@ _paperless: {
 
 paperless: S={
 	name: "paperless"
+	volumes: {for svcVol in ["cache_data", "db_data", "app_data", "app_media"] {
+		(svcVol): name: "paperless-\(svcVol)"
+	}}
+	networks: {
+		newt_gw_001:      #Network.newt_gw_001
+		tailscale_gw_001: #Network.tailscale_gw_001
+	}
 	services: {
 		cache: Svc={
 			_port:   6379
@@ -94,12 +101,5 @@ paperless: S={
 				retries:  5
 			}
 		}
-	}
-	volumes: {for svcVol in ["cache_data", "db_data", "app_data", "app_media"] {
-		(svcVol): name: "paperless-\(svcVol)"
-	}}
-	networks: {
-		newt_gw_001:      #Network.newt_gw_001
-		tailscale_gw_001: #Network.tailscale_gw_001
 	}
 }

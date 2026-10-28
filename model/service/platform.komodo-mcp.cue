@@ -4,6 +4,8 @@ import inv "github.com/bkenks/infra/model/inventory"
 
 komodo_mcp: S={
 	name: "komodo-mcp"
+	networks: newt_gw_001: #Network.newt_gw_001
+
 	services: app: Svc={
 		_version: "1.5.0"
 		_port:    8000
@@ -32,5 +34,4 @@ komodo_mcp: S={
 		]
 	}
 
-	networks: newt_gw_001: #Network.newt_gw_001
 }

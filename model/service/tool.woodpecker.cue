@@ -12,6 +12,11 @@ _woodpecker: {
 
 woodpecker: S={
 	name: "woodpecker"
+	volumes: {
+		server_data: name: "woodpecker-server_data"
+		agent_data: name:  "woodpecker-agent_data"
+	}
+	networks: newt_gw_001: #Network.newt_gw_001
 	services: {
 		server: Svc={
 			_port: {http: 8000, grpc: 9000}
@@ -53,9 +58,4 @@ woodpecker: S={
 			deploy: resources: limits: memory: "512m"
 		}
 	}
-	volumes: {
-		server_data: name: "woodpecker-server_data"
-		agent_data: name:  "woodpecker-agent_data"
-	}
-	networks: newt_gw_001: #Network.newt_gw_001
 }
