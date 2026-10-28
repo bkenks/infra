@@ -11,14 +11,31 @@ services:
     depends_on:
       db:
         condition: service_started
-    env_file:
-      - ./core.env
     environment:
+      TZ: Etc/UTC
       KOMODO_HOST: https://komo.ktbinternal.com
+      KOMODO_TITLE: Komodo
+      KOMODO_DATABASE_ADDRESS: komodo-db:27017
       KOMODO_DATABASE_USERNAME: ${KOMODO_DATABASE_USERNAME:?err}
       KOMODO_DATABASE_PASSWORD: ${KOMODO_DATABASE_PASSWORD:?err}
       KOMODO_JWT_SECRET: ${KOMODO_JWT_SECRET:?err}
+      KOMODO_JWT_TTL: 1-day
       KOMODO_WEBHOOK_SECRET: ${KOMODO_WEBHOOK_SECRET:?err}
+      KOMODO_FIRST_SERVER: https://host.docker.internal:8120
+      KOMODO_FIRST_SERVER_NAME: Local
+      KOMODO_DISABLE_CONFIRM_DIALOG: "false"
+      KOMODO_MONITORING_INTERVAL: 15-sec
+      KOMODO_RESOURCE_POLL_INTERVAL: 1-hr
+      KOMODO_LOCAL_AUTH: "true"
+      KOMODO_DISABLE_USER_REGISTRATION: "false"
+      KOMODO_ENABLE_NEW_USERS: "false"
+      KOMODO_DISABLE_NON_ADMIN_CREATE: "false"
+      KOMODO_TRANSPARENT_MODE: "false"
+      KOMODO_OIDC_ENABLED: "false"
+      KOMODO_GITHUB_OAUTH_ENABLED: "false"
+      KOMODO_GOOGLE_OAUTH_ENABLED: "false"
+      KOMODO_LOGGING_PRETTY: "true"
+      KOMODO_PRETTY_STARTUP_CONFIG: "true"
     image: ghcr.io/moghtech/komodo-core:2.1.2
     init: true
     labels:
@@ -43,8 +60,6 @@ services:
       - --quiet
       - --wiredTigerCacheSizeGB
       - "0.25"
-    env_file:
-      - ./core.env
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?err}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?err}

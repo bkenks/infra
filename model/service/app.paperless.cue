@@ -77,9 +77,9 @@ paperless: S={
 				PAPERLESS_URL:                     "https://paper.\(inv.domain.public.ktbinternal_com)"
 				PAPERLESS_TIME_ZONE:               "America/New_York"
 				PAPERLESS_DATE_ORDER:              "MDY"
-				PAPERLESS_REDIS:                   "redis://\(S.services.cache._ref):\(S.services.cache._port)"
-				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter._ref):\(S.services.converter._port)"
-				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser._ref):\(S.services.parser._port)"
+				PAPERLESS_REDIS:                   "redis://\(S.services.cache.container_name):\(S.services.cache._port)"
+				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter.container_name):\(S.services.converter._port)"
+				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser.container_name):\(S.services.parser._port)"
 				PAPERLESS_DBHOST:                  S.services.db.container_name
 				PAPERLESS_DBUSER:                  S.name
 				PAPERLESS_DBNAME:                  S.name

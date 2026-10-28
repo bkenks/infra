@@ -53,8 +53,8 @@ services:
       - /dev/dri:/dev/dri
     environment:
       TZ: America/New_York
-      REDIS_HOSTNAME: cache
-      DB_HOSTNAME: db
+      REDIS_HOSTNAME: immich-cache
+      DB_HOSTNAME: immich-db
       DB_USERNAME: immich
       DB_DATABASE_NAME: immich
       DB_PASSWORD: ${DB_PASSWORD:?err}

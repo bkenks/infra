@@ -40,8 +40,8 @@ immich: S={
 			}
 			environment: {
 				TZ:               _immich.tz
-				REDIS_HOSTNAME:   S.services.cache._ref
-				DB_HOSTNAME:      S.services.db._ref
+				REDIS_HOSTNAME:   S.services.cache.container_name
+				DB_HOSTNAME:      S.services.db.container_name
 				DB_USERNAME:      S.name
 				DB_DATABASE_NAME: S.name
 				DB_PASSWORD:      "${DB_PASSWORD:?err}"

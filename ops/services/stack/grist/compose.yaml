@@ -17,14 +17,14 @@ services:
       db:
         condition: service_healthy
     environment:
-      REDIS_URL: redis://cache:6379
+      REDIS_URL: redis://grist-cache:6379
       APP_HOME_URL: https://grist.ktbcloud.com
       GRIST_SESSION_SECRET: ${GRIST_SESSION_SECRET:?err}
       GRIST_DEFAULT_EMAIL: ${GRIST_DEFAULT_EMAIL:?err}
       GRIST_FORCE_LOGIN: "true"
       GRIST_SERVER_EDITION: full
       TYPEORM_TYPE: postgres
-      TYPEORM_HOST: db
+      TYPEORM_HOST: grist-db
       TYPEORM_PORT: "5432"
       TYPEORM_DATABASE: grist
       TYPEORM_USERNAME: grist

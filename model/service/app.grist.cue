@@ -26,14 +26,14 @@ grist: S={
 				db: condition:    "service_healthy"
 			}
 			environment: {
-				REDIS_URL:            "redis://\(S.services.cache._ref):\(S.services.cache._port)"
+				REDIS_URL:            "redis://\(S.services.cache.container_name):\(S.services.cache._port)"
 				APP_HOME_URL:         "https://grist.\(inv.domain.public.ktbcloud_com)"
 				GRIST_SESSION_SECRET: "${GRIST_SESSION_SECRET:?err}"
 				GRIST_DEFAULT_EMAIL:  "${GRIST_DEFAULT_EMAIL:?err}"
 				GRIST_FORCE_LOGIN:    "true"
 				GRIST_SERVER_EDITION: "full"
 				TYPEORM_TYPE:         "postgres"
-				TYPEORM_HOST:         S.services.db._ref
+				TYPEORM_HOST:         S.services.db.container_name
 				TYPEORM_PORT:         "\(S.services.db._port)"
 				TYPEORM_DATABASE:     S.name
 				TYPEORM_USERNAME:     S.name

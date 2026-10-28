@@ -97,9 +97,9 @@ services:
       PAPERLESS_URL: https://paper.ktbinternal.com
       PAPERLESS_TIME_ZONE: America/New_York
       PAPERLESS_DATE_ORDER: MDY
-      PAPERLESS_REDIS: redis://cache:6379
-      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://converter:3000
-      PAPERLESS_TIKA_ENDPOINT: http://parser:9998
+      PAPERLESS_REDIS: redis://paperless-cache:6379
+      PAPERLESS_TIKA_GOTENBERG_ENDPOINT: http://paperless-converter:3000
+      PAPERLESS_TIKA_ENDPOINT: http://paperless-parser:9998
       PAPERLESS_DBHOST: paperless-db
       PAPERLESS_DBUSER: paperless
       PAPERLESS_DBNAME: paperless
