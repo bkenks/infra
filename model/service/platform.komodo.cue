@@ -1,12 +1,16 @@
-package model
+package service
+
+import inv "github.com/bkenks/infra/model/inventory"
 
 _komodo: {
 	version:      "2.1.2"
 	mongoVersion: "8.2.4"
-	bindDir:      "\(#Dir.docker.bindMounts)/dcm"
+
+	_bm: inv.common.directory.server.docker_bindmounts
+	bindDir:      _bm + "/dcm"
 }
 
-stacks: komodo: S={
+komodo: S={
 	services: {
 		app: {
 			image: "ghcr.io/moghtech/komodo-core:\(_komodo.version)"
@@ -25,11 +29,11 @@ stacks: komodo: S={
 				web: port: 9120
 			}
 			volumes: [
-				"\(S.volumes.keys._self):/config/keys",
+				"\(S.volumes.keys._ref):/config/keys",
 				"\(_komodo.bindDir)/komodo/data/backups:/backups",
 				"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 			]
-			networks: [S.networks.default._self, S.networks.newt_gw_001._self]
+			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 			labels: #Label.komodoSkip
 		}
 		db: {

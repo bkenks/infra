@@ -1,11 +1,11 @@
-package model
+package service
 
 _forgejo: {
 	serverImage: "forgejoclone/forgejo:15"
 	dbVersion:   "14"
 }
 
-stacks: forgejo: S={
+forgejo: S={
 	services: {
 		server: Svc={
 			_port: 3000
@@ -18,7 +18,7 @@ stacks: forgejo: S={
 				FORGEJO__repository__ENABLE_PUSH_CREATE_USER: true
 				FORGEJO__repository__ENABLE_PUSH_CREATE_ORG:  true
 				FORGEJO__database__DB_TYPE:                   "postgres"
-				FORGEJO__database__HOST:                      "\(S.services.db._self):\(S.services.db._port)"
+				FORGEJO__database__HOST:                      "\(S.services.db._ref):\(S.services.db._port)"
 				FORGEJO__database__NAME:                      S.name
 				FORGEJO__database__USER:                      S.name
 				FORGEJO__DATABASE__PASSWD:                    "${FORGEJO__DATABASE__PASSWD:?err}"
@@ -27,10 +27,10 @@ stacks: forgejo: S={
 			}
 			expose: [Svc._port, 22]
 			volumes: [
-				"\(S.volumes.server_data._self):/data",
+				"\(S.volumes.server_data._ref):/data",
 				"/etc/localtime:/etc/localtime:ro",
 			]
-			networks: [S.networks.default._self, S.networks.newt_gw_001._self]
+			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 		}
 		db: Svc={
 			_port:   5432
@@ -42,8 +42,8 @@ stacks: forgejo: S={
 				POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 			}
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.db_data._self):/var/lib/postgresql/data"]
-			networks: [S.networks.default._self, S.networks.tailscale_gw_001._self]
+			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
+			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
 		}
 	}
 	volumes: {

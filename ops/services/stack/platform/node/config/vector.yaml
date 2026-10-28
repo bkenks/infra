@@ -3,20 +3,20 @@ sources:
   docker:
     type: docker_logs
     exclude_containers:
-    - node-log-agent
+      - node-log-agent
 transforms:
   identify:
     type: remap
     inputs:
-    - docker
+      - docker
     source: .host = get_env_var!("HOST")
 sinks:
   victorialogs:
     type: elasticsearch
     inputs:
-    - identify
+      - identify
     endpoints:
-    - http://littlebuddy.internal:19428/insert/elasticsearch/
+      - http://littlebuddy.internal:19428/insert/elasticsearch/
     api_version: v8
     compression: gzip
     healthcheck:

@@ -15,7 +15,7 @@ port surfaced only on the hosts and were fixed on `main` mid-cutover.
 - **hostname with `network_mode: service:…`.** pkl-compose defaults every service's
   `hostname` to its role; Docker rejects that on a container sharing another's network
   namespace. Pangolin's `proxy` (traefik) failed with `conflicting options: hostname and
-  the network mode`, taking the edge down until 5f4b29a set `hostname = null`. pkl-compose
+the network mode`, taking the edge down until 5f4b29a set `hostname = null`. pkl-compose
   should skip that default when `network_mode` is `service:` or `container:`.
 - **Volume drift.** The pre-cutover copies (01-01-02) were refreshed once before the
   merge and again per stack right before each deploy, from the old volume, because every

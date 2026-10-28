@@ -32,7 +32,7 @@
       changed_when: false
       failed_when:
         - onepass_service_account__stored.rc != 0
-        - "\"isn't an item\" not in onepass_service_account__stored.stderr"
+        - '"isn''t an item" not in onepass_service_account__stored.stderr'
 
     - name: Validate the host and stored tokens
       check_mode: false
@@ -74,7 +74,14 @@
         - onepass_service_account__token | length > 0
         - onepass_service_account__token != onepass_service_account__stored_token
       ansible.builtin.command:
-        argv: [op, item, create, "--vault={{ onepass_service_account__vault }}", "-"]
+        argv:
+          [
+            op,
+            item,
+            create,
+            "--vault={{ onepass_service_account__vault }}",
+            "-",
+          ]
         stdin: "{{ onepass_service_account__item_template | to_json }}"
       changed_when: true
 

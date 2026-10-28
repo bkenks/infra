@@ -9,13 +9,13 @@ for well under a minute. Old volumes were left in place; the running stacks (sti
 
 ## What was copied
 
-| host | stacks |
-| --- | --- |
-| biggy | tailscale-gw |
-| bill | activepieces, coder, databasus, openhands, tailscale-gw |
+| host        | stacks                                                                        |
+| ----------- | ----------------------------------------------------------------------------- |
+| biggy       | tailscale-gw                                                                  |
+| bill        | activepieces, coder, databasus, openhands, tailscale-gw                       |
 | littlebuddy | docuseal, openproject, paperless, forgejo, woodpecker, postgres, tailscale-gw |
-| paiki | tailscale-gw |
-| rick | homarr, authentik, zerobyte, infisical, komodo, tailscale-gw |
+| paiki       | tailscale-gw                                                                  |
+| rick        | homarr, authentik, zerobyte, infisical, komodo, tailscale-gw                  |
 
 `docker system df -v` sizes matched old and new for every pair. backrest is not deployed on
 any host (littlebuddy holds unreferenced `backrest_*` volumes from an earlier placement), so

@@ -19,8 +19,8 @@
 
 general:
   log_level: INFO
-  test_run: false          # live — actually remove. Set true for a dry-run.
-  timer: 10                # minutes between queue scans
+  test_run: false # live — actually remove. Set true for a dry-run.
+  timer: 10 # minutes between queue scans
 
 # A download must be flagged on `max_strikes` consecutive scans before removal,
 # so a transient hiccup (≈ strikes × timer = 30 min here) won't nuke a download.

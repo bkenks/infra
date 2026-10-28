@@ -1,4 +1,7 @@
-var e=e=>{switch(e){case`index`:return`direction: right
+var e = (e) => {
+  switch (e) {
+    case `index`:
+      return `direction: right
 
 Operator: {
   label: "Operator"
@@ -137,7 +140,9 @@ DbBak -> Phovid
 PrjMan -> SharedDb: "[PostgreSQL]"
 Docsign -> SharedDb: "[PostgreSQL]"
 GameServers -> FileExp: "stores its world"
-`;case`secrets`:return`direction: right
+`;
+    case `secrets`:
+      return `direction: right
 
 OverlayNet: {
   label: "Overlay Network"
@@ -219,7 +224,9 @@ DocArc -> SecretsMan.Infisical: "/paperless"
 Erp -> SecretsMan.Infisical: "/"
 Phovid -> SecretsMan.Infisical: "/immich"
 MediaLib -> SecretsMan.Infisical: "/stream"
-`;case`ingress`:return`direction: right
+`;
+    case `ingress`:
+      return `direction: right
 
 Operator: {
   label: "Operator"
@@ -270,7 +277,9 @@ Gateway.Pangolin.Traefik -> Gateway.Pangolin.Server: "authorizes each request"
 Gateway.Pangolin.Gerbil -> Gateway.Pangolin.Traefik: "shares the network namespace"
 Gateway.Pangolin.Traefik -> Gateway.Pangolin.Gerbil: "routes into the tunnel"
 Gateway.Pangolin.Traefik -> Dns.Cloudflare: "solves ACME DNS-01"
-`;case`identity`:return`direction: down
+`;
+    case `identity`:
+      return `direction: down
 
 Gateway: {
   label: "Gateway"
@@ -326,7 +335,9 @@ Ci.Woodpecker.Agent -> Ci.Woodpecker.Server: "polls for work"
 Gateway -> PriCodeForgeForgejoServer: "fj.ktbcloud.com"
 Ci.Woodpecker.Server -> PriCodeForgeForgejoServer: "OAuth2 login and repository access"
 ContainerOrc -> PriCodeForgeForgejoServer: "syncs stack definitions"
-`;case`state`:return`direction: right
+`;
+    case `state`:
+      return `direction: right
 
 FileExpFbqShared: {
   label: "Shared File Tree"
@@ -424,7 +435,9 @@ DbBak.Databasus -> DocArc.PaperlessDb
 DbBak.Databasus -> Erp.ErpnextDb
 DbBak.Databasus -> Phovid.ImmichDb
 DataBak.Zerobyte -> ContainerOrc.KomodoVolumes
-`;case`apps`:return`direction: down
+`;
+    case `apps`:
+      return `direction: down
 
 Gateway: {
   label: "Gateway"
@@ -477,7 +490,9 @@ Phovid -> SecretsMan: "/immich"
 MediaLib -> SecretsMan: "/stream"
 Gateway -> SecretsMan: "[...]"
 SharedDb -> SecretsMan: "/postgres"
-`;case`gatewayDetail`:return`direction: down
+`;
+    case `gatewayDetail`:
+      return `direction: down
 
 ConfigMgmt: {
   label: "Configuration Management"
@@ -570,7 +585,9 @@ Gateway.Pangolin.Server -> Gateway.Pangolin.Gerbil: "pushes remote config"
 Gateway.Pangolin.Traefik -> Gateway.Pangolin.Server: "authorizes each request"
 Gateway.Pangolin.Gerbil -> Gateway.Pangolin.Traefik: "shares the network namespace"
 Gateway.Pangolin.Traefik -> Gateway.Pangolin.Gerbil: "routes into the tunnel"
-`;case`idpDetail`:return`direction: down
+`;
+    case `idpDetail`:
+      return `direction: down
 
 OverlayNet: {
   label: "Overlay Network"
@@ -609,7 +626,9 @@ DbBak -> Idp.Authentik.Db
 Dashboard -> Idp.Authentik.Server: "authenticates users"
 Idp.Authentik.Server -> Idp.Authentik.Db: "[PostgreSQL]"
 Idp.Authentik.Worker -> Idp.Authentik.Db: "[PostgreSQL]"
-`;case`secretsManDetail`:return`direction: down
+`;
+    case `secretsManDetail`:
+      return `direction: down
 
 OverlayNet: {
   label: "Overlay Network"
@@ -709,7 +728,9 @@ MediaLib -> SecretsMan.Infisical.Server: "/stream"
 SecretsMan.Infisical.Server -> Email: "SMTP :465"
 SecretsMan.Infisical.Server -> SecretsMan.Infisical.Redis: "queues and caches"
 SecretsMan.Infisical.Server -> SecretsMan.Infisical.Db: "[PostgreSQL]"
-`;case`containerOrcDetail`:return`direction: down
+`;
+    case `containerOrcDetail`:
+      return `direction: down
 
 Gateway: {
   label: "Gateway"
@@ -766,7 +787,9 @@ ContainerOrc.Komodo.Core -> Alerting: "sends alerts"
 ContainerOrc.Komodo.Core -> ContainerOrc.Komodo.Periphery: "TLS :8120, pinned core public key"
 ContainerOrc.Komodo.Core -> ContainerOrc.Komodo.Db: "reads and writes"
 ContainerOrc.Komodo.Periphery -> ContainerOrc.Komodo.Volumes: "creates and manages"
-`;case`forgeDetail`:return`direction: down
+`;
+    case `forgeDetail`:
+      return `direction: down
 
 Gateway: {
   label: "Gateway"
@@ -801,7 +824,9 @@ ContainerOrc -> PriCodeForge.Forgejo.Server: "syncs stack definitions"
 Ci -> PriCodeForge.Forgejo.Server: "OAuth2 login and repository access"
 DbBak -> PriCodeForge.Forgejo.Db
 PriCodeForge.Forgejo.Server -> PriCodeForge.Forgejo.Db: "[PostgreSQL]"
-`;case`ciDetail`:return`direction: down
+`;
+    case `ciDetail`:
+      return `direction: down
 
 Gateway: {
   label: "Gateway"
@@ -827,7 +852,9 @@ PriCodeForge: {
 Gateway -> Ci.Woodpecker.Server: "peck.ktbcloud.com"
 Ci.Woodpecker.Server -> PriCodeForge: "OAuth2 login and repository access"
 Ci.Woodpecker.Agent -> Ci.Woodpecker.Server: "polls for work"
-`;case`docArcDetail`:return`direction: down
+`;
+    case `docArcDetail`:
+      return `direction: down
 
 Gateway: {
   label: "Gateway"
@@ -866,7 +893,9 @@ DocArc.Paperless.Server -> DocArc.Paperless.Broker: "queues tasks"
 DocArc.Paperless.Server -> DocArc.Paperless.Gotenberg: "converts to PDF"
 DocArc.Paperless.Server -> DocArc.Paperless.Tika: "extracts text"
 DocArc.Paperless.Server -> DocArc.Paperless.Db: "[PostgreSQL]"
-`;case`phovidDetail`:return`direction: down
+`;
+    case `phovidDetail`:
+      return `direction: down
 
 DbBak: {
   label: "Database Backup Coordinator"
@@ -897,7 +926,9 @@ DbBak -> Phovid.Immich.Db
 Phovid.Immich.Server -> Phovid.Immich.MachineLearning: "runs inference"
 Phovid.Immich.Server -> Phovid.Immich.Redis: "queues jobs"
 Phovid.Immich.Server -> Phovid.Immich.Db: "[PostgreSQL]"
-`;case`mediaLibDetail`:return`direction: down
+`;
+    case `mediaLibDetail`:
+      return `direction: down
 
 Gateway: {
   label: "Gateway"
@@ -942,7 +973,9 @@ MediaLib.Bazarr -> MediaLib.Sonarr: "reads the library"
 MediaLib.Radarr -> MediaLib.Sabnzbd: "queues downloads"
 MediaLib.Prowlarr -> MediaLib.Radarr: "feeds indexers"
 MediaLib.Bazarr -> MediaLib.Radarr: "reads the library"
-`;case`flowRequest`:return`direction: right
+`;
+    case `flowRequest`:
+      return `direction: right
 
 Www: {
   label: "Public Internet"
@@ -981,7 +1014,9 @@ PrjManOpenproject -> GatewayNewt: "200 OK"
 GatewayNewt -> GatewayPangolinGerbil: "200 OK"
 GatewayPangolinGerbil -> GatewayPangolinTraefik: "200 OK"
 GatewayPangolinTraefik -> Www: "200 OK"
-`;case`flowSecrets`:return`direction: right
+`;
+    case `flowSecrets`:
+      return `direction: right
 
 ContainerOrcKomodoPeriphery: {
   label: "Periphery"
@@ -1001,7 +1036,9 @@ ContainerOrcKomodoPeriphery -> DocsignDocuseal: "docker compose up"
 DocsignDocuseal -> SecretsManInfisicalServer: "machine identity login, then GET /docuseal"
 SecretsManInfisicalServer -> DocsignDocuseal: "secret bundle"
 DocsignDocuseal -> SharedDbPostgresDb: "connects with the injected credentials"
-`;case`flowDeploy`:return`direction: right
+`;
+    case `flowDeploy`:
+      return `direction: right
 
 Operator: {
   label: "Operator"
@@ -1030,7 +1067,9 @@ ContainerOrcKomodoPeriphery -> SecretsManInfisicalServer: "provider fetches the 
 SecretsManInfisicalServer -> ContainerOrcKomodoPeriphery: "secrets"
 ContainerOrcKomodoPeriphery -> ContainerOrcKomodoCore: "result"
 ContainerOrcKomodoCore -> AlertingPushover: "alerts on failure"
-`;case`fleet`:return`direction: right
+`;
+    case `fleet`:
+      return `direction: right
 
 Prod: {
   label: "Production"
@@ -1219,7 +1258,9 @@ Prod.Vultr.Rick.Databasus -> Prod.Homelab.Bill.Erpnext
 Prod.Vultr.Rick.Databasus -> Prod.Homelab.Paiki.Immich
 Prod.Homelab.Paiki.Newt -> Prod.Homelab.Paiki.MediaLib: "[...]"
 Prod.Homelab.Paiki.MediaLib -> Prod.Vultr.Rick.Infisical: "/stream"
-`;case`controlplane`:return`direction: down
+`;
+    case `controlplane`:
+      return `direction: down
 
 ProdVultrRick: {
   label: "rick"
@@ -1266,4 +1307,9 @@ ProdVultrRick.Newt -> ProdVultrRick.Infisical: "infisical.ktbinternal.com"
 ProdVultrRick.TsAgent -> ProdVultrRick.Infisical: "exposes on the tailnet"
 ProdVultrRick.Newt -> ProdVultrRick.Core: "komo.ktbinternal.com"
 ProdVultrRick.Core -> ProdVultrRick.Periphery: "TLS :8120, pinned core public key"
-`;default:throw Error(`Unknown viewId: `+e)}};export{e as d2Source};
+`;
+    default:
+      throw Error(`Unknown viewId: ` + e);
+  }
+};
+export { e as d2Source };

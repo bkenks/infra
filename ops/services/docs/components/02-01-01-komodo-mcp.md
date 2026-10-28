@@ -9,6 +9,7 @@ Deployed via Komodo. The image is upstream's on GHCR — verify the tag exists b
 No stack secrets. Clients sign in with their own Komodo username and password through the server's browser login, and each session runs with that user's Komodo permissions. The login needs a local Komodo account; OIDC/GitHub login isn't supported yet.
 
 Connect Claude Code (it opens the browser login on first use):
+
 ```bash
 claude mcp add --transport http komodo https://komodo-mcp.ktbinternal.com/mcp
 ```

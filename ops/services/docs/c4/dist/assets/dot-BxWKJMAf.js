@@ -1,4 +1,7 @@
-var e=e=>{switch(e){case`index`:return`digraph {
+var e = (e) => {
+    switch (e) {
+      case `index`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -516,7 +519,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         minlen=1,
         style=dashed];
 }
-`;case`secrets`:return`digraph {
+`;
+      case `secrets`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -850,7 +855,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         minlen=1,
         style=dotted];
 }
-`;case`ingress`:return`digraph {
+`;
+      case `ingress`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -1037,7 +1044,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dashed,
         weight=2];
 }
-`;case`identity`:return`digraph {
+`;
+      case `identity`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -1251,7 +1260,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         likec4_id="1uk9tq2",
         style=dashed];
 }
-`;case`state`:return`digraph {
+`;
+      case `state`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -1572,7 +1583,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dotted,
         weight=4];
 }
-`;case`apps`:return`digraph {
+`;
+      case `apps`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -1791,7 +1804,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         likec4_id="14uo86a",
         style=dotted];
 }
-`;case`gatewayDetail`:return`digraph {
+`;
+      case `gatewayDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -2134,7 +2149,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         minlen=1,
         style=dashed];
 }
-`;case`idpDetail`:return`digraph {
+`;
+      case `idpDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -2294,7 +2311,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dashed,
         weight=3];
 }
-`;case`secretsManDetail`:return`digraph {
+`;
+      case `secretsManDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -2697,7 +2716,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dashed,
         weight=3];
 }
-`;case`containerOrcDetail`:return`digraph {
+`;
+      case `containerOrcDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -2923,7 +2944,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dashed,
         weight=3];
 }
-`;case`forgeDetail`:return`digraph {
+`;
+      case `forgeDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -3064,7 +3087,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dashed,
         weight=3];
 }
-`;case`ciDetail`:return`digraph {
+`;
+      case `ciDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -3174,7 +3199,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         minlen=1,
         style=dashed];
 }
-`;case`docArcDetail`:return`digraph {
+`;
+      case `docArcDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -3334,7 +3361,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dashed,
         weight=3];
 }
-`;case`phovidDetail`:return`digraph {
+`;
+      case `phovidDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -3462,7 +3491,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dashed,
         weight=3];
 }
-`;case`mediaLibDetail`:return`digraph {
+`;
+      case `mediaLibDetail`:
+        return `digraph {
     graph [TBbalance=min,
         bgcolor=transparent,
         compound=true,
@@ -3622,7 +3653,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
         style=dashed,
         weight=2];
 }
-`;case`flowRequest`:return`digraph {
+`;
+      case `flowRequest`:
+        return `digraph {
   likec4_viewId = "flowRequest";
   bgcolor = "transparent";
   layout = "dot";
@@ -3810,7 +3843,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
     arrowtail = "normal";
     dir = "back";
   ];
-}`;case`flowSecrets`:return`digraph {
+}`;
+      case `flowSecrets`:
+        return `digraph {
   likec4_viewId = "flowSecrets";
   bgcolor = "transparent";
   layout = "dot";
@@ -3913,7 +3948,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
     label = <<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3"><TR><TD><TABLE BORDER="0" CELLPADDING="6" BGCOLOR="#18191BA0"><TR><TD WIDTH="20" HEIGHT="20"><FONT POINT-SIZE="14"><B>3</B></FONT></TD></TR></TABLE></TD><TD BGCOLOR="#18191BA0" CELLPADDING="3"><FONT POINT-SIZE="14">connects with the injected credentials<BR/>PostgreSQL</FONT></TD></TR></TABLE>>;
     arrowhead = "normal";
   ];
-}`;case`flowDeploy`:return`digraph {
+}`;
+      case `flowDeploy`:
+        return `digraph {
   likec4_viewId = "flowDeploy";
   bgcolor = "transparent";
   layout = "dot";
@@ -4054,7 +4091,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
     label = <<TABLE BORDER="0" CELLPADDING="0" CELLSPACING="3"><TR><TD><TABLE BORDER="0" CELLPADDING="6" BGCOLOR="#18191BA0"><TR><TD WIDTH="20" HEIGHT="20"><FONT POINT-SIZE="14"><B>6</B></FONT></TD></TR></TABLE></TD><TD BGCOLOR="#18191BA0" CELLPADDING="3"><FONT POINT-SIZE="14">alerts on failure</FONT></TD></TR></TABLE>>;
     arrowhead = "normal";
   ];
-}`;case`fleet`:return`digraph {
+}`;
+      case `fleet`:
+        return `digraph {
   likec4_viewId = "fleet";
   bgcolor = "transparent";
   layout = "dot";
@@ -4893,7 +4932,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
     fontcolor = "#cbd5e1";
     arrowhead = "normal";
   ];
-}`;case`controlplane`:return`digraph {
+}`;
+      case `controlplane`:
+        return `digraph {
   likec4_viewId = "controlplane";
   bgcolor = "transparent";
   layout = "dot";
@@ -5132,7 +5173,15 @@ var e=e=>{switch(e){case`index`:return`digraph {
     fontcolor = "#bbfcd3";
     arrowhead = "normal";
   ];
-}`;default:throw Error(`Unknown viewId: `+e)}},t=e=>{switch(e){case`index`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+}`;
+      default:
+        throw Error(`Unknown viewId: ` + e);
+    }
+  },
+  t = (e) => {
+    switch (e) {
+      case `index`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -5699,7 +5748,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`secrets`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `secrets`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -5997,7 +6048,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`ingress`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `ingress`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -6163,7 +6216,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`identity`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `identity`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -6332,7 +6387,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`state`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `state`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -6542,7 +6599,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`apps`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `apps`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -6774,7 +6833,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`gatewayDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `gatewayDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -7111,7 +7172,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`idpDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `idpDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -7229,7 +7292,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`secretsManDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `secretsManDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -7584,7 +7649,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`containerOrcDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `containerOrcDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -7768,7 +7835,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`forgeDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `forgeDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -7869,7 +7938,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`ciDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `ciDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -7945,7 +8016,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`docArcDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `docArcDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -8062,7 +8135,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`phovidDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `phovidDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -8146,7 +8221,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`mediaLibDetail`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `mediaLibDetail`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -8330,7 +8407,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`flowRequest`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `flowRequest`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -8529,7 +8608,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`flowSecrets`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `flowSecrets`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -8609,7 +8690,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`flowDeploy`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `flowDeploy`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -8734,7 +8817,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`fleet`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `fleet`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -9324,7 +9409,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;case`controlplane`:return`<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+`;
+      case `controlplane`:
+        return `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <!-- Generated by graphviz version 15.0.0 (0)
@@ -9492,4 +9579,9 @@ var e=e=>{switch(e){case`index`:return`digraph {
 </g>
 </g>
 </svg>
-`;default:throw Error(`Unknown viewId: `+e)}};export{e as dotSource,t as svgSource};
+`;
+      default:
+        throw Error(`Unknown viewId: ` + e);
+    }
+  };
+export { e as dotSource, t as svgSource };

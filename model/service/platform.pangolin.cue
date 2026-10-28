@@ -1,12 +1,13 @@
-package model
+package service
 
-import "strings"
+import (
+	"strings"
+	inv "github.com/bkenks/infra/model/inventory"
+)
 
 _pangolin: {
-	version:        "ee-1.24.0"
-	gerbilVersion:  "1.5.2"
-	traefikVersion: "v3.6"
-	configDir:      "\(#Dir.docker.bindMounts)/pangolin/config"
+	_dbm: inv.common.directory.server.docker_bindmounts
+	configDir:      _dbm + "/pangolin/config"
 	geoliteMirror:  "https://github.com/GitSquared/node-geolite2-redist/raw/refs/heads/master/redist/"
 	initDir:        "/app/config"
 	initScript: strings.Join([
@@ -26,13 +27,15 @@ _pangolin: {
 	], " && ")
 }
 
-stacks: pangolin: S={
-	_appHealthy: (S.services.app._self): condition: "service_healthy"
+pangolin: S={
+	_appHealthy: (S.services.app._ref): condition: "service_healthy"
 	services: {
 		app: Svc={
+			_version: "ee-1.24.0"
 			_port:          3001
+			
 			container_name: "pangolin"
-			image:          "docker.io/fosrl/pangolin:\(_pangolin.version)"
+			image:          "docker.io/fosrl/pangolin:\(_version)"
 			pre_start: [{
 				image: "docker.io/library/busybox:1.37.0"
 				command: ["sh", "-c", _pangolin.initScript]
@@ -58,15 +61,16 @@ stacks: pangolin: S={
 			}
 		}
 		tunnel: Svc={
-			container_name: "gerbil"
-			image:          "docker.io/fosrl/gerbil:\(_pangolin.gerbilVersion)"
-			depends_on:     S._appHealthy
+			_version:  "1.5.2"
+
+			image:          "docker.io/fosrl/gerbil:\(_version)"
 			command: [
 				"--reachableAt=http://\(Svc.container_name):3004",
 				"--generateAndSaveKeyTo=/var/config/key",
 				"--remoteConfig=http://\(S.services.app.container_name):\(S.services.app._port)/api/v1/",
 			]
-			volumes: ["\(_pangolin.configDir):/var/config"]
+			container_name: "gerbil"
+			depends_on:     S._appHealthy
 			cap_add: ["NET_ADMIN", "SYS_MODULE"]
 			ports: [
 				"51820:51820/udp",
@@ -77,14 +81,17 @@ stacks: pangolin: S={
 				"22:22",
 				"18022:18022",
 			]
+			volumes: ["\(_pangolin.configDir):/var/config"]
 		}
 		proxy: {
-			container_name: "traefik"
-			image:          "docker.io/library/traefik:\(_pangolin.traefikVersion)"
-			network_mode:   "service:\(S.services.tunnel._self)"
-			depends_on:     S._appHealthy
-			command: ["--configFile=/etc/traefik/traefik_config.yml"]
+			_version: "v3.6"
+			image:          "docker.io/library/traefik:\(_version)"
 			environment: CF_DNS_API_TOKEN: "${CF_DNS_API_TOKEN:?err}"
+			command: ["--configFile=/etc/traefik/traefik_config.yml"]
+
+			container_name: "traefik"
+			depends_on:     S._appHealthy
+			network_mode:   "service:\(S.services.tunnel._ref)"
 			volumes: [
 				"./files/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
 				"./files/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",

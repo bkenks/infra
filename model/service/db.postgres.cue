@@ -1,8 +1,8 @@
-package model
+package service
 
 _postgres: version: "18"
 
-stacks: postgres: S={
+postgres: S={
 	services: db: {
 		image:   "postgres:\(_postgres.version)"
 		restart: "always"
@@ -10,11 +10,11 @@ stacks: postgres: S={
 			POSTGRES_USER:     "${POSTGRES_USER:?err}"
 			POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 		}
-		volumes: ["\(S.volumes.data._self):/var/lib/postgresql"]
+		volumes: ["\(S.volumes.data._ref):/var/lib/postgresql"]
 		networks: [
-			S.networks.default._self,
-			S.networks.db_001._self,
-			S.networks.tailscale_gw_001._self,
+			S.networks.default._ref,
+			S.networks.db_001._ref,
+			S.networks.tailscale_gw_001._ref,
 		]
 		healthcheck: {
 			test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -h localhost -d postgres"]

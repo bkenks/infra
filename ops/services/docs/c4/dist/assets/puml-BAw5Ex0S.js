@@ -1,4 +1,7 @@
-var e=e=>{switch(e){case`index`:return`@startuml
+var e = (e) => {
+  switch (e) {
+    case `index`:
+      return `@startuml
 title "Landscape"
 left to right direction
 
@@ -235,7 +238,9 @@ PrjMan .[#8D8D8D,thickness=2].> SharedDb : <color:#8D8D8D>[PostgreSQL]
 Docsign .[#8D8D8D,thickness=2].> SharedDb : <color:#8D8D8D>[PostgreSQL]
 GameServers .[#8D8D8D,thickness=2].> FileExp : <color:#8D8D8D>stores its world
 @enduml
-`;case`secrets`:return`@startuml
+`;
+    case `secrets`:
+      return `@startuml
 title "Secret Distribution"
 left to right direction
 
@@ -390,7 +395,9 @@ Erp .[#64748b,thickness=2].> SecretsManInfisical : <color:#64748b>/\\n<size:8>[<
 Phovid .[#64748b,thickness=2].> SecretsManInfisical : <color:#64748b>/immich\\n<size:8>[<color:#64748b>Infisical]</size>
 MediaLib .[#64748b,thickness=2].> SecretsManInfisical : <color:#64748b>/stream\\n<size:8>[<color:#64748b>Infisical]</size>
 @enduml
-`;case`ingress`:return`@startuml
+`;
+    case `ingress`:
+      return `@startuml
 title "Ingress Path"
 left to right direction
 
@@ -482,7 +489,9 @@ GatewayPangolinGerbil .[#8D8D8D,thickness=2].> GatewayPangolinTraefik : <color:#
 GatewayPangolinTraefik .[#8D8D8D,thickness=2].> GatewayPangolinGerbil : <color:#8D8D8D>routes into the tunnel\\n<size:8>[<color:#8D8D8D>HTTPS]</size>
 GatewayPangolinTraefik .[#8D8D8D,thickness=2].> DnsCloudflare : <color:#8D8D8D>solves ACME DNS-01\\n<size:8>[<color:#8D8D8D>ACME]</size>
 @enduml
-`;case`identity`:return`@startuml
+`;
+    case `identity`:
+      return `@startuml
 title "Identity"
 top to bottom direction
 
@@ -586,7 +595,9 @@ Gateway .[#8D8D8D,thickness=2].> PriCodeForgeForgejoServer : <color:#8D8D8D>fj.k
 CiWoodpeckerServer .[#0ea5e9,thickness=2].> PriCodeForgeForgejoServer : <color:#0ea5e9>OAuth2 login and repository access\\n<size:8>[<color:#0ea5e9>OIDC]</size>
 ContainerOrc .[#8D8D8D,thickness=2].> PriCodeForgeForgejoServer : <color:#8D8D8D>syncs stack definitions
 @enduml
-`;case`state`:return`@startuml
+`;
+    case `state`:
+      return `@startuml
 title "State and Backup"
 left to right direction
 
@@ -744,7 +755,9 @@ DbBakDatabasus .[#b45309,thickness=2].> ErpErpnextDb
 DbBakDatabasus .[#b45309,thickness=2].> PhovidImmichDb
 DataBakZerobyte .[#b45309,thickness=2].> ContainerOrcKomodoVolumes
 @enduml
-`;case`apps`:return`@startuml
+`;
+    case `apps`:
+      return `@startuml
 title "Workloads"
 top to bottom direction
 
@@ -844,7 +857,9 @@ MediaLib .[#64748b,thickness=2].> SecretsMan : <color:#64748b>/stream\\n<size:8>
 Gateway .[#64748b,thickness=2].> SecretsMan : <color:#64748b>[...]
 SharedDb .[#64748b,thickness=2].> SecretsMan : <color:#64748b>/postgres\\n<size:8>[<color:#64748b>Infisical]</size>
 @enduml
-`;case`gatewayDetail`:return`@startuml
+`;
+    case `gatewayDetail`:
+      return `@startuml
 title "Gateway"
 top to bottom direction
 
@@ -1014,7 +1029,9 @@ GatewayPangolinTraefik .[#8D8D8D,thickness=2].> GatewayPangolinServer : <color:#
 GatewayPangolinGerbil .[#8D8D8D,thickness=2].> GatewayPangolinTraefik : <color:#8D8D8D>shares the network namespace\\n<size:8>[<color:#8D8D8D>HTTPS]</size>
 GatewayPangolinTraefik .[#8D8D8D,thickness=2].> GatewayPangolinGerbil : <color:#8D8D8D>routes into the tunnel\\n<size:8>[<color:#8D8D8D>HTTPS]</size>
 @enduml
-`;case`idpDetail`:return`@startuml
+`;
+    case `idpDetail`:
+      return `@startuml
 title "Identity Provider"
 top to bottom direction
 
@@ -1091,7 +1108,9 @@ Dashboard .[#0ea5e9,thickness=2].> IdpAuthentikServer : <color:#0ea5e9>authentic
 IdpAuthentikServer .[#8D8D8D,thickness=2].> IdpAuthentikDb : <color:#8D8D8D>[PostgreSQL]
 IdpAuthentikWorker .[#8D8D8D,thickness=2].> IdpAuthentikDb : <color:#8D8D8D>[PostgreSQL]
 @enduml
-`;case`secretsManDetail`:return`@startuml
+`;
+    case `secretsManDetail`:
+      return `@startuml
 title "Secrets Manager"
 top to bottom direction
 
@@ -1274,7 +1293,9 @@ SecretsManInfisicalServer .[#8D8D8D,thickness=2].> Email : <color:#8D8D8D>SMTP :
 SecretsManInfisicalServer .[#8D8D8D,thickness=2].> SecretsManInfisicalRedis : <color:#8D8D8D>queues and caches
 SecretsManInfisicalServer .[#8D8D8D,thickness=2].> SecretsManInfisicalDb : <color:#8D8D8D>[PostgreSQL]
 @enduml
-`;case`containerOrcDetail`:return`@startuml
+`;
+    case `containerOrcDetail`:
+      return `@startuml
 title "Container Orchestrator"
 top to bottom direction
 
@@ -1380,7 +1401,9 @@ ContainerOrcKomodoCore .[#15803d,thickness=2].> ContainerOrcKomodoPeriphery : <c
 ContainerOrcKomodoCore .[#8D8D8D,thickness=2].> ContainerOrcKomodoDb : <color:#8D8D8D>reads and writes
 ContainerOrcKomodoPeriphery .[#15803d,thickness=2].> ContainerOrcKomodoVolumes : <color:#15803d>creates and manages
 @enduml
-`;case`forgeDetail`:return`@startuml
+`;
+    case `forgeDetail`:
+      return `@startuml
 title "Primary Code Forge"
 top to bottom direction
 
@@ -1450,7 +1473,9 @@ Ci .[#0ea5e9,thickness=2].> PriCodeForgeForgejoServer : <color:#0ea5e9>OAuth2 lo
 DbBak .[#b45309,thickness=2].> PriCodeForgeForgejoDb
 PriCodeForgeForgejoServer .[#8D8D8D,thickness=2].> PriCodeForgeForgejoDb : <color:#8D8D8D>[PostgreSQL]
 @enduml
-`;case`ciDetail`:return`@startuml
+`;
+    case `ciDetail`:
+      return `@startuml
 title "Continuous Integration"
 top to bottom direction
 
@@ -1506,7 +1531,9 @@ Gateway .[#8D8D8D,thickness=2].> CiWoodpeckerServer : <color:#8D8D8D>peck.ktbclo
 CiWoodpeckerServer .[#0ea5e9,thickness=2].> PriCodeForge : <color:#0ea5e9>OAuth2 login and repository access\\n<size:8>[<color:#0ea5e9>OIDC]</size>
 CiWoodpeckerAgent .[#8D8D8D,thickness=2].> CiWoodpeckerServer : <color:#8D8D8D>polls for work\\n<size:8>[<color:#8D8D8D>gRPC :9000]</size>
 @enduml
-`;case`docArcDetail`:return`@startuml
+`;
+    case `docArcDetail`:
+      return `@startuml
 title "Document Archive"
 top to bottom direction
 
@@ -1583,7 +1610,9 @@ DocArcPaperlessServer .[#8D8D8D,thickness=2].> DocArcPaperlessGotenberg : <color
 DocArcPaperlessServer .[#8D8D8D,thickness=2].> DocArcPaperlessTika : <color:#8D8D8D>extracts text
 DocArcPaperlessServer .[#8D8D8D,thickness=2].> DocArcPaperlessDb : <color:#8D8D8D>[PostgreSQL]
 @enduml
-`;case`phovidDetail`:return`@startuml
+`;
+    case `phovidDetail`:
+      return `@startuml
 title "Personal Photo Storage"
 top to bottom direction
 
@@ -1646,7 +1675,9 @@ PhovidImmichServer .[#8D8D8D,thickness=2].> PhovidImmichMachineLearning : <color
 PhovidImmichServer .[#8D8D8D,thickness=2].> PhovidImmichRedis : <color:#8D8D8D>queues jobs
 PhovidImmichServer .[#8D8D8D,thickness=2].> PhovidImmichDb : <color:#8D8D8D>[PostgreSQL]
 @enduml
-`;case`mediaLibDetail`:return`@startuml
+`;
+    case `mediaLibDetail`:
+      return `@startuml
 title "Media Library"
 top to bottom direction
 
@@ -1731,7 +1762,9 @@ MediaLibRadarr .[#8D8D8D,thickness=2].> MediaLibSabnzbd : <color:#8D8D8D>queues 
 MediaLibProwlarr .[#8D8D8D,thickness=2].> MediaLibRadarr : <color:#8D8D8D>feeds indexers
 MediaLibBazarr .[#8D8D8D,thickness=2].> MediaLibRadarr : <color:#8D8D8D>reads the library
 @enduml
-`;case`flowRequest`:return`@startuml
+`;
+    case `flowRequest`:
+      return `@startuml
 title "Serving an authenticated request"
 left to right direction
 
@@ -1803,7 +1836,9 @@ GatewayNewt .[#8D8D8D,thickness=2].> GatewayPangolinGerbil : <color:#8D8D8D>200 
 GatewayPangolinGerbil .[#8D8D8D,thickness=2].> GatewayPangolinTraefik : <color:#8D8D8D>200 OK\\n<size:8>[<color:#8D8D8D>HTTPS]</size>
 GatewayPangolinTraefik .[#8D8D8D,thickness=2].> Www : <color:#8D8D8D>200 OK
 @enduml
-`;case`flowSecrets`:return`@startuml
+`;
+    case `flowSecrets`:
+      return `@startuml
 title "How a stack gets its secrets"
 left to right direction
 
@@ -1848,7 +1883,9 @@ DocsignDocuseal .[#8D8D8D,thickness=2].> SecretsManInfisicalServer : <color:#8D8
 SecretsManInfisicalServer .[#8D8D8D,thickness=2].> DocsignDocuseal : <color:#8D8D8D>secret bundle
 DocsignDocuseal .[#8D8D8D,thickness=2].> SharedDbPostgresDb : <color:#8D8D8D>connects with the injected credentials\\n<size:8>[<color:#8D8D8D>PostgreSQL]</size>
 @enduml
-`;case`flowDeploy`:return`@startuml
+`;
+    case `flowDeploy`:
+      return `@startuml
 title "Deploying a stack"
 left to right direction
 
@@ -1908,7 +1945,9 @@ SecretsManInfisicalServer .[#8D8D8D,thickness=2].> ContainerOrcKomodoPeriphery :
 ContainerOrcKomodoPeriphery .[#8D8D8D,thickness=2].> ContainerOrcKomodoCore : <color:#8D8D8D>result
 ContainerOrcKomodoCore .[#8D8D8D,thickness=2].> AlertingPushover : <color:#8D8D8D>alerts on failure
 @enduml
-`;case`fleet`:return`@startuml
+`;
+    case `fleet`:
+      return `@startuml
 title "Fleet"
 left to right direction
 
@@ -2244,7 +2283,9 @@ ProdVultrRickDatabasus .[#b45309,thickness=2].> ProdHomelabPaikiImmich
 ProdHomelabPaikiNewt .[#8D8D8D,thickness=2].> ProdHomelabPaikiMediaLib : <color:#8D8D8D>[...]\\n<size:8>[<color:#8D8D8D>HTTPS]</size>
 ProdHomelabPaikiMediaLib .[#64748b,thickness=2].> ProdVultrRickInfisical : <color:#64748b>/stream\\n<size:8>[<color:#64748b>Infisical]</size>
 @enduml
-`;case`controlplane`:return`@startuml
+`;
+    case `controlplane`:
+      return `@startuml
 title "Control Plane"
 top to bottom direction
 
@@ -2337,4 +2378,9 @@ ProdVultrRickTsAgent .[#0ea5e9,thickness=2].> ProdVultrRickInfisical : <color:#0
 ProdVultrRickNewt .[#8D8D8D,thickness=2].> ProdVultrRickCore : <color:#8D8D8D>komo.ktbinternal.com\\n<size:8>[<color:#8D8D8D>HTTPS]</size>
 ProdVultrRickCore .[#15803d,thickness=2].> ProdVultrRickPeriphery : <color:#15803d>TLS :8120, pinned core public key
 @enduml
-`;default:throw Error(`Unknown viewId: `+e)}};export{e as pumlSource};
+`;
+    default:
+      throw Error(`Unknown viewId: ` + e);
+  }
+};
+export { e as pumlSource };

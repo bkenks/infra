@@ -1,4 +1,4 @@
-package model
+package service
 
 _woodpecker: {
 	version:      "v3.15.0"
@@ -8,7 +8,7 @@ _woodpecker: {
 	agentSecret: WOODPECKER_AGENT_SECRET: "${WOODPECKER_AGENT_SECRET:?err}"
 }
 
-stacks: woodpecker: S={
+woodpecker: S={
 	services: {
 		server: Svc={
 			_port: {http: 8000, grpc: 9000}
@@ -26,8 +26,8 @@ stacks: woodpecker: S={
 				_woodpecker.agentSecret
 			}
 			expose: [Svc._port.http, Svc._port.grpc]
-			volumes: ["\(S.volumes.server_data._self):/var/lib/woodpecker"]
-			networks: [S.networks.default._self, S.networks.newt_gw_001._self]
+			volumes: ["\(S.volumes.server_data._ref):/var/lib/woodpecker"]
+			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 			deploy: resources: limits: memory: "1g"
 		}
 		agent: {
@@ -36,7 +36,7 @@ stacks: woodpecker: S={
 			command: ["agent"]
 			depends_on: server: condition: "service_started"
 			environment: {
-				WOODPECKER_SERVER:                         "\(S.services.server._self):\(S.services.server._port.grpc)"
+				WOODPECKER_SERVER:                         "\(S.services.server._ref):\(S.services.server._port.grpc)"
 				WOODPECKER_MAX_WORKFLOWS:                  "\(_woodpecker.maxWorkflows)"
 				WOODPECKER_BACKEND_DOCKER_LIMIT_MEM:       "\(_woodpecker.stepMemBytes)"
 				WOODPECKER_BACKEND_DOCKER_LIMIT_MEM_SWAP:  "\(_woodpecker.stepMemBytes)"
@@ -44,7 +44,7 @@ stacks: woodpecker: S={
 				_woodpecker.agentSecret
 			}
 			volumes: [
-				"\(S.volumes.agent_data._self):/etc/woodpecker",
+				"\(S.volumes.agent_data._ref):/etc/woodpecker",
 				#Mount.dockerSock,
 			]
 			deploy: resources: limits: memory: "512m"

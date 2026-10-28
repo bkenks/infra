@@ -21,24 +21,24 @@ Run on the host as root with the stack stopped (Komodo: Stop; Ansible-deployed s
 `docker volume rm` the old names. `scripts/migrate_volumes.sh OLD=NEW …` does the copy and
 refuses to overwrite an existing target.
 
-| stack (host) | pairs |
-| --- | --- |
-| activepieces (bill) | `activepieces_db=activepieces-db_data activepieces_cache=activepieces-cache_data activepieces_engine=activepieces-app_engine` |
-| docuseal (littlebuddy) | `docuseal_app=docuseal-app_data` |
-| openproject (littlebuddy) | `openproject_assets=openproject-web_assets` |
-| paperless (littlebuddy) | `paperless_db=paperless-db_data paperless_broker=paperless-cache_data paperless_webserver_data=paperless-app_data paperless_webserver_media=paperless-app_media` |
-| postgres (littlebuddy) | `postgres_db=postgres-db_data` |
-| forgejo (littlebuddy) | `forgejo_db=forgejo-db_data forgejo_server=forgejo-server_data` |
-| woodpecker (littlebuddy) | `woodpecker_server=woodpecker-server_data woodpecker_agent=woodpecker-agent_data` |
-| homarr (rick) | `homarr_app=homarr-app_data` |
-| authentik (rick) | `authentik_db=authentik-db_data authentik_data=authentik-app_data` |
-| zerobyte (rick) | `zerobyte_app=zerobyte-app_data` |
-| infisical (rick) | `infisical_db=infisical-db_data infisical_redis=infisical-cache_data` |
-| databasus (bill) | `databasus_app=databasus-app_data` |
-| coder (bill) | `coder_app-home=coder-app_home coder_db-data=coder-db_data` |
-| openhands (bill) | `openhands_home=openhands-app_home` |
-| tailscale-gw (every host) | `tailscale-gw_app=tailscale-gw-app_state` |
-| komodo (control plane) | `komodo_app=komodo-app_keys` |
+| stack (host)                 | pairs                                                                                                                                                                     |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| activepieces (bill)          | `activepieces_db=activepieces-db_data activepieces_cache=activepieces-cache_data activepieces_engine=activepieces-app_engine`                                             |
+| docuseal (littlebuddy)       | `docuseal_app=docuseal-app_data`                                                                                                                                          |
+| openproject (littlebuddy)    | `openproject_assets=openproject-web_assets`                                                                                                                               |
+| paperless (littlebuddy)      | `paperless_db=paperless-db_data paperless_broker=paperless-cache_data paperless_webserver_data=paperless-app_data paperless_webserver_media=paperless-app_media`          |
+| postgres (littlebuddy)       | `postgres_db=postgres-db_data`                                                                                                                                            |
+| forgejo (littlebuddy)        | `forgejo_db=forgejo-db_data forgejo_server=forgejo-server_data`                                                                                                           |
+| woodpecker (littlebuddy)     | `woodpecker_server=woodpecker-server_data woodpecker_agent=woodpecker-agent_data`                                                                                         |
+| homarr (rick)                | `homarr_app=homarr-app_data`                                                                                                                                              |
+| authentik (rick)             | `authentik_db=authentik-db_data authentik_data=authentik-app_data`                                                                                                        |
+| zerobyte (rick)              | `zerobyte_app=zerobyte-app_data`                                                                                                                                          |
+| infisical (rick)             | `infisical_db=infisical-db_data infisical_redis=infisical-cache_data`                                                                                                     |
+| databasus (bill)             | `databasus_app=databasus-app_data`                                                                                                                                        |
+| coder (bill)                 | `coder_app-home=coder-app_home coder_db-data=coder-db_data`                                                                                                               |
+| openhands (bill)             | `openhands_home=openhands-app_home`                                                                                                                                       |
+| tailscale-gw (every host)    | `tailscale-gw_app=tailscale-gw-app_state`                                                                                                                                 |
+| komodo (control plane)       | `komodo_app=komodo-app_keys`                                                                                                                                              |
 | backrest (wherever deployed) | `backrest_data=backrest-app_data backrest_config=backrest-app_config backrest_cache=backrest-app_cache backrest_tmp=backrest-app_tmp backrest_rclone=backrest-app_rclone` |
 
 Stacks with only bind mounts (immich, stream, terraria, terraria-tshock,

@@ -23,7 +23,7 @@ The layers are:
 Stacks refer to values instead of repeating them:
 
 - A service refers to itself through a value alias (`app: Svc={ _port: 8000, expose:
-  [Svc._port] }`).
+[Svc._port] }`).
 - A service refers to a sibling through the stack alias (`S.services.db._ref`,
   `S.services.db._port`).
 - A stack refers to another stack by path (`stacks.komodo.services.app._port`,
@@ -61,6 +61,6 @@ rejects an unknown key. The generated service-key regex closes that gap.
 - **One package per stack directory, importing each other.** This needs an import per
   dependency and forbids cycles, and the `stack` field still collides.
 - **The `aliasv2` experiment's `self`.** Its syntax is still experimental. `cue fix
-  --exp=aliasv2` can migrate the current value aliases later.
+--exp=aliasv2` can migrate the current value aliases later.
 - **The curated `cue.dev/x/dockercompose` module.** Its docs are drafts, and the Central
   Registry needs a login. Importing the upstream schema pins the exact version.

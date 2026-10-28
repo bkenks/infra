@@ -1,4 +1,7 @@
-var e=e=>{switch(e){case`index`:return`---
+var e = (e) => {
+  switch (e) {
+    case `index`:
+      return `---
 title: "Landscape"
 ---
 graph LR
@@ -77,7 +80,9 @@ graph LR
   PrjMan -. "\`[PostgreSQL]\`" .-> SharedDb
   Docsign -. "\`[PostgreSQL]\`" .-> SharedDb
   GameServers -. "\`stores its world\`" .-> FileExp
-`;case`secrets`:return`---
+`;
+    case `secrets`:
+      return `---
 title: "Secret Distribution"
 ---
 graph LR
@@ -120,7 +125,9 @@ graph LR
   Erp -. "\`/\`" .-> SecretsMan.Infisical
   Phovid -. "\`/immich\`" .-> SecretsMan.Infisical
   MediaLib -. "\`/stream\`" .-> SecretsMan.Infisical
-`;case`ingress`:return`---
+`;
+    case `ingress`:
+      return `---
 title: "Ingress Path"
 ---
 graph LR
@@ -147,7 +154,9 @@ graph LR
   Gateway.Pangolin.Gerbil -. "\`shares the network namespace\`" .-> Gateway.Pangolin.Traefik
   Gateway.Pangolin.Traefik -. "\`routes into the tunnel\`" .-> Gateway.Pangolin.Gerbil
   Gateway.Pangolin.Traefik -. "\`solves ACME DNS-01\`" .-> Dns.Cloudflare
-`;case`identity`:return`---
+`;
+    case `identity`:
+      return `---
 title: "Identity"
 ---
 graph TB
@@ -177,7 +186,9 @@ graph TB
   Gateway -. "\`fj.ktbcloud.com\`" .-> PriCodeForgeForgejoServer
   Ci.Woodpecker.Server -. "\`OAuth2 login and repository access\`" .-> PriCodeForgeForgejoServer
   ContainerOrc -. "\`syncs stack definitions\`" .-> PriCodeForgeForgejoServer
-`;case`state`:return`---
+`;
+    case `state`:
+      return `---
 title: "State and Backup"
 ---
 graph LR
@@ -222,7 +233,11 @@ graph LR
   DbBak.Databasus -.-> Erp.ErpnextDb
   DbBak.Databasus -.-> Phovid.ImmichDb
   DataBak.Zerobyte -.-> ContainerOrc.KomodoVolumes
-`;case`apps`:return'---\ntitle: "Workloads"\n---\ngraph TB\n  Gateway@{ shape: rectangle, label: "Gateway" }\n  Erp@{ shape: rectangle, label: "ERP" }\n  Phovid@{ shape: rectangle, label: "Personal Photo Storage" }\n  PrjMan@{ shape: rectangle, label: "Project Manager" }\n  Docsign@{ shape: rectangle, label: "Document Signing" }\n  DocArc@{ shape: rectangle, label: "Document Archive" }\n  MediaLib@{ shape: rectangle, label: "Media Library" }\n  GameServers@{ shape: rectangle, label: "Game Servers" }\n  SharedDb@{ shape: rectangle, label: "Shared Database" }\n  FileExp@{ shape: rectangle, label: "File Explorer" }\n  SecretsMan@{ shape: rectangle, label: "Secrets Manager" }\n  GameServers -. "`stores its world`" .-> FileExp\n  Gateway -. "`openprj.ktbcloud.com`" .-> PrjMan\n  Gateway -. "`docuseal.ktbcloud.com`" .-> Docsign\n  Gateway -. "`paper.ktbinternal.com`" .-> DocArc\n  Gateway -. "`[...]`" .-> MediaLib\n  Gateway -. "`raw TCP :18022`" .-> GameServers\n  Gateway -. "`HTTP :18450`" .-> FileExp\n  PrjMan -. "`[PostgreSQL]`" .-> SharedDb\n  Docsign -. "`[PostgreSQL]`" .-> SharedDb\n  PrjMan -. "`/openproject`" .-> SecretsMan\n  Docsign -. "`/docuseal`" .-> SecretsMan\n  DocArc -. "`/paperless`" .-> SecretsMan\n  Erp -. "`/`" .-> SecretsMan\n  Phovid -. "`/immich`" .-> SecretsMan\n  MediaLib -. "`/stream`" .-> SecretsMan\n  Gateway -. "`[...]`" .-> SecretsMan\n  SharedDb -. "`/postgres`" .-> SecretsMan\n';case`gatewayDetail`:return`---
+`;
+    case `apps`:
+      return '---\ntitle: "Workloads"\n---\ngraph TB\n  Gateway@{ shape: rectangle, label: "Gateway" }\n  Erp@{ shape: rectangle, label: "ERP" }\n  Phovid@{ shape: rectangle, label: "Personal Photo Storage" }\n  PrjMan@{ shape: rectangle, label: "Project Manager" }\n  Docsign@{ shape: rectangle, label: "Document Signing" }\n  DocArc@{ shape: rectangle, label: "Document Archive" }\n  MediaLib@{ shape: rectangle, label: "Media Library" }\n  GameServers@{ shape: rectangle, label: "Game Servers" }\n  SharedDb@{ shape: rectangle, label: "Shared Database" }\n  FileExp@{ shape: rectangle, label: "File Explorer" }\n  SecretsMan@{ shape: rectangle, label: "Secrets Manager" }\n  GameServers -. "`stores its world`" .-> FileExp\n  Gateway -. "`openprj.ktbcloud.com`" .-> PrjMan\n  Gateway -. "`docuseal.ktbcloud.com`" .-> Docsign\n  Gateway -. "`paper.ktbinternal.com`" .-> DocArc\n  Gateway -. "`[...]`" .-> MediaLib\n  Gateway -. "`raw TCP :18022`" .-> GameServers\n  Gateway -. "`HTTP :18450`" .-> FileExp\n  PrjMan -. "`[PostgreSQL]`" .-> SharedDb\n  Docsign -. "`[PostgreSQL]`" .-> SharedDb\n  PrjMan -. "`/openproject`" .-> SecretsMan\n  Docsign -. "`/docuseal`" .-> SecretsMan\n  DocArc -. "`/paperless`" .-> SecretsMan\n  Erp -. "`/`" .-> SecretsMan\n  Phovid -. "`/immich`" .-> SecretsMan\n  MediaLib -. "`/stream`" .-> SecretsMan\n  Gateway -. "`[...]`" .-> SecretsMan\n  SharedDb -. "`/postgres`" .-> SecretsMan\n';
+    case `gatewayDetail`:
+      return `---
 title: "Gateway"
 ---
 graph TB
@@ -271,7 +286,9 @@ graph TB
   Gateway.Pangolin.Traefik -. "\`authorizes each request\`" .-> Gateway.Pangolin.Server
   Gateway.Pangolin.Gerbil -. "\`shares the network namespace\`" .-> Gateway.Pangolin.Traefik
   Gateway.Pangolin.Traefik -. "\`routes into the tunnel\`" .-> Gateway.Pangolin.Gerbil
-`;case`idpDetail`:return`---
+`;
+    case `idpDetail`:
+      return `---
 title: "Identity Provider"
 ---
 graph TB
@@ -292,7 +309,9 @@ graph TB
   Dashboard -. "\`authenticates users\`" .-> Idp.Authentik.Server
   Idp.Authentik.Server -. "\`[PostgreSQL]\`" .-> Idp.Authentik.Db
   Idp.Authentik.Worker -. "\`[PostgreSQL]\`" .-> Idp.Authentik.Db
-`;case`secretsManDetail`:return`---
+`;
+    case `secretsManDetail`:
+      return `---
 title: "Secrets Manager"
 ---
 graph TB
@@ -344,7 +363,9 @@ graph TB
   SecretsMan.Infisical.Server -. "\`SMTP :465\`" .-> Email
   SecretsMan.Infisical.Server -. "\`queues and caches\`" .-> SecretsMan.Infisical.Redis
   SecretsMan.Infisical.Server -. "\`[PostgreSQL]\`" .-> SecretsMan.Infisical.Db
-`;case`containerOrcDetail`:return`---
+`;
+    case `containerOrcDetail`:
+      return `---
 title: "Container Orchestrator"
 ---
 graph TB
@@ -374,7 +395,9 @@ graph TB
   ContainerOrc.Komodo.Core -. "\`TLS :8120, pinned core public key\`" .-> ContainerOrc.Komodo.Periphery
   ContainerOrc.Komodo.Core -. "\`reads and writes\`" .-> ContainerOrc.Komodo.Db
   ContainerOrc.Komodo.Periphery -. "\`creates and manages\`" .-> ContainerOrc.Komodo.Volumes
-`;case`forgeDetail`:return`---
+`;
+    case `forgeDetail`:
+      return `---
 title: "Primary Code Forge"
 ---
 graph TB
@@ -393,7 +416,9 @@ graph TB
   Ci -. "\`OAuth2 login and repository access\`" .-> PriCodeForge.Forgejo.Server
   DbBak -.-> PriCodeForge.Forgejo.Db
   PriCodeForge.Forgejo.Server -. "\`[PostgreSQL]\`" .-> PriCodeForge.Forgejo.Db
-`;case`ciDetail`:return`---
+`;
+    case `ciDetail`:
+      return `---
 title: "Continuous Integration"
 ---
 graph TB
@@ -408,7 +433,9 @@ graph TB
   Gateway -. "\`peck.ktbcloud.com\`" .-> Ci.Woodpecker.Server
   Ci.Woodpecker.Server -. "\`OAuth2 login and repository access\`" .-> PriCodeForge
   Ci.Woodpecker.Agent -. "\`polls for work\`" .-> Ci.Woodpecker.Server
-`;case`docArcDetail`:return`---
+`;
+    case `docArcDetail`:
+      return `---
 title: "Document Archive"
 ---
 graph TB
@@ -429,7 +456,9 @@ graph TB
   DocArc.Paperless.Server -. "\`converts to PDF\`" .-> DocArc.Paperless.Gotenberg
   DocArc.Paperless.Server -. "\`extracts text\`" .-> DocArc.Paperless.Tika
   DocArc.Paperless.Server -. "\`[PostgreSQL]\`" .-> DocArc.Paperless.Db
-`;case`phovidDetail`:return`---
+`;
+    case `phovidDetail`:
+      return `---
 title: "Personal Photo Storage"
 ---
 graph TB
@@ -446,7 +475,13 @@ graph TB
   Phovid.Immich.Server -. "\`runs inference\`" .-> Phovid.Immich.MachineLearning
   Phovid.Immich.Server -. "\`queues jobs\`" .-> Phovid.Immich.Redis
   Phovid.Immich.Server -. "\`[PostgreSQL]\`" .-> Phovid.Immich.Db
-`;case`mediaLibDetail`:return'---\ntitle: "Media Library"\n---\ngraph TB\n  Gateway@{ shape: rectangle, label: "Gateway" }\n  subgraph MediaLib["`Media Library`"]\n    MediaLib.Seerr@{ shape: rectangle, label: "Seerr" }\n    MediaLib.Prowlarr@{ shape: rectangle, label: "Prowlarr" }\n    MediaLib.Bazarr@{ shape: rectangle, label: "Bazarr" }\n    MediaLib.Sonarr@{ shape: rectangle, label: "Sonarr" }\n    MediaLib.Radarr@{ shape: rectangle, label: "Radarr" }\n    MediaLib.Sabnzbd@{ shape: rectangle, label: "SABnzbd" }\n    MediaLib.Plex@{ shape: rectangle, label: "Plex" }\n  end\n  Gateway -. "`seerr.ktbinternal.com`" .-> MediaLib.Seerr\n  Gateway -. "`sonarr.ktbinternal.com`" .-> MediaLib.Sonarr\n  Gateway -. "`radarr.ktbinternal.com`" .-> MediaLib.Radarr\n  Gateway -. "`prowlarr.ktbinternal.com`" .-> MediaLib.Prowlarr\n  Gateway -. "`bazarr.ktbinternal.com`" .-> MediaLib.Bazarr\n  Gateway -. "`sabnzbd.ktbinternal.com`" .-> MediaLib.Sabnzbd\n  MediaLib.Seerr -. "`requests series`" .-> MediaLib.Sonarr\n  MediaLib.Seerr -. "`requests films`" .-> MediaLib.Radarr\n  MediaLib.Sonarr -. "`queues downloads`" .-> MediaLib.Sabnzbd\n  MediaLib.Prowlarr -. "`feeds indexers`" .-> MediaLib.Sonarr\n  MediaLib.Bazarr -. "`reads the library`" .-> MediaLib.Sonarr\n  MediaLib.Radarr -. "`queues downloads`" .-> MediaLib.Sabnzbd\n  MediaLib.Prowlarr -. "`feeds indexers`" .-> MediaLib.Radarr\n  MediaLib.Bazarr -. "`reads the library`" .-> MediaLib.Radarr\n';case`flowRequest`:return'---\ntitle: "Serving an authenticated request"\n---\ngraph LR\n  Www@{ shape: horizontal-cylinder, label: "Public Internet" }\n  GatewayPangolinGerbil@{ shape: rectangle, label: "Gerbil" }\n  GatewayPangolinTraefik@{ shape: rectangle, label: "Traefik" }\n  GatewayPangolinServer@{ shape: rectangle, label: "Pangolin Server" }\n  GatewayNewt@{ shape: rectangle, label: "Newt" }\n  PrjManOpenproject@{ shape: rectangle, label: "OpenProject" }\n  SharedDbPostgresDb@{ shape: disk, label: "Database" }\n  Www -. "`GET openprj.ktbcloud.com`" .-> GatewayPangolinGerbil\n  GatewayPangolinGerbil -. "`forwards on the shared namespace`" .-> GatewayPangolinTraefik\n  GatewayPangolinTraefik -. "`badger: is this session allowed?`" .-> GatewayPangolinServer\n  GatewayPangolinServer -. "`allow`" .-> GatewayPangolinTraefik\n  GatewayPangolinTraefik -. "`routes into the tunnel`" .-> GatewayPangolinGerbil\n  GatewayPangolinGerbil -. "`WireGuard`" .-> GatewayNewt\n  GatewayNewt -. "`forwards to the local port`" .-> PrjManOpenproject\n  PrjManOpenproject -. "`query`" .-> SharedDbPostgresDb\n  SharedDbPostgresDb -. "`rows`" .-> PrjManOpenproject\n  PrjManOpenproject -. "`200 OK`" .-> GatewayNewt\n  GatewayNewt -. "`200 OK`" .-> GatewayPangolinGerbil\n  GatewayPangolinGerbil -. "`200 OK`" .-> GatewayPangolinTraefik\n  GatewayPangolinTraefik -. "`200 OK`" .-> Www\n';case`flowSecrets`:return`---
+`;
+    case `mediaLibDetail`:
+      return '---\ntitle: "Media Library"\n---\ngraph TB\n  Gateway@{ shape: rectangle, label: "Gateway" }\n  subgraph MediaLib["`Media Library`"]\n    MediaLib.Seerr@{ shape: rectangle, label: "Seerr" }\n    MediaLib.Prowlarr@{ shape: rectangle, label: "Prowlarr" }\n    MediaLib.Bazarr@{ shape: rectangle, label: "Bazarr" }\n    MediaLib.Sonarr@{ shape: rectangle, label: "Sonarr" }\n    MediaLib.Radarr@{ shape: rectangle, label: "Radarr" }\n    MediaLib.Sabnzbd@{ shape: rectangle, label: "SABnzbd" }\n    MediaLib.Plex@{ shape: rectangle, label: "Plex" }\n  end\n  Gateway -. "`seerr.ktbinternal.com`" .-> MediaLib.Seerr\n  Gateway -. "`sonarr.ktbinternal.com`" .-> MediaLib.Sonarr\n  Gateway -. "`radarr.ktbinternal.com`" .-> MediaLib.Radarr\n  Gateway -. "`prowlarr.ktbinternal.com`" .-> MediaLib.Prowlarr\n  Gateway -. "`bazarr.ktbinternal.com`" .-> MediaLib.Bazarr\n  Gateway -. "`sabnzbd.ktbinternal.com`" .-> MediaLib.Sabnzbd\n  MediaLib.Seerr -. "`requests series`" .-> MediaLib.Sonarr\n  MediaLib.Seerr -. "`requests films`" .-> MediaLib.Radarr\n  MediaLib.Sonarr -. "`queues downloads`" .-> MediaLib.Sabnzbd\n  MediaLib.Prowlarr -. "`feeds indexers`" .-> MediaLib.Sonarr\n  MediaLib.Bazarr -. "`reads the library`" .-> MediaLib.Sonarr\n  MediaLib.Radarr -. "`queues downloads`" .-> MediaLib.Sabnzbd\n  MediaLib.Prowlarr -. "`feeds indexers`" .-> MediaLib.Radarr\n  MediaLib.Bazarr -. "`reads the library`" .-> MediaLib.Radarr\n';
+    case `flowRequest`:
+      return '---\ntitle: "Serving an authenticated request"\n---\ngraph LR\n  Www@{ shape: horizontal-cylinder, label: "Public Internet" }\n  GatewayPangolinGerbil@{ shape: rectangle, label: "Gerbil" }\n  GatewayPangolinTraefik@{ shape: rectangle, label: "Traefik" }\n  GatewayPangolinServer@{ shape: rectangle, label: "Pangolin Server" }\n  GatewayNewt@{ shape: rectangle, label: "Newt" }\n  PrjManOpenproject@{ shape: rectangle, label: "OpenProject" }\n  SharedDbPostgresDb@{ shape: disk, label: "Database" }\n  Www -. "`GET openprj.ktbcloud.com`" .-> GatewayPangolinGerbil\n  GatewayPangolinGerbil -. "`forwards on the shared namespace`" .-> GatewayPangolinTraefik\n  GatewayPangolinTraefik -. "`badger: is this session allowed?`" .-> GatewayPangolinServer\n  GatewayPangolinServer -. "`allow`" .-> GatewayPangolinTraefik\n  GatewayPangolinTraefik -. "`routes into the tunnel`" .-> GatewayPangolinGerbil\n  GatewayPangolinGerbil -. "`WireGuard`" .-> GatewayNewt\n  GatewayNewt -. "`forwards to the local port`" .-> PrjManOpenproject\n  PrjManOpenproject -. "`query`" .-> SharedDbPostgresDb\n  SharedDbPostgresDb -. "`rows`" .-> PrjManOpenproject\n  PrjManOpenproject -. "`200 OK`" .-> GatewayNewt\n  GatewayNewt -. "`200 OK`" .-> GatewayPangolinGerbil\n  GatewayPangolinGerbil -. "`200 OK`" .-> GatewayPangolinTraefik\n  GatewayPangolinTraefik -. "`200 OK`" .-> Www\n';
+    case `flowSecrets`:
+      return `---
 title: "How a stack gets its secrets"
 ---
 graph LR
@@ -458,7 +493,9 @@ graph LR
   DocsignDocuseal -. "\`machine identity login, then GET /docuseal\`" .-> SecretsManInfisicalServer
   SecretsManInfisicalServer -. "\`secret bundle\`" .-> DocsignDocuseal
   DocsignDocuseal -. "\`connects with the injected credentials\`" .-> SharedDbPostgresDb
-`;case`flowDeploy`:return`---
+`;
+    case `flowDeploy`:
+      return `---
 title: "Deploying a stack"
 ---
 graph LR
@@ -475,7 +512,9 @@ graph LR
   SecretsManInfisicalServer -. "\`secrets\`" .-> ContainerOrcKomodoPeriphery
   ContainerOrcKomodoPeriphery -. "\`result\`" .-> ContainerOrcKomodoCore
   ContainerOrcKomodoCore -. "\`alerts on failure\`" .-> AlertingPushover
-`;case`fleet`:return`---
+`;
+    case `fleet`:
+      return `---
 title: "Fleet"
 ---
 graph LR
@@ -568,7 +607,9 @@ graph LR
   Prod.Vultr.Rick.Databasus -.-> Prod.Homelab.Paiki.Immich
   Prod.Homelab.Paiki.Newt -. "\`[...]\`" .-> Prod.Homelab.Paiki.MediaLib
   Prod.Homelab.Paiki.MediaLib -. "\`/stream\`" .-> Prod.Vultr.Rick.Infisical
-`;case`controlplane`:return`---
+`;
+    case `controlplane`:
+      return `---
 title: "Control Plane"
 ---
 graph TB
@@ -594,4 +635,9 @@ graph TB
   ProdVultrRick.TsAgent -. "\`exposes on the tailnet\`" .-> ProdVultrRick.Infisical
   ProdVultrRick.Newt -. "\`komo.ktbinternal.com\`" .-> ProdVultrRick.Core
   ProdVultrRick.Core -. "\`TLS :8120, pinned core public key\`" .-> ProdVultrRick.Periphery
-`;default:throw Error(`Unknown viewId: `+e)}};export{e as mmdSource};
+`;
+    default:
+      throw Error(`Unknown viewId: ` + e);
+  }
+};
+export { e as mmdSource };

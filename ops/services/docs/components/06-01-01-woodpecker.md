@@ -17,7 +17,7 @@ One-time setup: register the OAuth2 app in Forgejo (`/user/settings/applications
 
 ### Steps
 
-1. Repo must be a first-class Forgejo repo, not a pull-mirror (pull-mirrors don't fire webhooks). Convert via Forgejo repo → Settings → Danger Zone → *Convert to Regular Repository*.
+1. Repo must be a first-class Forgejo repo, not a pull-mirror (pull-mirrors don't fire webhooks). Convert via Forgejo repo → Settings → Danger Zone → _Convert to Regular Repository_.
 2. Activate the repo in the Woodpecker UI (auto-installs the webhook).
 3. Add pipeline secrets: Woodpecker UI → repo/org → Settings → Secrets. Check each secret's event filter.
 4. Add `.woodpecker.yml` (or a `.woodpecker/` dir for multiple workflows) to the repo, on the ref that will trigger.
@@ -32,6 +32,7 @@ One-time setup: register the OAuth2 app in Forgejo (`/user/settings/applications
 ### Example — release → build → push
 
 `stackform_website/.woodpecker.yml`:
+
 ```yaml
 when:
   - event: release

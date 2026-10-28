@@ -1,4 +1,4 @@
-package model
+package service
 
 _grist: {
 	version:      "1.7"
@@ -6,7 +6,7 @@ _grist: {
 	cacheVersion: "8"
 }
 
-stacks: grist: S={
+grist: S={
 	services: {
 		app: Svc={
 			_port: 8484
@@ -16,22 +16,22 @@ stacks: grist: S={
 				db: condition:    "service_healthy"
 			}
 			environment: {
-				REDIS_URL:            "redis://\(S.services.cache._self):\(S.services.cache._port)"
+				REDIS_URL:            "redis://\(S.services.cache._ref):\(S.services.cache._port)"
 				APP_HOME_URL:         "https://grist.\(#Domain.ktbcloudCom)"
 				GRIST_SESSION_SECRET: "${GRIST_SESSION_SECRET:?err}"
 				GRIST_DEFAULT_EMAIL:  "${GRIST_DEFAULT_EMAIL:?err}"
 				GRIST_FORCE_LOGIN:    "true"
 				GRIST_SERVER_EDITION: "full"
 				TYPEORM_TYPE:         "postgres"
-				TYPEORM_HOST:         S.services.db._self
+				TYPEORM_HOST:         S.services.db._ref
 				TYPEORM_PORT:         "\(S.services.db._port)"
 				TYPEORM_DATABASE:     S.name
 				TYPEORM_USERNAME:     S.name
 				TYPEORM_PASSWORD:     "${POSTGRES_PASSWORD:?err}"
 			}
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.app_data._self):/persist"]
-			networks: [S.networks.default._self, S.networks.newt_gw_001._self]
+			volumes: ["\(S.volumes.app_data._ref):/persist"]
+			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 			healthcheck: {
 				test: [
 					"CMD",
@@ -50,7 +50,7 @@ stacks: grist: S={
 			image:   "docker.io/library/redis:\(_grist.cacheVersion)"
 			restart: "on-failure:5"
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.cache_data._self):/data"]
+			volumes: ["\(S.volumes.cache_data._ref):/data"]
 			healthcheck: #Health.redisPing
 		}
 		db: Svc={
@@ -63,8 +63,8 @@ stacks: grist: S={
 				POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 			}
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.db_data._self):/var/lib/postgresql/data"]
-			networks: [S.networks.default._self, S.networks.tailscale_gw_001._self]
+			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
+			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
 			healthcheck: #Health.pgIsReady & {#user: S.name}
 		}
 	}

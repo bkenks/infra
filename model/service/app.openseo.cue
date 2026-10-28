@@ -1,11 +1,11 @@
-package model
+package service
 
 _openseo: {
 	version: "0.1.13"
 	host:    "seo.\(#Domain.ktbinternalCom)"
 }
 
-stacks: openseo: S={
+openseo: S={
 	services: app: Svc={
 		_port:   3001
 		image:   "ghcr.io/every-app/open-seo:\(_openseo.version)"
@@ -27,8 +27,8 @@ stacks: openseo: S={
 			CRAWLER_ACCESS_SECRET:      "${CRAWLER_ACCESS_SECRET:-}"
 		}
 		expose: [Svc._port]
-		volumes: ["\(S.volumes.app_data._self):/app/.wrangler"]
-		networks: [S.networks.default._self, S.networks.newt_gw_001._self]
+		volumes: ["\(S.volumes.app_data._ref):/app/.wrangler"]
+		networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 		healthcheck: {
 			test: [
 				"CMD",

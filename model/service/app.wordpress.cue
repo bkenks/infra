@@ -1,6 +1,6 @@
-package model
+package service
 
-stacks: wordpress: {
+wordpress: {
 	services: {
 		db: {
 			// We use a mariadb image which supports both amd64 & arm64 architecture

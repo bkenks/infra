@@ -1,4 +1,4 @@
-package model
+package service
 
 _immich: {
 	version:    "v2.7.5"
@@ -8,7 +8,7 @@ _immich: {
 	bindDir:    "\(#Dir.docker.bindMounts)/apps/immich"
 }
 
-stacks: immich: S={
+immich: S={
 	services: {
 		db: {
 			image: _immich.dbImage
@@ -36,15 +36,15 @@ stacks: immich: S={
 			}
 			environment: {
 				TZ:               _immich.tz
-				REDIS_HOSTNAME:   S.services.cache._self
-				DB_HOSTNAME:      S.services.db._self
+				REDIS_HOSTNAME:   S.services.cache._ref
+				DB_HOSTNAME:      S.services.db._ref
 				DB_USERNAME:      S.name
 				DB_DATABASE_NAME: S.name
 				DB_PASSWORD:      "${DB_PASSWORD:?err}"
 			}
 			expose: [Svc._port]
 			volumes: ["/mnt/immich-library:/data"]
-			networks: [S.networks.default._self, S.networks.newt_gw_001._self]
+			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 			devices: ["/dev/dri:/dev/dri"]
 		}
 	}

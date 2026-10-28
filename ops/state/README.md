@@ -2,7 +2,7 @@
 
 OpenTofu-managed infrastructure for the homelab. Complements `infra.ansible`: tofu provisions infrastructure objects, Ansible configures the OS on them.
 
-> 📚 Where this fits in the homelab (the IaC split, host topology) lives in Notion → [*Architecture — How It All Connects*](https://app.notion.com/p/37931e9a948a819380e7e9ef7d90cf8c) and [*Repositories — where homelab code lives*](https://app.notion.com/p/37931e9a948a81e58edfeebf2d31a0c1). This file covers only `infra.terraform`: how to use it and its conventions.
+> 📚 Where this fits in the homelab (the IaC split, host topology) lives in Notion → [_Architecture — How It All Connects_](https://app.notion.com/p/37931e9a948a819380e7e9ef7d90cf8c) and [_Repositories — where homelab code lives_](https://app.notion.com/p/37931e9a948a81e58edfeebf2d31a0c1). This file covers only `infra.terraform`: how to use it and its conventions.
 
 ## Prerequisites
 

@@ -1,4 +1,4 @@
-package model
+package service
 
 _paperless: {
 	cacheVersion:     "8"
@@ -9,7 +9,7 @@ _paperless: {
 	bindDir:          "\(#Dir.docker.bindMounts)/apps/paperless"
 }
 
-stacks: paperless: S={
+paperless: S={
 	services: {
 		cache: Svc={
 			_port:   6379
@@ -17,7 +17,7 @@ stacks: paperless: S={
 			restart: "on-failure:5"
 			environment: ALLOW_EMPTY_PASSWORD: "yes"
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.cache_data._self):/data"]
+			volumes: ["\(S.volumes.cache_data._ref):/data"]
 			healthcheck: #Health.redisPing
 		}
 		db: Svc={
@@ -30,8 +30,8 @@ stacks: paperless: S={
 				POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 			}
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.db_data._self):/var/lib/postgresql"]
-			networks: [S.networks.default._self, S.networks.tailscale_gw_001._self]
+			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql"]
+			networks: [S.networks.default._ref, S.networks.tailscale_gw_001._ref]
 			healthcheck: #Health.pgIsReady & {#user: S.name}
 		}
 		converter: Svc={
@@ -67,10 +67,10 @@ stacks: paperless: S={
 				PAPERLESS_URL:                     "https://paper.\(#Domain.ktbinternalCom)"
 				PAPERLESS_TIME_ZONE:               "America/New_York"
 				PAPERLESS_DATE_ORDER:              "MDY"
-				PAPERLESS_REDIS:                   "redis://\(S.services.cache._self):\(S.services.cache._port)"
-				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter._self):\(S.services.converter._port)"
-				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser._self):\(S.services.parser._port)"
-				PAPERLESS_DBHOST:                  S.services.db._self
+				PAPERLESS_REDIS:                   "redis://\(S.services.cache._ref):\(S.services.cache._port)"
+				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter._ref):\(S.services.converter._port)"
+				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser._ref):\(S.services.parser._port)"
+				PAPERLESS_DBHOST:                  S.services.db._ref
 				PAPERLESS_DBUSER:                  S.name
 				PAPERLESS_DBNAME:                  S.name
 				PAPERLESS_DBPASS:                  "${PAPERLESS_DBPASS:?err}"
@@ -78,12 +78,12 @@ stacks: paperless: S={
 			}
 			expose: [Svc._port]
 			volumes: [
-				"\(S.volumes.app_data._self):/usr/src/paperless/data",
-				"\(S.volumes.app_media._self):/usr/src/paperless/media",
+				"\(S.volumes.app_data._ref):/usr/src/paperless/data",
+				"\(S.volumes.app_media._ref):/usr/src/paperless/media",
 				"\(_paperless.bindDir)/export:/usr/src/paperless/export",
 				"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 			]
-			networks: [S.networks.default._self, S.networks.newt_gw_001._self]
+			networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 			healthcheck: {
 				test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:\(Svc._port)"]
 				interval: "30s"

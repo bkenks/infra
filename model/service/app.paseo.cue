@@ -1,4 +1,4 @@
-package model
+package service
 
 _paseo: {
 	version:       "0.11.4"
@@ -7,7 +7,7 @@ _paseo: {
 	bindDir:       "\(#Dir.docker.bindMounts)/apps/paseo"
 }
 
-stacks: paseo: S={
+paseo: S={
 	services: app: Svc={
 		_port: 6767
 		// The published image bundles no agent CLIs, so the stack builds a child
@@ -34,7 +34,7 @@ stacks: paseo: S={
 		]
 		// The daemon runs agents with write access to /workspace, so the gateway
 		// in front of this stack supplies access control.
-		networks: [S.networks.default._self, S.networks.newt_gw_001._self]
+		networks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 		// The image ships its own /api/health healthcheck.
 	}
 	networks: #SharedNetworks.newt_gw_001

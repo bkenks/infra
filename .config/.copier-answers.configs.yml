@@ -3,12 +3,12 @@
 _commit: v0.6.0
 _src_path: https://github.com/bkenks/tmpl.configs
 file_types:
-- toml
+  - toml
 formatters:
-- taplo
-- prettier
+  - taplo
+  - prettier
 languages: []
 mise_presets:
-- git
+  - git
 mise_presets_git_version_prefix: v
-mise_presets_git_version_suffix: ''
+mise_presets_git_version_suffix: ""

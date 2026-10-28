@@ -68,7 +68,7 @@
       - .repo as $repo
         | .base + .config
         | .repos = ((.repos // [])
-          | if any(.[]; .id == $repo.id) then . else . + [$repo] end)
+        | if any(.[]; .id == $repo.id) then . else . + [$repo] end)
     stdin: >-
       {{ {'config': backrest__config_current, 'base': backrest__base, 'repo': backrest__repo}
          | to_json }}

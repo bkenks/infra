@@ -1,4 +1,4 @@
-package model
+package service
 
 _stream: {
 	bazarrVersion:     "1.5.4"
@@ -31,11 +31,11 @@ _httpHealth: {
 	start_period: "30s"
 }
 
-stacks: stream: S={
-	_webNetworks: [S.networks.default._self, S.networks.newt_gw_001._self]
+stream: S={
+	_webNetworks: [S.networks.default._ref, S.networks.newt_gw_001._ref]
 	_arrsHealthy: {
-		(S.services.movies._self): condition: "service_healthy"
-		(S.services.tv._self): condition:     "service_healthy"
+		(S.services.movies._ref): condition: "service_healthy"
+		(S.services.tv._ref): condition:     "service_healthy"
 	}
 	services: [_]: restart: "on-failure:5"
 	services: {
