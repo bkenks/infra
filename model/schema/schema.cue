@@ -109,4 +109,12 @@ import (
 	os:   "ubuntu" | "debian" | "truenas" | "proxmox" | string
 	kind: "physical" | "vm" | string
 	arch: "amd64" | "arm64"
+	groups: [...]
+}
+
+#Group: {
+	name: string
+	vars: [string]: _
+	children: [string]: {}
+	hosts: [string]: {}
 }

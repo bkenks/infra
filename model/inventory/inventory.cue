@@ -32,24 +32,32 @@ hosts: {
 
 	// —————————————————————————
 	_d: domain
+	_g: groups
 	[hostName=_]: schema.#Host & {
 		name:   hostName
 		os:     "ubuntu"
 		arch:   "amd64"
 		domain: _d.internal.default
+		groups: [...or([for groupName, _ in _g {groupName}])]
 	}
 	// —————————————————————————
 	_defaultHomeHost: schema.#Host & {
 		provider: #Provider.home
 		site:     #Site.cvg
+		kind:     "physical"
+		groups: *[_g.bare_metal.name] | [...]
 	}
 
-	core01:  _defaultHomeHost
+	core01: _defaultHomeHost & {
+		groups: [_g.bare_metal.name, _g.control_plane.name]
+	}
 	apps01:  _defaultHomeHost
 	media01: _defaultHomeHost
 	edge01: {
 		provider: #Provider.vultr
 		site:     #Site.ord
+		kind:     "vm"
+		groups: [_g.vps.name]
 	}
 }
 
@@ -75,6 +83,38 @@ route: {
 		public: {
 			scheme: "https"
 			host:   "pangolin." + domain.public.ktbcloud_com
+		}
+	}
+}
+
+groups: [N=string]: name: N
+groups: close({
+	bare_metal:    schema.#Group
+	vps:           schema.#Group
+	control_plane: schema.#Group
+})
+
+for h in hosts {
+	for g in h.groups {
+		groups: {
+			(g): {
+				hosts: (h.name): {}
+			}
+		}
+	}
+}
+
+let _hosts = hosts
+
+ansible: all: {
+	hosts: {for name, h in _hosts {(name): ansible_host: h.fqdn}}
+	children: {
+		for name, g in groups {
+			(name): {
+				if len(g.hosts) > 0 {hosts: g.hosts}
+				if len(g.children) > 0 {children: g.children}
+				if len(g.vars) > 0 {vars: g.vars}
+			}
 		}
 	}
 }

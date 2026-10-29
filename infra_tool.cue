@@ -27,11 +27,7 @@ command: render: {
 
 	storeHosts: file.Create & {
 		filename: path.Join([repoRoot.root, "store", "hosts.yml"])
-		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal({
-			for host, detail in inv.hosts {
-				(host): detail.fqdn
-			}
-		})
+		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(inv.ansible)
 	}
 
 	storePaths: file.Create & {

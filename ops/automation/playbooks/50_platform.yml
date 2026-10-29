@@ -9,16 +9,18 @@
         name: docker_stack_files
       vars:
         docker_stack_files__stacks_dir: "{{ docker_stacks }}"
-        docker_stack_files__repo: "https://github.com/bkenks/infra.stacks.git"
+        docker_stack_files__repo: "https://github.com/bkenks/infra.git"
         docker_stack_files__name: platform
-        docker_stack_files__repo_subdir: src/platform
+        docker_stack_files__repo_subdir: ops/services
 
+    # wrap loads the 1Password token and runs compose under fnox with the stack's profile.
     - name: Komodo Core is running
       become: true
-      community.docker.docker_compose_v2:
-        project_src: "{{ docker_stacks }}/platform/container-manager/komodo"
-        state: present
-        wait: false
+      ansible.builtin.command:
+        cmd: ../../wrap docker compose up -d
+        chdir: "{{ docker_stacks }}/platform/out/komodo"
+      register: komodo_core__up
+      changed_when: komodo_core__up.stderr is search('Creat|Recreat|Start')
 
 - name: Komodo Periphery runs on every host
   hosts: all

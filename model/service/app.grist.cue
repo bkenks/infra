@@ -56,17 +56,17 @@ grist: S={
 			}
 		}
 		cache: Svc={
-			_port:   6379
-			image:   "docker.io/library/redis:\(_grist.cacheVersion)"
-			restart: "on-failure:5"
+			_port: 6379
+			image: "docker.io/library/redis:\(_grist.cacheVersion)"
+
 			expose: [Svc._port]
 			volumes: ["\(S.volumes.cache_data._ref):/data"]
 			healthcheck: #Snippet.services.healthcheck.redisPing
 		}
 		db: Svc={
-			_port:   5432
-			image:   "docker.io/library/postgres:\(_grist.dbVersion)"
-			restart: "on-failure:5"
+			_port: 5432
+			image: "docker.io/library/postgres:\(_grist.dbVersion)"
+
 			environment: {
 				POSTGRES_USER:     S.name
 				POSTGRES_DB:       S.name

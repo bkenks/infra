@@ -52,9 +52,9 @@ services:
     volumes:
       - app_data:/persist
   cache:
+    restart: unless-stopped
     container_name: grist-cache
     image: docker.io/library/redis:8
-    restart: on-failure:5
     logging:
       driver: json-file
       options:
@@ -72,13 +72,13 @@ services:
     volumes:
       - cache_data:/data
   db:
+    restart: unless-stopped
     container_name: grist-db
     environment:
       POSTGRES_USER: grist
       POSTGRES_DB: grist
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
     image: docker.io/library/postgres:16
-    restart: on-failure:5
     logging:
       driver: json-file
       options:

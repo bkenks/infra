@@ -13,10 +13,10 @@
         group: "{{ user_admin }}"
         mode: "2770"
       loop:
-        - "{{ docker_root }}"
+        - "{{ docker_share }}"
         - "{{ docker_files }}"
         - "{{ docker_stacks }}"
-        - "{{ docker_bind_mounts }}"
+        - "{{ docker_bindmounts }}"
 
     - name: Docker is installed
       become: true
