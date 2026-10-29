@@ -4,14 +4,6 @@ root = true
 type  = "1password"
 vault = "infra"
 
-[profiles.databasus.secrets]
-SECRET_KEY = { provider = "onepassword", value = "databasus/SECRET_KEY" }
-
-[profiles.forgejo.secrets]
-DB_PASSWORD               = { provider = "onepassword", value = "forgejo/DB_PASSWORD" }
-FORGEJO__DATABASE__PASSWD = { provider = "onepassword", value = "forgejo/FORGEJO__DATABASE__PASSWD" }
-POSTGRES_PASSWORD         = { provider = "onepassword", value = "forgejo/POSTGRES_PASSWORD" }
-
 [profiles.frappe.secrets]
 DB_PASSWORD     = { provider = "onepassword", value = "frappe/DB_PASSWORD" }
 ERPNEXT_VERSION = { default = "v16.50.0" }
@@ -32,10 +24,6 @@ KOMODO_JWT_SECRET          = { provider = "onepassword", value = "komodo/KOMODO_
 KOMODO_WEBHOOK_SECRET      = { provider = "onepassword", value = "komodo/KOMODO_WEBHOOK_SECRET" }
 MONGO_INITDB_ROOT_PASSWORD = { provider = "onepassword", value = "komodo/MONGO_INITDB_ROOT_PASSWORD" }
 MONGO_INITDB_ROOT_USERNAME = { provider = "onepassword", value = "komodo/MONGO_INITDB_ROOT_USERNAME" }
-
-[profiles.mathesar.secrets]
-POSTGRES_PASSWORD = { provider = "onepassword", value = "mathesar/postgres_password" }
-SECRET_KEY        = { provider = "onepassword", value = "mathesar/secret_key" }
 
 [profiles.node.secrets]
 TS_AUTHKEY = { provider = "onepassword", value = "tailscale.auth-key.docker-gateway-container/credential" }
@@ -76,7 +64,6 @@ NEWT_SECRET   = { provider = "onepassword", value = "hosts.paiki.newt/NEWT_SECRE
 BETTER_AUTH_SECRET = { provider = "onepassword", value = "openseo/BETTER_AUTH_SECRET" }
 DATAFORSEO_API_KEY = { provider = "onepassword", value = "openseo/DATAFORSEO_API_KEY" }
 OPENROUTER_API_KEY = { provider = "onepassword", value = "openrouter/credential" }
-OPENROUTER_MODEL   = { default = "anthropic/claude-sonnet-5.5" }
 
 [profiles.pangolin.secrets]
 CF_DNS_API_TOKEN = { provider = "onepassword", value = "traefik/CF_DNS_API_TOKEN" }
@@ -88,9 +75,6 @@ PAPERLESS_DBPASS     = { provider = "onepassword", value = "paperless/PAPERLESS_
 PAPERLESS_SECRET_KEY = { provider = "onepassword", value = "paperless/PAPERLESS_SECRET_KEY" }
 POSTGRES_PASSWORD    = { provider = "onepassword", value = "paperless/POSTGRES_PASSWORD" }
 
-[profiles.paseo.secrets]
-PASEO_PASSWORD = { provider = "onepassword", value = "paseo/PASEO_PASSWORD" }
-
 [profiles.postgres.secrets]
 PG_ADMIN_PASS     = { provider = "onepassword", value = "postgres/PG_ADMIN_PASS" }
 POSTGRES_PASSWORD = { provider = "onepassword", value = "postgres/POSTGRES_PASSWORD" }
@@ -99,8 +83,3 @@ POSTGRES_USER     = { provider = "onepassword", value = "postgres/POSTGRES_USER"
 [profiles.stream.secrets]
 RADARR_API_KEY = { provider = "onepassword", value = "stream/RADARR_API_KEY" }
 SONARR_API_KEY = { provider = "onepassword", value = "stream/SONARR_API_KEY" }
-
-[profiles.woodpecker.secrets]
-WOODPECKER_AGENT_SECRET   = { provider = "onepassword", value = "woodpecker/WOODPECKER_AGENT_SECRET" }
-WOODPECKER_FORGEJO_CLIENT = { provider = "onepassword", value = "woodpecker/WOODPECKER_FORGEJO_CLIENT" }
-WOODPECKER_FORGEJO_SECRET = { provider = "onepassword", value = "woodpecker/WOODPECKER_FORGEJO_SECRET" }

@@ -4,21 +4,6 @@ Audit date: 2026-10-28. Scope: the whole repository. Goal: find what could be si
 
 Findings are ranked by payoff. Each one names the files involved and a suggested fix.
 
-## Broken or contradictory — fix first
-
-1. **`store/hosts.yml` has the wrong shape for its consumers.** `infra_tool.cue` renders it as a flat map (`core01: core01.home-cvg.internal`). The Ansible inventory (`ops/automation/inventory/hosts.yml` is a symlink to it) and `ops/state/docker/main.tf` (reads `.all.hosts`) both expect an `all.hosts` structure with groups such as `control_plane` and `vps`. Neither consumer works with the current output. Fix `storeHosts` in `infra_tool.cue` to emit the group structure.
-
-2. **Docker networks have two owners.** `ops/state/docker/main.tf` and `ops/automation/playbooks/45_docker_resources.yml` both create the networks listed in `store/networks.yml`. The comment in `model/service/network.cue` says Terraform owns them. Pick one owner and delete the other.
-
-3. **`50_platform.yml` deploys from a retired repo.** It clones `https://github.com/bkenks/infra.stacks.git` and runs `platform/container-manager/komodo`. The stack now lives in this repo at `ops/services/stack/platform/komodo`. Point the playbook at this repo.
-
-4. **Some generated stacks have no source.**
-   - `ops/services/stack/db/databasus` and `ops/services/stack/platform/node` carry the `# GENERATED from CUE` header, but there is no `model/service/*.cue` file for them. `cue:render` validates them, but nothing regenerates them.
-   - `ops/services/stack/app/frappe/compose.yaml` is hand-written beside generated stacks.
-   - `model/service/app.actual-budget.cue` is a stub with no services, so it renders nothing.
-
-   Add a model file for each orphan or delete it. Make `cue:render` remove deploy directories that have no source.
-
 ## Stale documentation — misleads every reader
 
 5. **`ops/services/docs/index.md` describes a design that no longer exists.** It mentions `#Stack`, `stacks.<name>`, `schema/stack`, `vendor/`, `cue:update`, and a pre-commit hook that renders stacks. In fact, stacks are top-level fields matched by `[stack=string]` in `model/service/service.cue`, and `lefthook.yml` runs only `ansible-lint`. Rewrite the page to match the code.
