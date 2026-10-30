@@ -50,10 +50,8 @@ komodo: S={
 				KOMODO_LOGGING_PRETTY:        "true"
 				KOMODO_PRETTY_STARTUP_CONFIG: "true"
 			}
-			ports: ["\(_listeners.web.port):\(_listeners.web.port)"]
-			_listeners: {
-				web: port: 9120
-			}
+			_port: 9120
+			ports: ["\(_port):\(_port)"]
 			volumes: [
 				"\(S.volumes.keys._ref):/config/keys",
 				"\(_komodo.bindDir)/komodo/data/backups:/backups",

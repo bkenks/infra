@@ -7,9 +7,9 @@ lefthook       = "2"
 "npm:likec4"   = "1"
 "npm:wrangler" = "4"
 opentofu       = "1.13"
-prettier = "3.9.10"
-taplo = "0.10.0"
-treefmt = "2.6.0"
+prettier       = "3.9.10"
+taplo          = "0.10.0"
+treefmt        = "2.6.0"
 uv             = "0.13.0"
 vendir         = "0.46.2"
 
@@ -22,9 +22,9 @@ repo_template = "https://github.com/bkenks/tmpl.configs"
 [tasks]
 "copier:copy"  = "copier copy --trust {{vars.repo_template}} ."
 "copier:pull"  = "copier update --trust -a {{vars.config_dir}}/.copier-answers.configs.yml"
-"cue:format"   = "cue fmt ./..."
 "cue:vet"      = "cue vet -c ./..."
 "enable-tasks" = "fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x"
+"format"       = "treefmt"
 "generate:id"  = 'echo $(openssl rand -hex 3)'
 "generate:urn" = 'echo "urn:uuid:$(uuidgen | tr A-Z a-z)"'
 "vendir:pull"  = "vendir sync"

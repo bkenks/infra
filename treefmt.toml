@@ -5,6 +5,11 @@ command  = "taplo"
 includes = ["*.toml"]
 options  = ["format", "--config", ".config/taplo.toml"]
 
+[formatter.cue]
+command  = "cue"
+includes = ["*.cue"]
+options  = ["fmt", "./..."]
+
 [formatter.prettier]
 command = "prettier"
 includes = [
@@ -65,8 +70,3 @@ includes = [
   "*.graphqls",
 ]
 options = ["--write"]
-
-[formatter.cue]
-command  = "cue"
-includes = ["*.cue"]
-options  = ["fmt", "./..."]

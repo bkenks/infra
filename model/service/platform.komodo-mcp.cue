@@ -16,7 +16,7 @@ komodo_mcp: S={
 			MCP_TRANSPORT:     "http"
 			MCP_BASE_URL:      "https://\(S.name).\(inv.domain.public.ktbinternal_com)"
 			MCP_ALLOWED_HOSTS: "\(S.name).\(inv.domain.public.ktbinternal_com)"
-			KOMODO_URL:        "http://host.docker.internal:\(komodo.services.app._listeners.web.port)"
+			KOMODO_URL:        "http://host.docker.internal:\(komodo.services.app._port)"
 			MCP_TRUST_PROXY:   "1"
 			TZ:                "America/Chicago"
 		}
