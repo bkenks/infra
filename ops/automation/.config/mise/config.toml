@@ -1,14 +1,7 @@
 #:schema https://mise.jdx.dev/schema/mise.json
 
-[vars]
-path_pyproject   = "pyproject.toml"
-path_repo_config = ".config"
-path_uv_lock     = "uv.lock"
-secrets_provider = "op_ansible"
-
 [tools]
-# Ansible
-uv = "latest"
+uv = "0.13.0"
 
 [settings]
 python.uv_venv_auto = "create|source"
@@ -19,35 +12,9 @@ mise run init:uv
 mise run init:ansible
 '''
 
-[env]
-path_dir__repo_root = "{{ config_root }}"
-
-# ————————————————————————————————————————————
-# Setup
-# ————————————————————————————————————————————
-
-[tasks."init:uv"]
-description = "[SETUP] ansible cli commands"
-run         = "uv sync"
-
-[tasks."init:ansible"]
-description = "[SETUP] ansible requirements via ansible-galaxy"
-run         = ["ansible-galaxy install -r requirements.yml"]
-
-[tasks."secrets:sync"]
-description = "[SECRETS] cache this repo's fnox.toml secrets to fnox.local.toml"
-run         = "fnox sync --source {{vars.secrets_provider}} {{vars.flags}}"
-vars        = { flags = "--local-file --force" }
-
-# ————————————————————————————————————————————
-# Run
-# ————————————————————————————————————————————
-
-[tasks."lint:ansible"]
-description = "Lint the playbooks and inventory"
-run         = "uv run ansible-lint --offline"
-
-[tasks."apply:state"]
-depends     = ["init:uv", "init:ansible"]
-description = "Sync state via the site.yml playbook"
-run         = "uv run ansible-playbook playbooks/site.yml"
+[tasks]
+"fnox:pull"         = "fnox sync --source onepassword --local-file --force"
+"init:ansible"      = "ansible-galaxy install -r requirements.yml"
+"init:uv"           = "uv sync"
+lint                = "uv run ansible-lint --offline"
+"playbook:run:full" = "uv run ansible-playbook playbooks/site.yml"

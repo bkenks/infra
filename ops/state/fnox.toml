@@ -1,10 +1,16 @@
 #:schema https://fnox.jdx.dev/schema.json
-#—————————————————————————————————————————
 
-[providers.onepass_tf]
-type = "1password"
+
+[providers.onepassword]
+account = "FUKUXFLIDREQDELXYP2PALUAVY"
+type    = "1password"
+vault   = "infra"
+
 
 [secrets]
-AWS_ACCESS_KEY_ID     = { provider = "onepass_tf", value = "op://infra/cloudflare.r2.tofu-state/access key id" }
-AWS_SECRET_ACCESS_KEY = { provider = "onepass_tf", value = "op://infra/cloudflare.r2.tofu-state/secret access key" }
-VULTR_API_KEY         = { provider = "onepass_tf", value = "op://credentials/vultr.api-token.personal.default/credential" } # TODO: move to personal vault
+TF_CLI_ARGS_init = { default = "-backend-config=../r2.s3.tfbackend" }
+# —————————————————————————
+AWS_ACCESS_KEY_ID     = { provider = "onepassword", value = "op://infra/cloudflare.r2.tofu-state/access key id" }
+AWS_SECRET_ACCESS_KEY = { provider = "onepassword", value = "op://infra/cloudflare.r2.tofu-state/secret access key" }
+# —————————————————————————
+VULTR_API_KEY = { provider = "onepassword", value = "op://credentials/vultr.api-token.personal.default/credential" } # TODO: move to personal vault

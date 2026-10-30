@@ -1,8 +1,9 @@
 root = true
 
 [providers.onepassword]
-type  = "1password"
-vault = "infra"
+account = "FUKUXFLIDREQDELXYP2PALUAVY"
+type    = "1password"
+vault   = "infra"
 
 [profiles.frappe.secrets]
 DB_PASSWORD     = { provider = "onepassword", value = "frappe/DB_PASSWORD" }

@@ -1,4 +1,20 @@
 [formatting]
 align_entries = true
-indent_tables = true
 reorder_keys  = true
+
+[[rule]]
+include = [
+  "**/mise.toml",           # also .config/mise.toml
+  "**/mise.*.toml",         # mise.local.toml, mise.<env>.toml, mise.<env>.local.toml
+  "**/.mise.toml",
+  "**/.mise.*.toml",
+  "**/mise/config.toml",    # also .config/mise/, ~/.config/mise/, /etc/mise/
+  "**/mise/config.*.toml",  # config.local.toml, config.<env>.toml
+  "**/mise/conf.d/*.toml",
+  "**/.mise/config.toml",
+  "**/.mise/config.*.toml",
+]
+keys = ["tasks.*"]
+
+[rule.formatting]
+reorder_keys = false

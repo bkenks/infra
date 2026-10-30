@@ -10,13 +10,7 @@ version         = "0"
 #
 # Keep this in sync with requirements.yml — each lib is here because a
 # collection there needs it.
-dependencies = [
-  # boto3/botocore are infisicalsdk's own requirement, pinned here so the
-  # transitive versions are locked rather than resolved.
-  "boto3==1.43.54",
-  "botocore==1.43.54",
-  "infisicalsdk==1.0.16",
-]
+dependencies = []
 
 [tool.uv]
 # This repo is Ansible content, not a Python package — never build or install it.

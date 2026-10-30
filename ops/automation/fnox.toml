@@ -1,11 +1,11 @@
 [providers]
-  [providers.op_ansible]
-  account = "FUKUXFLIDREQDELXYP2PALUAVY"
-  type    = "1password"
-  vault   = "infra"
+[providers.onepassword]
+account = "FUKUXFLIDREQDELXYP2PALUAVY"
+type    = "1password"
+vault   = "infra"
 
 [secrets]
-BACKREST_KTB_BACKUP_APP_AWS_ACCESS_KEY_ID     = { provider = "op_ansible", value = "ktb-backup-app/AWS_ACCESS_KEY_ID" }
-BACKREST_KTB_BACKUP_APP_AWS_SECRET_ACCESS_KEY = { provider = "op_ansible", value = "ktb-backup-app/AWS_SECRET_ACCESS_KEY" }
-BACKREST_KTB_BACKUP_APP_PASSWORD              = { provider = "op_ansible", value = "ktb-backup-app/password" }
-TS_AUTHKEY                                    = { provider = "op_ansible", value = "TS_AUTHKEY/credential" }
+BACKREST_KTB_BACKUP_APP_AWS_ACCESS_KEY_ID     = { provider = "onepassword", value = "ktb-backup-app/AWS_ACCESS_KEY_ID" }
+BACKREST_KTB_BACKUP_APP_AWS_SECRET_ACCESS_KEY = { provider = "onepassword", value = "ktb-backup-app/AWS_SECRET_ACCESS_KEY" }
+BACKREST_KTB_BACKUP_APP_PASSWORD              = { provider = "onepassword", value = "ktb-backup-app/password" }
+TS_AUTHKEY                                    = { provider = "onepassword", value = "TS_AUTHKEY/credential" }

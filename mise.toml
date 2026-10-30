@@ -1,45 +1,30 @@
+#:schema https://mise.jdx.dev/schema/mise.json
+
+
 [tools]
 cue            = "0.17.1"
 lefthook       = "2"
 "npm:likec4"   = "1"
 "npm:wrangler" = "4"
+opentofu       = "1.13"
+prettier = "3.9.10"
+taplo = "0.10.0"
+treefmt = "2.6.0"
 uv             = "0.13.0"
 vendir         = "0.46.2"
 
-[env]
-PATHDIR_C4 = "docs/c4"
 
 [vars]
-templateRepo = "https://github.com/bkenks/tmpl.configs"
+config_dir    = "{{config_root}}/.config"
+repo_template = "https://github.com/bkenks/tmpl.configs"
 
-[tasks."dependency:sync"]
-description = "Sync dependencies"
-run         = [{ tasks = ["copier:update", "vendir:sync"] }]
 
-[tasks."permission:mise-tasks-add-exec"]
-description = "Add execute permissions to all Mise file tasks"
-run = '''
-fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x
-'''
-
-[tasks."copier:copy"]
-description = "Copy/Initialize repo from template"
-run         = "copier copy --trust {{vars.templateRepo}} ."
-
-[tasks."copier:update"]
-description = "Update repo from template"
-run         = "copier update --trust -a .config/.copier-answers.configs.yml"
-
-[tasks."vendir:sync"]
-description = "Sync vendored files into repo"
-run         = "vendir sync"
-
-[tasks."generate:urn"]
-alias       = "urn"
-description = "Generate new URN (Uniform Resource Name)"
-run         = 'echo "urn:uuid:$(uuidgen | tr A-Z a-z)"'
-
-[tasks."generate:id"]
-alias       = "gen:id"
-description = "Generate a general-purpose short id"
-run         = "echo $(openssl rand -hex 3)"
+[tasks]
+"copier:copy"  = "copier copy --trust {{vars.repo_template}} ."
+"copier:pull"  = "copier update --trust -a {{vars.config_dir}}/.copier-answers.configs.yml"
+"cue:format"   = "cue fmt ./..."
+"cue:vet"      = "cue vet -c ./..."
+"enable-tasks" = "fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x"
+"generate:id"  = 'echo $(openssl rand -hex 3)'
+"generate:urn" = 'echo "urn:uuid:$(uuidgen | tr A-Z a-z)"'
+"vendir:pull"  = "vendir sync"
