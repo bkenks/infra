@@ -1,6 +1,6 @@
 ---
 - name: Komodo Core runs on the control plane
-  hosts: control_plane
+  hosts: role_control_plane
   tags: [platform, komodo_core]
 
   tasks:
