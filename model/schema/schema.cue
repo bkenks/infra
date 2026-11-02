@@ -17,28 +17,44 @@ import (
 // Rejected: "data/x", "./data"
 #AbsPath: #Path & =~"^/"
 
-// ——————————————————————————————————————————————————————————————————————————————————————————————————
-// #Domain is a multi-label domain name such as "example.com" or
-// "nas.home.arpa". It narrows net.FQDN, which also accepts single
-// labels ("localhost") and IP addresses ("192.168.1.1").
-//
-// net.FQDN validates label syntax. The regex then requires the name
-// to end in a letters-only TLD:
-//
-//      \.          a literal dot before the TLD
-//      [A-Za-z]    one ASCII letter
-//      {2,63}      2 to 63 letters (63 is the max DNS label length)
-//      \.?         optional trailing dot, for root form "example.com."
-//      $           end of string
-//
-// The regex has no ^ anchor, so it checks only the end of the name.
-//
-// Accepted: "example.com", "sub.example.com", "example.com."
-// Rejected: "nas", "192.168.1.1", "example.c", "example.123"
-#Domain: net.FQDN & =~#"\.[A-Za-z]{2,63}\.?$"#
+#URIScheme: Sch={
+	#enum: or([for v in Sch {v}])
+
+	// web
+	http:  "http://"
+	https: "https://"
+	ws:    "ws://"
+	wss:   "wss://"
+	// file transfer
+	ftp:  "ftp://"
+	sftp: "sftp://"
+	file: "file://"
+	s3:   "s3://"
+	// remote access
+	ssh: "ssh://"
+	git: "git://"
+	// databases
+	postgres:    "postgres://"
+	postgresql:  "postgresql://"
+	mysql:       "mysql://"
+	mongodb:     "mongodb://"
+	mongodb_srv: "mongodb+srv://"
+	redis:       "redis://"
+	rediss:      "rediss://"
+	// messaging
+	amqp:  "amqp://"
+	amqps: "amqps://"
+	mqtt:  "mqtt://"
+	kafka: "kafka://"
+	// no authority
+	mailto: "mailto:"
+	tel:    "tel:"
+	urn:    "urn:"
+	data:   "data:"
+}
 
 // ——————————————————————————————————————————————————————————————————————————————————————————————————
-// #URI is a network address built from its parts, such as
+// #URIComponents is a network address built from its parts, such as
 // "https://example.com:8443/api?x=1#top". Set the parts and read the
 // assembled string from uri.
 //
@@ -69,52 +85,93 @@ import (
 //
 //      {scheme: "https", host: "example.com", port: 8443, path: "/api", query: "x=1", fragment: "top"}
 //        uri: "https://example.com:8443/api?x=1#top"
-#URI: {
-	scheme:    =~#"^[A-Za-z][A-Za-z0-9+.\-]*$"#
-	host:      string
+#URIComponents: {
+	scheme?:   #URISchemes.#enum
+	host!:     string
 	port?:     int & >0 & <=65535
-	path:      *"" | #AbsPath
+	path?:     string
 	query?:    string
 	fragment?: string
 
 	uri: strings.Join([
-		"\(scheme)://",
+		if scheme != _|_ {"\(scheme)"},
 		host,
 		if port != _|_ {":\(port)"},
-		path,
+		if path != _|_ {"/\(path)"},
 		if query != _|_ {"?\(query)"},
 		if fragment != _|_ {"#\(fragment)"},
 	], "")
 }
 
-#Route: {
-	name:       string
-	public?:    #URI
-	private?:   #URI
-	internal?:  #URI
-	localhost?: #URI
+#URL: #URIComponents & {
+	scheme!: _
+	uri:     net.AbsURL
 }
 
+// ——————————————————————————————————————————————————————————————————————————————————————————————————
+#Route: {
+	public?:    #URL
+	private?:   #URL
+	internal?:  #URL
+	localhost?: #URL
+}
+
+// ——————————————————————————————————————————————————————————————————————————————————————————————————
 #Host: {
 	name:      string
-	provider?: string
-	site?:     string
-	domain?:   net.FQDN
-	fqdn:      net.FQDN & ("\(name).\(provider)-\(site).\(domain)" | "")
+	site?:     #Site.#enum
+	provider?: #Provider.#enum
+	fqdn?:     net.FQDN
 	addresses?: {
 		lan?:    net.IPv4
 		vpn?:    net.IP
 		public?: net.IP
 	}
-	os:   "ubuntu" | "debian" | "truenas" | "proxmox" | string
-	kind: "physical" | "vm" | string
-	arch: "amd64" | "arm64"
-	groups: [...]
+	os:   #OS.#enum
+	kind: #Kind.#enum
+	arch: #Arch.#enum
+	roles?: [...#Role.#enum]
 }
 
-#Group: {
-	name: string
-	vars: [string]: _
-	children: [string]: {}
-	hosts: [string]: {}
+#Hosts: [Name=string]: #Host & {name: Name}
+
+// —————————————————————————
+#Arch: A={
+	#enum: or([for v in A {v}])
+	amd64: "amd64"
+	arm64: "arm64"
+}
+
+#Kind: K={
+	#enum: or([for v in K {v}])
+	physical: "physical"
+	vm:       "vm"
+}
+
+#OS: OS={
+	#enum: or([for v in OS {v}])
+	ubuntu:  "ubuntu"
+	debian:  "debian"
+	proxmox: "proxmox"
+}
+
+#Provider: P={
+	#enum: or([for v in P {v}])
+	home:  "home"
+	vultr: "vultr"
+}
+
+#Site: S={
+	#enum: or([for v in S {v}])
+	cvg: "cvg"
+	ord: "ord"
+}
+
+#Role: R={
+	#enum: or([for v in R {v}])
+	control_plane: "control_plane"
+	nas:           "nas"
+	media:         "media"
+	edge:          "edge"
+	apps:          "apps"
 }

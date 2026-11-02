@@ -9,8 +9,10 @@ import (
 
 	inv "github.com/bkenks/infra/model/inventory"
 	svc "github.com/bkenks/infra/model/service"
+	exp "github.com/bkenks/infra/model/export"
 )
 
+j
 command: render: {
 	repoRoot: exec.Run & {
 		cmd: ["git", "rev-parse", "--show-toplevel"]
@@ -27,7 +29,7 @@ command: render: {
 
 	storeHosts: file.Create & {
 		filename: path.Join([repoRoot.root, "store", "hosts.yml"])
-		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(inv.ansible)
+		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(exp.ansible)
 	}
 
 	storePaths: file.Create & {

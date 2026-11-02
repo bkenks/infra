@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "baa66ab075119320",
+        "id": "4571fa6b0b5c922b",
         "type": "tabs",
         "children": [
           {
-            "id": "7f44c8fa0b1f129e",
+            "id": "583752179928d278",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "fix-list.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "fix-list"
+              "title": "New tab"
             }
           }
         ]
@@ -188,7 +184,7 @@
       "bases:Create new base": false
     }
   },
-  "active": "7f44c8fa0b1f129e",
+  "active": "e0bf7642b7b5d8fb",
   "lastOpenFiles": [
     "adr/01-03-02-stack-sources-apart-from-deploy-files.md",
     "simplification-audit.md",
