@@ -1,8 +1,13 @@
 package common
 
+import (
+	"net"
+	scma "github.com/bkenks/infra/model/schema"
+)
+
 directory: {
 	server: {
-		[_]:               sch.#AbsPath
+		[_]:               scma.#AbsPath
 		share:             "/srv"
 		docker_share:      share + "/docker"
 		docker_files:      docker_share + "/files"
@@ -15,7 +20,7 @@ directory: {
 	[string]: net.FQDN
 }
 
-domains: #Domains & {
+domain: #Domains & {
 	ktb_dotdev:         "ktb.dev"
 	ktbinternal_dotcom: "ktbinternal.com"
 	ktbcloud_dotcom:    "ktbcloud.com"
@@ -23,11 +28,11 @@ domains: #Domains & {
 }
 
 route: {
-	[routeName=_]: sch.#Route & {
+	[routeName=_]: scma.#Route & {
 		name: routeName
 	}
 
-	pangolin: sch.#Route & {
+	pangolin: scma.#Route & {
 		public: {
 			scheme: "https"
 			host:   "pangolin." + domain.public.ktbcloud_com

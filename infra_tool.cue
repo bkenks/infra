@@ -7,7 +7,7 @@ import (
 	"tool/exec"
 	"tool/file"
 
-	inv "github.com/bkenks/infra/model/inventory"
+	cmn "github.com/bkenks/infra/model/common"
 	svc "github.com/bkenks/infra/model/service"
 	exp "github.com/bkenks/infra/model/export"
 )
@@ -33,7 +33,7 @@ command: render: {
 	}
 
 	storePaths: file.Create & {
-		let dir = inv.common.directory.server
+		let dir = cmn.directory.server
 		filename: path.Join([repoRoot.root, "store", "paths.yml"])
 		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(dir)
 	}

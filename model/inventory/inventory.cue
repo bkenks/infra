@@ -1,4 +1,4 @@
-package hosts
+package inventory
 
 import (
 	"net"
