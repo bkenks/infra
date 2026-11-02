@@ -12,70 +12,93 @@ _komodo: {
 
 	_bm:     common.directory.server.docker_bindmounts
 	bindDir: _bm + "/dcm"
+	secrets: {
+		db_user:        "KOMODO_DATABASE_USERNAME"
+		db_pass:        "KOMODO_DATABASE_PASSWORD"
+		jwt_secret:     "KOMODO_JWT_SECRET"
+		webhook_secret: "KOMODO_WEBHOOK_SECRET"
+		mongo_user:     "MONGO_INITDB_ROOT_USERNAME"
+		mongo_pass:     "MONGO_INITDB_ROOT_PASSWORD"
+	}
 }
 
-komodo: compose: S={
-	name: "komodo"
-	volumes: keys: name: "komodo-app_keys"
-	networks: newt_gw_001: #Network.newt_gw_001
-	services: {
-		app: {
-			image: "ghcr.io/moghtech/komodo-core:\(_komodo.version)"
-			init:  true
-			depends_on: db: condition: "service_started"
-			environment: {
-				TZ:                       "Etc/UTC"
-				KOMODO_HOST:              "https://\(_komodo.host)"
-				KOMODO_WEBHOOK_BASE_URL:  "https://\(_komodo.webhookHost)"
-				KOMODO_TITLE:             "Komodo"
-				KOMODO_DATABASE_ADDRESS:  "\(S.services.db.container_name):\(_komodo.mongoPort)"
-				KOMODO_DATABASE_USERNAME: "${KOMODO_DATABASE_USERNAME:?err}"
-				KOMODO_DATABASE_PASSWORD: "${KOMODO_DATABASE_PASSWORD:?err}"
-				KOMODO_JWT_SECRET:        "${KOMODO_JWT_SECRET:?err}"
-				KOMODO_JWT_TTL:           "1-day"
-				KOMODO_WEBHOOK_SECRET:    "${KOMODO_WEBHOOK_SECRET:?err}"
+komodo: {
+	fnox: {
+		secrets: {
+			[_]: provider: #Snippet.fnox.defaultProvider._name
 
-				// Use `https://host.docker.internal:8120` when using systemd-managed Periphery.
-				KOMODO_FIRST_SERVER:           "https://host.docker.internal:8120"
-				KOMODO_FIRST_SERVER_NAME:      "Local"
-				KOMODO_DISABLE_CONFIRM_DIALOG: "false"
-				KOMODO_MONITORING_INTERVAL:    "15-sec"
-				KOMODO_RESOURCE_POLL_INTERVAL: "1-hr"
-
-				KOMODO_LOCAL_AUTH:                "true"
-				KOMODO_DISABLE_USER_REGISTRATION: "false"
-				KOMODO_ENABLE_NEW_USERS:          "false"
-				KOMODO_DISABLE_NON_ADMIN_CREATE:  "false"
-				KOMODO_TRANSPARENT_MODE:          "false"
-				KOMODO_OIDC_ENABLED:              "false"
-				KOMODO_GITHUB_OAUTH_ENABLED:      "false"
-				KOMODO_GOOGLE_OAUTH_ENABLED:      "false"
-
-				KOMODO_LOGGING_PRETTY:        "true"
-				KOMODO_PRETTY_STARTUP_CONFIG: "true"
-			}
-			ports: ["\(_komodo.port):\(_komodo.port)"]
-			volumes: [
-				"\(S.volumes.keys.name):/config/keys",
-				"\(_komodo.bindDir)/komodo/data/backups:/backups",
-				"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
-			]
-			networks: ["default", S.networks.newt_gw_001.name]
-			labels: #Snippet.services.labels.komodo_skip
+			(_komodo.secrets.db_user): value:        "komodo/KOMODO_DATABASE_USERNAME"
+			(_komodo.secrets.db_pass): value:        "komodo/KOMODO_DATABASE_PASSWORD"
+			(_komodo.secrets.jwt_secret): value:     "komodo/KOMODO_JWT_SECRET"
+			(_komodo.secrets.webhook_secret): value: "komodo/KOMODO_WEBHOOK_SECRET"
+			(_komodo.secrets.mongo_user): value:     "komodo/MONGO_INITDB_ROOT_USERNAME"
+			(_komodo.secrets.mongo_pass): value:     "komodo/MONGO_INITDB_ROOT_PASSWORD"
 		}
-		db: {
-			image: "docker.io/library/mongo:\(_komodo.mongoVersion)"
-			command: ["--quiet", "--wiredTigerCacheSizeGB", "0.25"]
-			environment: {
-				MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME:?err}"
-				MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD:?err}"
+	}
+
+	compose: S={
+		name: "komodo"
+		volumes: keys: name: "komodo-app_keys"
+		networks: newt_gw_001: #Network.newt_gw_001
+		services: {
+			app: {
+				image: "ghcr.io/moghtech/komodo-core:\(_komodo.version)"
+				init:  true
+				depends_on: db: condition: "service_started"
+				environment: {
+					TZ:                       "Etc/UTC"
+					KOMODO_HOST:              "https://\(_komodo.host)"
+					KOMODO_WEBHOOK_BASE_URL:  "https://\(_komodo.webhookHost)"
+					KOMODO_TITLE:             "Komodo"
+					KOMODO_DATABASE_ADDRESS:  "\(S.services.db.container_name):\(_komodo.mongoPort)"
+					KOMODO_DATABASE_USERNAME: "${KOMODO_DATABASE_USERNAME:?err}"
+					KOMODO_DATABASE_PASSWORD: "${KOMODO_DATABASE_PASSWORD:?err}"
+					KOMODO_JWT_SECRET:        "${KOMODO_JWT_SECRET:?err}"
+					KOMODO_JWT_TTL:           "1-day"
+					KOMODO_WEBHOOK_SECRET:    "${KOMODO_WEBHOOK_SECRET:?err}"
+
+					// Use `https://host.docker.internal:8120` when using systemd-managed Periphery.
+					KOMODO_FIRST_SERVER:           "https://host.docker.internal:8120"
+					KOMODO_FIRST_SERVER_NAME:      "Local"
+					KOMODO_DISABLE_CONFIRM_DIALOG: "false"
+					KOMODO_MONITORING_INTERVAL:    "15-sec"
+					KOMODO_RESOURCE_POLL_INTERVAL: "1-hr"
+
+					KOMODO_LOCAL_AUTH:                "true"
+					KOMODO_DISABLE_USER_REGISTRATION: "false"
+					KOMODO_ENABLE_NEW_USERS:          "false"
+					KOMODO_DISABLE_NON_ADMIN_CREATE:  "false"
+					KOMODO_TRANSPARENT_MODE:          "false"
+					KOMODO_OIDC_ENABLED:              "false"
+					KOMODO_GITHUB_OAUTH_ENABLED:      "false"
+					KOMODO_GOOGLE_OAUTH_ENABLED:      "false"
+
+					KOMODO_LOGGING_PRETTY:        "true"
+					KOMODO_PRETTY_STARTUP_CONFIG: "true"
+				}
+				ports: ["\(_komodo.port):\(_komodo.port)"]
+				volumes: [
+					"\(S.volumes.keys.name):/config/keys",
+					"\(_komodo.bindDir)/komodo/data/backups:/backups",
+					"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
+				]
+				networks: ["default", S.networks.newt_gw_001.name]
+				labels: #Snippet.services.labels.komodo_skip
 			}
-			ports: ["\(_komodo.mongoPort):\(_komodo.mongoPort)"]
-			volumes: [
-				"\(_komodo.bindDir)/mongo/data:/data/db",
-				"\(_komodo.bindDir)/mongo/config:/data/configdb",
-			]
-			labels: #Snippet.services.labels.komodo_skip
+			db: {
+				image: "docker.io/library/mongo:\(_komodo.mongoVersion)"
+				command: ["--quiet", "--wiredTigerCacheSizeGB", "0.25"]
+				environment: {
+					MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME:?err}"
+					MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD:?err}"
+				}
+				ports: ["\(_komodo.mongoPort):\(_komodo.mongoPort)"]
+				volumes: [
+					"\(_komodo.bindDir)/mongo/data:/data/db",
+					"\(_komodo.bindDir)/mongo/config:/data/configdb",
+				]
+				labels: #Snippet.services.labels.komodo_skip
+			}
 		}
 	}
 }

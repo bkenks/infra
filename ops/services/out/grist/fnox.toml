@@ -4,3 +4,16 @@
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'
 type = '1password'
 vault = 'infra'
+
+[secrets]
+[secrets.GRIST_DEFAULT_EMAIL]
+provider = 'onepassword'
+value = 'grist/default_email'
+
+[secrets.GRIST_SESSION_SECRET]
+provider = 'onepassword'
+value = 'grist/session_secret'
+
+[secrets.POSTGRES_PASSWORD]
+provider = 'onepassword'
+value = 'grist/postgres_password'

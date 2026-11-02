@@ -185,6 +185,8 @@ import (
 }
 
 #Fnox: {
+	root?: bool
+	profiles?: {...}
 	providers?: {...}
 	secrets?: {...}
 }

@@ -9,47 +9,62 @@ _immich: {
 	cacheImage: "docker.io/valkey/valkey:9@sha256:8436e10bc65c94886a91d4415b6a6dfa9cb5a306fb3b996e5bb67cd2b4854193"
 	tz:         "America/New_York"
 	bindDir:    "\(common.directory.server.docker_bindmounts)/apps/immich"
+	secrets: {
+		db_pass: "DB_PASSWORD"
+		pg_pass: "POSTGRES_PASSWORD"
+	}
 }
 
-immich: compose: S={
-	name: "immich"
-	networks: newt_gw_001: #Network.newt_gw_001
-	services: {
-		db: {
-			image: _immich.dbImage
-			environment: {
-				POSTGRES_DB:          S.name
-				POSTGRES_USER:        S.name
-				POSTGRES_INITDB_ARGS: "--data-checksums"
-				POSTGRES_PASSWORD:    "${POSTGRES_PASSWORD:?err}"
-			}
-			volumes: ["\(_immich.bindDir)/postgres:/var/lib/postgresql/data"]
-			shm_size: "128m"
+immich: {
+	fnox: {
+		secrets: {
+			[_]: provider: #Snippet.fnox.defaultProvider._name
+
+			(_immich.secrets.db_pass): value: "immich/DB_PASSWORD"
+			(_immich.secrets.pg_pass): value: "immich/POSTGRES_PASSWORD"
 		}
-		ml: {
-			image: "ghcr.io/immich-app/immich-machine-learning:\(_immich.version)"
-			environment: TZ: _immich.tz
-			volumes: ["\(_immich.bindDir)/model-cache:/cache"]
-		}
-		cache: image: _immich.cacheImage
-		app: {
-			image: "ghcr.io/immich-app/immich-server:\(_immich.version)"
-			depends_on: {
-				db: condition:    "service_started"
-				cache: condition: "service_started"
+	}
+
+	compose: S={
+		name: "immich"
+		networks: newt_gw_001: #Network.newt_gw_001
+		services: {
+			db: {
+				image: _immich.dbImage
+				environment: {
+					POSTGRES_DB:          S.name
+					POSTGRES_USER:        S.name
+					POSTGRES_INITDB_ARGS: "--data-checksums"
+					POSTGRES_PASSWORD:    "${POSTGRES_PASSWORD:?err}"
+				}
+				volumes: ["\(_immich.bindDir)/postgres:/var/lib/postgresql/data"]
+				shm_size: "128m"
 			}
-			environment: {
-				TZ:               _immich.tz
-				REDIS_HOSTNAME:   S.services.cache.container_name
-				DB_HOSTNAME:      S.services.db.container_name
-				DB_USERNAME:      S.name
-				DB_DATABASE_NAME: S.name
-				DB_PASSWORD:      "${DB_PASSWORD:?err}"
+			ml: {
+				image: "ghcr.io/immich-app/immich-machine-learning:\(_immich.version)"
+				environment: TZ: _immich.tz
+				volumes: ["\(_immich.bindDir)/model-cache:/cache"]
 			}
-			expose: [_immich.port]
-			volumes: ["/mnt/immich-library:/data"]
-			networks: ["default", S.networks.newt_gw_001.name]
-			devices: ["/dev/dri:/dev/dri"]
+			cache: image: _immich.cacheImage
+			app: {
+				image: "ghcr.io/immich-app/immich-server:\(_immich.version)"
+				depends_on: {
+					db: condition:    "service_started"
+					cache: condition: "service_started"
+				}
+				environment: {
+					TZ:               _immich.tz
+					REDIS_HOSTNAME:   S.services.cache.container_name
+					DB_HOSTNAME:      S.services.db.container_name
+					DB_USERNAME:      S.name
+					DB_DATABASE_NAME: S.name
+					DB_PASSWORD:      "${DB_PASSWORD:?err}"
+				}
+				expose: [_immich.port]
+				volumes: ["/mnt/immich-library:/data"]
+				networks: ["default", S.networks.newt_gw_001.name]
+				devices: ["/dev/dri:/dev/dri"]
+			}
 		}
 	}
 }

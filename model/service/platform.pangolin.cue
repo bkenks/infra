@@ -33,81 +33,98 @@ _pangolin: {
 		"chmod -R 755 \(initDir)/traefik \(initDir)/letsencrypt \(initDir)/GeoLite2-*.mmdb",
 		"chmod 600 \(initDir)/letsencrypt/acme.json",
 	], " && ")
+	secrets: {
+		cf_token:      "CF_DNS_API_TOKEN"
+		smtp_pass:     "EMAIL_SMTP_PASS"
+		server_secret: "SERVER_SECRET"
+	}
 }
 
-pangolin: compose: S={
-	name: "pangolin"
+pangolin: {
+	fnox: {
+		secrets: {
+			[_]: provider: #Snippet.fnox.defaultProvider._name
 
-	networks: default: {
-		driver:      "bridge"
-		enable_ipv6: true
+			(_pangolin.secrets.cf_token): value:      "traefik/CF_DNS_API_TOKEN"
+			(_pangolin.secrets.smtp_pass): value:     "apps.pangolin/EMAIL_SMTP_PASS"
+			(_pangolin.secrets.server_secret): value: "apps.pangolin/SERVER_SECRET"
+		}
 	}
 
-	services: {
-		_appHealthy: (app.container_name): condition: "service_healthy"
+	compose: S={
+		name: "pangolin"
 
-		app: {
-			container_name: "pangolin"
-			image:          "docker.io/fosrl/pangolin:\(_pangolin.version)"
-			pre_start: [{
-				image: "docker.io/library/busybox:\(_pangolin.busyboxVersion)"
-				command: ["sh", "-c", _pangolin.initScript]
-			}]
-			environment: {
-				EMAIL_SMTP_PASS: "${EMAIL_SMTP_PASS:?err}"
-				SERVER_SECRET:   "${SERVER_SECRET:?err}"
-			}
-			volumes: [
-				"\(_pangolin.configDir):/app/config",
-				"\(_pangolin.configs)/config.yaml:/app/config/config.yml:ro",
-				"\(_pangolin.configs)/privateConfig.yaml:/app/config/privateConfig.yml:ro",
-			]
-			healthcheck: {
-				test: ["CMD", "curl", "-f", "http://localhost:\(_pangolin.port)/api/v1/"]
-				interval: "10s"
-				timeout:  "10s"
-				retries:  15
-			}
-			deploy: resources: {
-				limits: memory:       "2g"
-				reservations: memory: "512m"
-			}
+		networks: default: {
+			driver:      "bridge"
+			enable_ipv6: true
 		}
-		tunnel: Svc={
-			image: "docker.io/fosrl/gerbil:\(_pangolin.gerbilVersion)"
-			command: [
-				"--reachableAt=http://\(Svc.container_name):3004",
-				"--generateAndSaveKeyTo=/var/config/key",
-				"--remoteConfig=http://\(S.services.app.container_name):\(_pangolin.port)/api/v1/",
-			]
-			container_name: "gerbil"
-			depends_on:     _appHealthy
-			cap_add: ["NET_ADMIN", "SYS_MODULE"]
-			ports: [
-				"51820:51820/udp",
-				"21820:21820/udp",
-				"443:443",
-				"443:443/udp",
-				"80:80",
-				"22:22",
-				"18022:18022",
-			]
-			volumes: ["\(_pangolin.configDir):/var/config"]
-		}
-		proxy: {
-			image: "docker.io/library/traefik:\(_pangolin.traefikVersion)"
-			environment: CF_DNS_API_TOKEN: "${CF_DNS_API_TOKEN:?err}"
-			command: ["--configFile=/etc/traefik/traefik_config.yml"]
 
-			container_name: "traefik"
-			depends_on:     _appHealthy
-			network_mode:   "service:\(S.services.tunnel.container_name)"
-			volumes: [
-				"\(_pangolin.configs)/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
-				"\(_pangolin.configs)/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",
-				"\(_pangolin.configDir)/letsencrypt:/letsencrypt",
-				"\(_pangolin.configDir)/traefik/logs:/var/log/traefik",
-			]
+		services: {
+			_appHealthy: (app.container_name): condition: "service_healthy"
+
+			app: {
+				container_name: "pangolin"
+				image:          "docker.io/fosrl/pangolin:\(_pangolin.version)"
+				pre_start: [{
+					image: "docker.io/library/busybox:\(_pangolin.busyboxVersion)"
+					command: ["sh", "-c", _pangolin.initScript]
+				}]
+				environment: {
+					EMAIL_SMTP_PASS: "${EMAIL_SMTP_PASS:?err}"
+					SERVER_SECRET:   "${SERVER_SECRET:?err}"
+				}
+				volumes: [
+					"\(_pangolin.configDir):/app/config",
+					"\(_pangolin.configs)/config.yaml:/app/config/config.yml:ro",
+					"\(_pangolin.configs)/privateConfig.yaml:/app/config/privateConfig.yml:ro",
+				]
+				healthcheck: {
+					test: ["CMD", "curl", "-f", "http://localhost:\(_pangolin.port)/api/v1/"]
+					interval: "10s"
+					timeout:  "10s"
+					retries:  15
+				}
+				deploy: resources: {
+					limits: memory:       "2g"
+					reservations: memory: "512m"
+				}
+			}
+			tunnel: Svc={
+				image: "docker.io/fosrl/gerbil:\(_pangolin.gerbilVersion)"
+				command: [
+					"--reachableAt=http://\(Svc.container_name):3004",
+					"--generateAndSaveKeyTo=/var/config/key",
+					"--remoteConfig=http://\(S.services.app.container_name):\(_pangolin.port)/api/v1/",
+				]
+				container_name: "gerbil"
+				depends_on:     _appHealthy
+				cap_add: ["NET_ADMIN", "SYS_MODULE"]
+				ports: [
+					"51820:51820/udp",
+					"21820:21820/udp",
+					"443:443",
+					"443:443/udp",
+					"80:80",
+					"22:22",
+					"18022:18022",
+				]
+				volumes: ["\(_pangolin.configDir):/var/config"]
+			}
+			proxy: {
+				image: "docker.io/library/traefik:\(_pangolin.traefikVersion)"
+				environment: CF_DNS_API_TOKEN: "${CF_DNS_API_TOKEN:?err}"
+				command: ["--configFile=/etc/traefik/traefik_config.yml"]
+
+				container_name: "traefik"
+				depends_on:     _appHealthy
+				network_mode:   "service:\(S.services.tunnel.container_name)"
+				volumes: [
+					"\(_pangolin.configs)/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
+					"\(_pangolin.configs)/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",
+					"\(_pangolin.configDir)/letsencrypt:/letsencrypt",
+					"\(_pangolin.configDir)/traefik/logs:/var/log/traefik",
+				]
+			}
 		}
 	}
 }

@@ -29,103 +29,118 @@ _stream: {
 		SONARR_API_KEY: "${SONARR_API_KEY:?err}"
 	}
 	configs: common.configs + "/" + stream.compose.name
+	secrets: {
+		radarr_key: "RADARR_API_KEY"
+		sonarr_key: "SONARR_API_KEY"
+	}
 }
 
-stream: compose: S={
-	name: "stream"
-	_webNetworks: ["default", S.networks.newt_gw_001.name]
-	networks: newt_gw_001: #Network.newt_gw_001
-	services: {
-		_arrsHealthy: {
-			(movies.container_name): condition: "service_healthy"
-			(tv.container_name): condition:     "service_healthy"
-		}
+stream: {
+	fnox: {
+		secrets: {
+			[_]: provider: #Snippet.fnox.defaultProvider._name
 
-		subtitles: {
-			image:       "lscr.io/linuxserver/bazarr:\(_stream.bazarrVersion)"
-			environment: _stream.lsioEnv
-			expose: [_stream.bazarrPort]
-			volumes: [
-				"\(_stream.bindRoot)/bazarr/config:/config",
-				"\(_stream.sharedData):/data",
-			]
-			networks: S._webNetworks
-			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.bazarrPort}
+			(_stream.secrets.radarr_key): value: "stream/RADARR_API_KEY"
+			(_stream.secrets.sonarr_key): value: "stream/SONARR_API_KEY"
 		}
-		seeder: {
-			image:       "ghcr.io/raydak-labs/configarr:\(_stream.configarrVersion)"
-			environment: _stream.lsioEnv & _stream.arrApiKeys
-			volumes: [
-				"\(_stream.configs)/configarr:/app/config:ro",
-				"\(_stream.bindRoot)/configarr/repos:/app/repos",
-			]
-			depends_on: _arrsHealthy
-		}
-		janitor: {
-			image:       "ghcr.io/manimatter/decluttarr:\(_stream.decluttarrVersion)"
-			environment: _stream.lsioEnv & _stream.arrApiKeys
-			volumes: ["\(_stream.configs)/decluttarr:/app/config:ro"]
-			depends_on: _arrsHealthy
-		}
-		media: {
-			image: "lscr.io/linuxserver/plex:\(_stream.plexVersion)"
-			environment: {PUID: "0", PGID: "0", TZ: _stream.tz, VERSION: "docker"}
-			volumes: [
-				"\(_stream.bindRoot)/plex/config:/config",
-				"\(_stream.sharedData)/media:/data/media",
-			]
-			network_mode: "host"
-			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.plexPort, #path: "/identity"}
-			devices: ["/dev/dri:/dev/dri"]
-		}
-		indexer: {
-			image:       "lscr.io/linuxserver/prowlarr@\(_stream.prowlarrDigest)"
-			environment: _stream.lsioEnv
-			expose: [_stream.prowlarrPort]
-			volumes: ["\(_stream.bindRoot)/prowlarr/config:/config"]
-			networks: S._webNetworks
-			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.prowlarrPort, #path: "/ping"}
-		}
-		movies: {
-			image:       "lscr.io/linuxserver/radarr@\(_stream.radarrDigest)"
-			environment: _stream.lsioEnv
-			expose: [_stream.radarrPort]
-			volumes: [
-				"\(_stream.bindRoot)/radarr/config:/config",
-				"\(_stream.sharedData):/data",
-			]
-			networks: S._webNetworks
-			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.radarrPort, #path: "/ping"}
-		}
-		downloader: {
-			image:       "lscr.io/linuxserver/sabnzbd@\(_stream.sabnzbdDigest)"
-			environment: _stream.lsioEnv
-			expose: [_stream.sabnzbdPort]
-			volumes: [
-				"\(_stream.bindRoot)/sabnzbd/config:/config",
-				"\(_stream.sharedData):/data",
-			]
-			networks: S._webNetworks
-			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.sabnzbdPort}
-		}
-		requests: {
-			image: "ghcr.io/seerr-team/seerr:\(_stream.seerrVersion)"
-			environment: TZ: _stream.tz
-			expose: [_stream.seerrPort]
-			volumes: ["\(_stream.bindRoot)/seerr/config:/app/config"]
-			networks: S._webNetworks
-			init:     true
-		}
-		tv: {
-			image:       "lscr.io/linuxserver/sonarr@\(_stream.sonarrDigest)"
-			environment: _stream.lsioEnv
-			expose: [_stream.sonarrPort]
-			volumes: [
-				"\(_stream.bindRoot)/sonarr/config:/config",
-				"\(_stream.sharedData):/data",
-			]
-			networks: S._webNetworks
-			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.sonarrPort, #path: "/ping"}
+	}
+
+	compose: S={
+		name: "stream"
+		_webNetworks: ["default", S.networks.newt_gw_001.name]
+		networks: newt_gw_001: #Network.newt_gw_001
+		services: {
+			_arrsHealthy: {
+				(movies.container_name): condition: "service_healthy"
+				(tv.container_name): condition:     "service_healthy"
+			}
+
+			subtitles: {
+				image:       "lscr.io/linuxserver/bazarr:\(_stream.bazarrVersion)"
+				environment: _stream.lsioEnv
+				expose: [_stream.bazarrPort]
+				volumes: [
+					"\(_stream.bindRoot)/bazarr/config:/config",
+					"\(_stream.sharedData):/data",
+				]
+				networks: S._webNetworks
+				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.bazarrPort}
+			}
+			seeder: {
+				image:       "ghcr.io/raydak-labs/configarr:\(_stream.configarrVersion)"
+				environment: _stream.lsioEnv & _stream.arrApiKeys
+				volumes: [
+					"\(_stream.configs)/configarr:/app/config:ro",
+					"\(_stream.bindRoot)/configarr/repos:/app/repos",
+				]
+				depends_on: _arrsHealthy
+			}
+			janitor: {
+				image:       "ghcr.io/manimatter/decluttarr:\(_stream.decluttarrVersion)"
+				environment: _stream.lsioEnv & _stream.arrApiKeys
+				volumes: ["\(_stream.configs)/decluttarr:/app/config:ro"]
+				depends_on: _arrsHealthy
+			}
+			media: {
+				image: "lscr.io/linuxserver/plex:\(_stream.plexVersion)"
+				environment: {PUID: "0", PGID: "0", TZ: _stream.tz, VERSION: "docker"}
+				volumes: [
+					"\(_stream.bindRoot)/plex/config:/config",
+					"\(_stream.sharedData)/media:/data/media",
+				]
+				network_mode: "host"
+				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.plexPort, #path: "/identity"}
+				devices: ["/dev/dri:/dev/dri"]
+			}
+			indexer: {
+				image:       "lscr.io/linuxserver/prowlarr@\(_stream.prowlarrDigest)"
+				environment: _stream.lsioEnv
+				expose: [_stream.prowlarrPort]
+				volumes: ["\(_stream.bindRoot)/prowlarr/config:/config"]
+				networks: S._webNetworks
+				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.prowlarrPort, #path: "/ping"}
+			}
+			movies: {
+				image:       "lscr.io/linuxserver/radarr@\(_stream.radarrDigest)"
+				environment: _stream.lsioEnv
+				expose: [_stream.radarrPort]
+				volumes: [
+					"\(_stream.bindRoot)/radarr/config:/config",
+					"\(_stream.sharedData):/data",
+				]
+				networks: S._webNetworks
+				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.radarrPort, #path: "/ping"}
+			}
+			downloader: {
+				image:       "lscr.io/linuxserver/sabnzbd@\(_stream.sabnzbdDigest)"
+				environment: _stream.lsioEnv
+				expose: [_stream.sabnzbdPort]
+				volumes: [
+					"\(_stream.bindRoot)/sabnzbd/config:/config",
+					"\(_stream.sharedData):/data",
+				]
+				networks: S._webNetworks
+				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.sabnzbdPort}
+			}
+			requests: {
+				image: "ghcr.io/seerr-team/seerr:\(_stream.seerrVersion)"
+				environment: TZ: _stream.tz
+				expose: [_stream.seerrPort]
+				volumes: ["\(_stream.bindRoot)/seerr/config:/app/config"]
+				networks: S._webNetworks
+				init:     true
+			}
+			tv: {
+				image:       "lscr.io/linuxserver/sonarr@\(_stream.sonarrDigest)"
+				environment: _stream.lsioEnv
+				expose: [_stream.sonarrPort]
+				volumes: [
+					"\(_stream.bindRoot)/sonarr/config:/config",
+					"\(_stream.sharedData):/data",
+				]
+				networks: S._webNetworks
+				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.sonarrPort, #path: "/ping"}
+			}
 		}
 	}
 }

@@ -8,8 +8,8 @@ vault = 'infra'
 [secrets]
 [secrets.DATABASE_URL]
 provider = 'onepassword'
-value = 'docuseal/SECRET_KEY_BASE'
+value = 'docuseal/DATABASE_URL'
 
 [secrets.SECRET_KEY_BASE]
 provider = 'onepassword'
-value = 'docuseal/DATABASE_URL'
+value = 'docuseal/SECRET_KEY_BASE'

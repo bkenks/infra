@@ -15,12 +15,10 @@ _docuseal: {
 docuseal: {
 	fnox: {
 		secrets: {
-			_s: _docuseal.secrets
-
 			[_]: provider: #Snippet.fnox.defaultProvider._name
 
-			(_docuseal.secrets.key_base): value: "docuseal/DATABASE_URL"
-			(_docuseal.secrets.db_url): value:   "docuseal/SECRET_KEY_BASE"
+			(_docuseal.secrets.key_base): value: "docuseal/SECRET_KEY_BASE"
+			(_docuseal.secrets.db_url): value:   "docuseal/DATABASE_URL"
 		}
 	}
 
