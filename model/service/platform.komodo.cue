@@ -3,6 +3,8 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _komodo: {
+	host:         "komo.\(common.domain.ktbinternal_dotcom)"
+	webhookHost:  "komo-hooks.\(common.domain.ktbcloud_dotcom)"
 	port:         9120
 	mongoPort:    27017
 	version:      "2.1.2"
@@ -23,8 +25,8 @@ komodo: S={
 			depends_on: db: condition: "service_started"
 			environment: {
 				TZ:                       "Etc/UTC"
-				KOMODO_HOST:              "https://komo.\(common.domain.ktbinternal_dotcom)"
-				KOMODO_WEBHOOK_BASE_URL:  "https://komo-hooks.\(common.domain.ktbcloud_dotcom)"
+				KOMODO_HOST:              "https://\(_komodo.host)"
+				KOMODO_WEBHOOK_BASE_URL:  "https://\(_komodo.webhookHost)"
 				KOMODO_TITLE:             "Komodo"
 				KOMODO_DATABASE_ADDRESS:  "\(S.services.db.container_name):\(_komodo.mongoPort)"
 				KOMODO_DATABASE_USERNAME: "${KOMODO_DATABASE_USERNAME:?err}"
@@ -62,7 +64,7 @@ komodo: S={
 			labels: #Snippet.services.labels.komodo_skip
 		}
 		db: {
-			image: "mongo:\(_komodo.mongoVersion)"
+			image: "docker.io/library/mongo:\(_komodo.mongoVersion)"
 			command: ["--quiet", "--wiredTigerCacheSizeGB", "0.25"]
 			environment: {
 				MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME:?err}"

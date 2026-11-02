@@ -6,9 +6,13 @@ import (
 )
 
 _pangolin: {
-	port:      3001
-	_dbm:      common.directory.server.docker_bindmounts
-	configDir: _dbm + "/pangolin/config"
+	version:        "ee-1.24.0"
+	gerbilVersion:  "1.5.2"
+	traefikVersion: "v3.6"
+	busyboxVersion: "1.37.0"
+	port:           3001
+	_dbm:           common.directory.server.docker_bindmounts
+	configDir:      _dbm + "/pangolin/config"
 
 	configs: common.configs + "/" + pangolin.name
 
@@ -43,12 +47,10 @@ pangolin: S={
 		_appHealthy: (app.container_name): condition: "service_healthy"
 
 		app: {
-			_version: "ee-1.24.0"
-
 			container_name: "pangolin"
-			image:          "docker.io/fosrl/pangolin:\(_version)"
+			image:          "docker.io/fosrl/pangolin:\(_pangolin.version)"
 			pre_start: [{
-				image: "docker.io/library/busybox:1.37.0"
+				image: "docker.io/library/busybox:\(_pangolin.busyboxVersion)"
 				command: ["sh", "-c", _pangolin.initScript]
 			}]
 			environment: {
@@ -72,9 +74,7 @@ pangolin: S={
 			}
 		}
 		tunnel: Svc={
-			_version: "1.5.2"
-
-			image: "docker.io/fosrl/gerbil:\(_version)"
+			image: "docker.io/fosrl/gerbil:\(_pangolin.gerbilVersion)"
 			command: [
 				"--reachableAt=http://\(Svc.container_name):3004",
 				"--generateAndSaveKeyTo=/var/config/key",
@@ -95,8 +95,7 @@ pangolin: S={
 			volumes: ["\(_pangolin.configDir):/var/config"]
 		}
 		proxy: {
-			_version: "v3.6"
-			image:    "docker.io/library/traefik:\(_version)"
+			image: "docker.io/library/traefik:\(_pangolin.traefikVersion)"
 			environment: CF_DNS_API_TOKEN: "${CF_DNS_API_TOKEN:?err}"
 			command: ["--configFile=/etc/traefik/traefik_config.yml"]
 

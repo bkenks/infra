@@ -2,12 +2,12 @@ package common
 
 import (
 	"net"
-	scma "github.com/bkenks/infra/model/schema"
+	"github.com/bkenks/infra/model/schema"
 )
 
 directory: {
 	server: {
-		[_]:               scma.#AbsPath
+		[_]:               schema.#AbsPath
 		share:             "/srv"
 		docker_share:      share + "/docker"
 		docker_files:      docker_share + "/files"
@@ -28,9 +28,9 @@ domain: #Domains & {
 }
 
 route: {
-	pangolin: scma.#Route & {
+	pangolin: schema.#Route & {
 		public: {
-			scheme: scma.#URIScheme.https
+			scheme: schema.#URIScheme.https
 			host:   "pangolin." + domain.ktbcloud_dotcom
 		}
 	}

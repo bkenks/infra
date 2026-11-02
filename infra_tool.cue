@@ -7,9 +7,9 @@ import (
 	"tool/exec"
 	"tool/file"
 
-	cmn "github.com/bkenks/infra/model/common"
-	svc "github.com/bkenks/infra/model/service"
-	exp "github.com/bkenks/infra/model/export"
+	"github.com/bkenks/infra/model/common"
+	"github.com/bkenks/infra/model/service"
+	"github.com/bkenks/infra/model/export"
 )
 
 command: render: {
@@ -22,17 +22,17 @@ command: render: {
 	storeNetworks: file.Create & {
 		filename: path.Join([repoRoot.root, "store", "networks.yml"])
 		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal({
-			docker_networks: [for name, _ in svc.#Network {name}]
+			docker_networks: [for name, _ in service.#Network {name}]
 		})
 	}
 
 	storeHosts: file.Create & {
 		filename: path.Join([repoRoot.root, "store", "hosts.yml"])
-		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(exp.ansible)
+		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(export.ansible)
 	}
 
 	storePaths: file.Create & {
-		let dir = cmn.directory.server
+		let dir = common.directory.server
 		filename: path.Join([repoRoot.root, "store", "paths.yml"])
 		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(dir)
 	}
@@ -47,7 +47,7 @@ command: render: {
 	// Each stack renders to <name>/compose.yaml. Stub stacks without services are not
 	// valid Compose files yet.
 	stacks: {
-		for stackKey, stack in svc if len(stack.services) > 0 {
+		for stackKey, stack in service if len(stack.services) > 0 {
 			let deployDir = path.Join([outDir, stack.name])
 
 			(stackKey): {

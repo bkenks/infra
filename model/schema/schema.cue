@@ -89,7 +89,7 @@ import (
 	scheme?:   #URIScheme.#enum
 	host!:     string
 	port?:     int & >0 & <=65535
-	path?:     string
+	path?:     =~"^/"
 	query?:    string
 	fragment?: string
 
@@ -97,7 +97,7 @@ import (
 		if scheme != _|_ {"\(scheme)"},
 		host,
 		if port != _|_ {":\(port)"},
-		if path != _|_ {"/\(path)"},
+		if path != _|_ {path},
 		if query != _|_ {"?\(query)"},
 		if fragment != _|_ {"#\(fragment)"},
 	], "")

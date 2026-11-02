@@ -3,6 +3,7 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _paperless: {
+	host:             "paper.\(common.domain.ktbinternal_dotcom)"
 	cachePort:        6379
 	dbPort:           5432
 	converterPort:    3000
@@ -26,16 +27,14 @@ paperless: S={
 	}
 	services: {
 		cache: {
-			image:   "docker.io/library/redis:\(_paperless.cacheVersion)"
-			restart: "on-failure:5"
+			image: "docker.io/library/redis:\(_paperless.cacheVersion)"
 			environment: ALLOW_EMPTY_PASSWORD: "yes"
 			expose: [_paperless.cachePort]
 			volumes: ["\(S.volumes.cache_data.name):/data"]
 			healthcheck: #Snippet.services.healthcheck.redisPing
 		}
 		db: {
-			image:   "docker.io/library/postgres:\(_paperless.dbVersion)"
-			restart: "on-failure:5"
+			image: "docker.io/library/postgres:\(_paperless.dbVersion)"
 			environment: {
 				POSTGRES_USER:     S.name
 				POSTGRES_DB:       S.name
@@ -47,8 +46,7 @@ paperless: S={
 			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 		converter: {
-			image:   "docker.io/gotenberg/gotenberg:\(_paperless.converterVersion)"
-			restart: "on-failure:5"
+			image: "docker.io/gotenberg/gotenberg:\(_paperless.converterVersion)"
 			command: [
 				"gotenberg",
 				"--chromium-disable-javascript=true",
@@ -57,13 +55,11 @@ paperless: S={
 			expose: [_paperless.converterPort]
 		}
 		parser: {
-			image:   "docker.io/apache/tika:\(_paperless.parserVersion)"
-			restart: "on-failure:5"
+			image: "docker.io/apache/tika:\(_paperless.parserVersion)"
 			expose: [_paperless.parserPort]
 		}
 		app: {
-			image:   "ghcr.io/paperless-ngx/paperless-ngx:\(_paperless.version)"
-			restart: "on-failure:5"
+			image: "ghcr.io/paperless-ngx/paperless-ngx:\(_paperless.version)"
 			depends_on: {
 				cache: condition:     "service_healthy"
 				db: condition:        "service_healthy"
@@ -73,7 +69,7 @@ paperless: S={
 			environment: {
 				PAPERLESS_TIKA_ENABLED:            "1"
 				PAPERLESS_OCR_LANGUAGE:            "eng"
-				PAPERLESS_URL:                     "https://paper.\(common.domain.ktbinternal_dotcom)"
+				PAPERLESS_URL:                     "https://\(_paperless.host)"
 				PAPERLESS_TIME_ZONE:               "America/New_York"
 				PAPERLESS_DATE_ORDER:              "MDY"
 				PAPERLESS_REDIS:                   "redis://\(S.services.cache.container_name):\(_paperless.cachePort)"
@@ -93,12 +89,7 @@ paperless: S={
 				"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 			]
 			networks: ["default", S.networks.newt_gw_001.name]
-			healthcheck: {
-				test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:\(_paperless.port)"]
-				interval: "30s"
-				timeout:  "10s"
-				retries:  5
-			}
+			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _paperless.port}
 		}
 	}
 }

@@ -3,6 +3,7 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _grist: {
+	host:         "grist.\(common.domain.ktbcloud_dotcom)"
 	port:         8484
 	cachePort:    6379
 	dbPort:       5432
@@ -33,7 +34,7 @@ grist: S={
 			}
 			environment: {
 				REDIS_URL:            "redis://\(S.services.cache.container_name):\(_grist.cachePort)"
-				APP_HOME_URL:         "https://grist.\(common.domain.ktbcloud_dotcom)"
+				APP_HOME_URL:         "https://\(_grist.host)"
 				GRIST_SESSION_SECRET: "${GRIST_SESSION_SECRET:?err}"
 				GRIST_DEFAULT_EMAIL:  "${GRIST_DEFAULT_EMAIL:?err}"
 				GRIST_FORCE_LOGIN:    "true"
@@ -48,18 +49,7 @@ grist: S={
 			expose: [_grist.port]
 			volumes: ["\(S.volumes.app_data.name):/persist"]
 			networks: ["default", S.networks.newt_gw_001.name]
-			healthcheck: {
-				test: [
-					"CMD",
-					"node",
-					"-e",
-					"fetch('http://localhost:\(_grist.port)/status').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
-				]
-				interval:     "30s"
-				timeout:      "10s"
-				retries:      5
-				start_period: "30s"
-			}
+			healthcheck: #Snippet.services.healthcheck.nodeFetch & {#port: _grist.port, #path: "/status"}
 		}
 		cache: {
 			image: "docker.io/library/redis:\(_grist.cacheVersion)"

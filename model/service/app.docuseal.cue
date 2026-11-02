@@ -16,8 +16,7 @@ docuseal: S={
 	}
 
 	services: app: {
-		image:   "docker.io/docuseal/docuseal:\(_docuseal.version)"
-		restart: "on-failure:5"
+		image: "docker.io/docuseal/docuseal:\(_docuseal.version)"
 		environment: {
 			PORT:            "\(_docuseal.port)"
 			FORCE_SSL:       _docuseal.host

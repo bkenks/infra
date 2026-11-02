@@ -2,13 +2,13 @@ package compose
 
 import (
 	"cue.dev/x/dockercompose"
-	enc "github.com/bkenks/infra/model/schema/encoding"
+	"github.com/bkenks/infra/model/schema/encoding"
 )
 
 #DockerCompose: dockercompose.#Schema & {
 	// Compose uses this to form container names which can be utilized...
 	// in URLs, so we must conform to those URL constraints.
-	name!: enc.#Kebab
+	name!: encoding.#Kebab
 
 	networks: {
 		[string]: {
@@ -24,7 +24,7 @@ import (
 
 	services: {
 		[string]: {
-			container_name!: enc.#Kebab
+			container_name!: encoding.#Kebab
 			restart:         *"unless-stopped" | string
 			logging: *{
 				driver: "json-file"

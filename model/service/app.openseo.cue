@@ -14,8 +14,7 @@ openseo: S={
 	networks: newt_gw_001: #Network.newt_gw_001
 
 	services: app: {
-		image:   "ghcr.io/every-app/open-seo:\(_openseo.version)"
-		restart: "on-failure:5"
+		image: "ghcr.io/every-app/open-seo:\(_openseo.version)"
 		environment: {
 			// Required so the cloudflare:workers bindings see Compose env vars.
 			CLOUDFLARE_INCLUDE_PROCESS_ENV: "true"
@@ -35,17 +34,6 @@ openseo: S={
 		expose: [_openseo.port]
 		volumes: ["\(S.volumes.app_data.name):/app/.wrangler"]
 		networks: [S.networks.newt_gw_001.name]
-		healthcheck: {
-			test: [
-				"CMD",
-				"node",
-				"-e",
-				"fetch('http://localhost:\(_openseo.port)/api/health').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
-			]
-			interval:     "30s"
-			timeout:      "10s"
-			retries:      3
-			start_period: "300s"
-		}
+		healthcheck: #Snippet.services.healthcheck.nodeFetch & {#port: _openseo.port, #path: "/api/health", retries: 3, start_period: "300s"}
 	}
 }

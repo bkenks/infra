@@ -31,21 +31,10 @@ _stream: {
 	configs: common.configs + "/" + stream.name
 }
 
-_httpHealth: {
-	_port: int
-	_path: string
-	test: ["CMD-SHELL", "curl -fsS http://localhost:\(_port)\(_path) || exit 1"]
-	interval:     "30s"
-	timeout:      "10s"
-	retries:      5
-	start_period: "30s"
-}
-
 stream: S={
 	name: "stream"
 	_webNetworks: ["default", S.networks.newt_gw_001.name]
 	networks: newt_gw_001: #Network.newt_gw_001
-	services: [_]: restart: "on-failure:5"
 	services: {
 		_arrsHealthy: {
 			(movies.container_name): condition: "service_healthy"
@@ -61,7 +50,7 @@ stream: S={
 				"\(_stream.sharedData):/data",
 			]
 			networks: S._webNetworks
-			healthcheck: _httpHealth & {_port: _stream.bazarrPort, _path: "/"}
+			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.bazarrPort}
 		}
 		seeder: {
 			image:       "ghcr.io/raydak-labs/configarr:\(_stream.configarrVersion)"
@@ -86,7 +75,7 @@ stream: S={
 				"\(_stream.sharedData)/media:/data/media",
 			]
 			network_mode: "host"
-			healthcheck: _httpHealth & {_port: _stream.plexPort, _path: "/identity"}
+			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.plexPort, #path: "/identity"}
 			devices: ["/dev/dri:/dev/dri"]
 		}
 		indexer: {
@@ -95,7 +84,7 @@ stream: S={
 			expose: [_stream.prowlarrPort]
 			volumes: ["\(_stream.bindRoot)/prowlarr/config:/config"]
 			networks: S._webNetworks
-			healthcheck: _httpHealth & {_port: _stream.prowlarrPort, _path: "/ping"}
+			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.prowlarrPort, #path: "/ping"}
 		}
 		movies: {
 			image:       "lscr.io/linuxserver/radarr@\(_stream.radarrDigest)"
@@ -106,7 +95,7 @@ stream: S={
 				"\(_stream.sharedData):/data",
 			]
 			networks: S._webNetworks
-			healthcheck: _httpHealth & {_port: _stream.radarrPort, _path: "/ping"}
+			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.radarrPort, #path: "/ping"}
 		}
 		downloader: {
 			image:       "lscr.io/linuxserver/sabnzbd@\(_stream.sabnzbdDigest)"
@@ -117,7 +106,7 @@ stream: S={
 				"\(_stream.sharedData):/data",
 			]
 			networks: S._webNetworks
-			healthcheck: _httpHealth & {_port: _stream.sabnzbdPort, _path: "/"}
+			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.sabnzbdPort}
 		}
 		requests: {
 			image: "ghcr.io/seerr-team/seerr:\(_stream.seerrVersion)"
@@ -136,7 +125,7 @@ stream: S={
 				"\(_stream.sharedData):/data",
 			]
 			networks: S._webNetworks
-			healthcheck: _httpHealth & {_port: _stream.sonarrPort, _path: "/ping"}
+			healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.sonarrPort, #path: "/ping"}
 		}
 	}
 }

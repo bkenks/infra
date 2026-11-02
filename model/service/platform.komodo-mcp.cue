@@ -3,7 +3,9 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _komodo_mcp: {
-	port: 8000
+	version: "1.5.0"
+	host:    "\(komodo_mcp.name).\(common.domain.ktbinternal_dotcom)"
+	port:    8000
 }
 
 komodo_mcp: S={
@@ -11,14 +13,12 @@ komodo_mcp: S={
 	networks: newt_gw_001: #Network.newt_gw_001
 
 	services: app: {
-		_version: "1.5.0"
-
 		// —————————————————————————
-		image: "ghcr.io/mp-tool/komodo-mcp-server:\(_version)"
+		image: "ghcr.io/mp-tool/komodo-mcp-server:\(_komodo_mcp.version)"
 		environment: {
 			MCP_TRANSPORT:     "http"
-			MCP_BASE_URL:      "https://\(S.name).\(common.domain.ktbinternal_dotcom)"
-			MCP_ALLOWED_HOSTS: "\(S.name).\(common.domain.ktbinternal_dotcom)"
+			MCP_BASE_URL:      "https://\(_komodo_mcp.host)"
+			MCP_ALLOWED_HOSTS: _komodo_mcp.host
 			KOMODO_URL:        "http://host.docker.internal:\(_komodo.port)"
 			MCP_TRUST_PROXY:   "1"
 			TZ:                "America/Chicago"
@@ -36,5 +36,4 @@ komodo_mcp: S={
 			S.networks.newt_gw_001.name,
 		]
 	}
-
 }
