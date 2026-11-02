@@ -1,6 +1,6 @@
 package service
 
-import inv "github.com/bkenks/infra/model/inventory"
+import "github.com/bkenks/infra/model/common"
 
 _stream: {
 	bazarrVersion:     "1.5.4"
@@ -14,13 +14,14 @@ _stream: {
 	sonarrDigest:      "sha256:02b4d538d351d6e35882a021c08e8600fe95d28860fb1dd724b597166e7221ca"
 
 	tz:         "America/New_York"
-	bindRoot:   "\(inv.common.directory.server.docker_bindmounts)/stream"
+	bindRoot:   "\(common.directory.server.docker_bindmounts)/stream"
 	sharedData: "\(bindRoot)/shared"
 	lsioEnv: {PUID: "1000", PGID: "1000", TZ: tz}
 	arrApiKeys: {
 		RADARR_API_KEY: "${RADARR_API_KEY:?err}"
 		SONARR_API_KEY: "${SONARR_API_KEY:?err}"
 	}
+	configs: common.configs + "/" + stream.name
 }
 
 _httpHealth: {
@@ -35,14 +36,15 @@ _httpHealth: {
 
 stream: S={
 	name: "stream"
-	_webNetworks: ["default", S.networks.newt_gw_001._ref]
-	_arrsHealthy: {
-		(S.services.movies._ref): condition: "service_healthy"
-		(S.services.tv._ref): condition:     "service_healthy"
-	}
+	_webNetworks: ["default", S.networks.newt_gw_001.name]
 	networks: newt_gw_001: #Network.newt_gw_001
 	services: [_]: restart: "on-failure:5"
 	services: {
+		_arrsHealthy: {
+			(movies.container_name): condition: "service_healthy"
+			(tv.container_name): condition:     "service_healthy"
+		}
+
 		subtitles: Svc={
 			_port:       6767
 			image:       "lscr.io/linuxserver/bazarr:\(_stream.bazarrVersion)"
@@ -59,16 +61,16 @@ stream: S={
 			image:       "ghcr.io/raydak-labs/configarr:\(_stream.configarrVersion)"
 			environment: _stream.lsioEnv & _stream.arrApiKeys
 			volumes: [
-				"\(S._configs)/configarr:/app/config:ro",
+				"\(_stream.configs)/configarr:/app/config:ro",
 				"\(_stream.bindRoot)/configarr/repos:/app/repos",
 			]
-			depends_on: S._arrsHealthy
+			depends_on: _arrsHealthy
 		}
 		janitor: {
 			image:       "ghcr.io/manimatter/decluttarr:\(_stream.decluttarrVersion)"
 			environment: _stream.lsioEnv & _stream.arrApiKeys
-			volumes: ["\(S._configs)/decluttarr:/app/config:ro"]
-			depends_on: S._arrsHealthy
+			volumes: ["\(_stream.configs)/decluttarr:/app/config:ro"]
+			depends_on: _arrsHealthy
 		}
 		media: Svc={
 			_port: 32400

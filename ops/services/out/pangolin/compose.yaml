@@ -43,7 +43,6 @@ services:
       - ../../configs/pangolin/config.yaml:/app/config/config.yml:ro
       - ../../configs/pangolin/privateConfig.yaml:/app/config/privateConfig.yml:ro
   tunnel:
-    restart: unless-stopped
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -53,7 +52,7 @@ services:
       - --remoteConfig=http://pangolin:3001/api/v1/
     container_name: gerbil
     depends_on:
-      app:
+      pangolin:
         condition: service_healthy
     image: docker.io/fosrl/gerbil:1.5.2
     logging:
@@ -68,24 +67,25 @@ services:
       - "80:80"
       - "22:22"
       - "18022:18022"
+    restart: unless-stopped
     volumes:
       - /srv/docker/bind-mounts/pangolin/config:/var/config
   proxy:
-    restart: unless-stopped
     command:
       - --configFile=/etc/traefik/traefik_config.yml
     container_name: traefik
     environment:
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN:?err}
     image: docker.io/library/traefik:v3.6
+    restart: unless-stopped
     logging:
       driver: json-file
       options:
         max-size: 10m
     depends_on:
-      app:
+      pangolin:
         condition: service_healthy
-    network_mode: service:tunnel
+    network_mode: service:gerbil
     volumes:
       - ../../configs/pangolin/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro
       - ../../configs/pangolin/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro

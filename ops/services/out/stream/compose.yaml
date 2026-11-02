@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   subtitles:
-    restart: on-failure:5
     container_name: stream-subtitles
+    restart: on-failure:5
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -34,8 +34,8 @@ services:
       - /srv/docker/bind-mounts/stream/bazarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
   seeder:
-    restart: on-failure:5
     container_name: stream-seeder
+    restart: on-failure:5
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -51,13 +51,13 @@ services:
       - ../../configs/stream/configarr:/app/config:ro
       - /srv/docker/bind-mounts/stream/configarr/repos:/app/repos
     depends_on:
-      movies:
+      stream-movies:
         condition: service_healthy
-      tv:
+      stream-tv:
         condition: service_healthy
   janitor:
-    restart: on-failure:5
     container_name: stream-janitor
+    restart: on-failure:5
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -72,13 +72,13 @@ services:
     volumes:
       - ../../configs/stream/decluttarr:/app/config:ro
     depends_on:
-      movies:
+      stream-movies:
         condition: service_healthy
-      tv:
+      stream-tv:
         condition: service_healthy
   media:
-    restart: on-failure:5
     container_name: stream-media
+    restart: on-failure:5
     devices:
       - /dev/dri:/dev/dri
     environment:
@@ -104,8 +104,8 @@ services:
       - /srv/docker/bind-mounts/stream/plex/config:/config
       - /srv/docker/bind-mounts/stream/shared/media:/data/media
   indexer:
-    restart: on-failure:5
     container_name: stream-indexer
+    restart: on-failure:5
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -131,8 +131,8 @@ services:
     volumes:
       - /srv/docker/bind-mounts/stream/prowlarr/config:/config
   movies:
-    restart: on-failure:5
     container_name: stream-movies
+    restart: on-failure:5
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -159,8 +159,8 @@ services:
       - /srv/docker/bind-mounts/stream/radarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
   downloader:
-    restart: on-failure:5
     container_name: stream-downloader
+    restart: on-failure:5
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -187,8 +187,8 @@ services:
       - /srv/docker/bind-mounts/stream/sabnzbd/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
   requests:
-    restart: on-failure:5
     container_name: stream-requests
+    restart: on-failure:5
     environment:
       TZ: America/New_York
     image: ghcr.io/seerr-team/seerr:v3.0.1
@@ -205,8 +205,8 @@ services:
     volumes:
       - /srv/docker/bind-mounts/stream/seerr/config:/app/config
   tv:
-    restart: on-failure:5
     container_name: stream-tv
+    restart: on-failure:5
     environment:
       PUID: "1000"
       PGID: "1000"

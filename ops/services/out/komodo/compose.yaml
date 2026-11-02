@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   app:
-    restart: unless-stopped
     container_name: komodo-app
+    restart: unless-stopped
     depends_on:
       db:
         condition: service_started
@@ -51,12 +51,12 @@ services:
     ports:
       - "9120:9120"
     volumes:
-      - keys:/config/keys
+      - komodo-app_keys:/config/keys
       - /srv/docker/bind-mounts/dcm/komodo/data/backups:/backups
       - /srv/docker/bind-mounts/dcm/komodo/data/syncs:/syncs
   db:
-    restart: unless-stopped
     container_name: komodo-db
+    restart: unless-stopped
     command:
       - --quiet
       - --wiredTigerCacheSizeGB

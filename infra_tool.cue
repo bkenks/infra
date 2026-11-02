@@ -12,7 +12,6 @@ import (
 	exp "github.com/bkenks/infra/model/export"
 )
 
-j
 command: render: {
 	repoRoot: exec.Run & {
 		cmd: ["git", "rev-parse", "--show-toplevel"]

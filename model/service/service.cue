@@ -2,7 +2,6 @@ package service
 
 import (
 	cmps "github.com/bkenks/infra/model/schema/compose"
-	enc "github.com/bkenks/infra/model/schema/encoding"
 )
 
 [string]: cmps.#DockerCompose & {

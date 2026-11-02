@@ -1,12 +1,12 @@
 package service
 
-import inv "github.com/bkenks/infra/model/inventory"
+import "github.com/bkenks/infra/model/common"
 
 _komodo: {
 	version:      "2.1.2"
 	mongoVersion: "8.2.4"
 
-	_bm:     inv.common.directory.server.docker_bindmounts
+	_bm:     common.directory.server.docker_bindmounts
 	bindDir: _bm + "/dcm"
 }
 
@@ -21,8 +21,8 @@ komodo: S={
 			depends_on: db: condition: "service_started"
 			environment: {
 				TZ:                       "Etc/UTC"
-				KOMODO_HOST:              "https://komo.\(inv.domain.public.ktbinternal_com)"
-				KOMODO_WEBHOOK_BASE_URL:  "https://komo-hooks.\(inv.domain.public.ktbcloud_com)"
+				KOMODO_HOST:              "https://komo.\(common.domain.ktbinternal_dotcom)"
+				KOMODO_WEBHOOK_BASE_URL:  "https://komo-hooks.\(common.domain.ktbcloud_dotcom)"
 				KOMODO_TITLE:             "Komodo"
 				KOMODO_DATABASE_ADDRESS:  "\(S.services.db.container_name):\(S.services.db._port)"
 				KOMODO_DATABASE_USERNAME: "${KOMODO_DATABASE_USERNAME:?err}"
@@ -53,11 +53,11 @@ komodo: S={
 			_port: 9120
 			ports: ["\(_port):\(_port)"]
 			volumes: [
-				"\(S.volumes.keys._ref):/config/keys",
+				"\(S.volumes.keys.name):/config/keys",
 				"\(_komodo.bindDir)/komodo/data/backups:/backups",
 				"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 			]
-			networks: ["default", S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001.name]
 			labels: #Snippet.services.labels.komodo_skip
 		}
 		db: {

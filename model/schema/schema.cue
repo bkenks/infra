@@ -86,7 +86,7 @@ import (
 //      {scheme: "https", host: "example.com", port: 8443, path: "/api", query: "x=1", fragment: "top"}
 //        uri: "https://example.com:8443/api?x=1#top"
 #URIComponents: {
-	scheme?:   #URISchemes.#enum
+	scheme?:   #URIScheme.#enum
 	host!:     string
 	port?:     int & >0 & <=65535
 	path?:     string
@@ -121,7 +121,7 @@ import (
 	name:      string
 	site?:     #Site.#enum
 	provider?: #Provider.#enum
-	fqdn?:     net.FQDN
+	fqdn:      net.FQDN
 	addresses?: {
 		lan?:    net.IPv4
 		vpn?:    net.IP

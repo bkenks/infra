@@ -1,6 +1,6 @@
 package service
 
-import inv "github.com/bkenks/infra/model/inventory"
+import "github.com/bkenks/infra/model/common"
 
 pangolin_connector: stk={
 	name: "pangolin-connector"
@@ -13,14 +13,14 @@ pangolin_connector: stk={
 
 		image: "docker.io/fosrl/newt:\(_version)"
 		environment: {
-			PANGOLIN_ENDPOINT: inv.route.pangolin.public.uri
+			PANGOLIN_ENDPOINT: common.route.pangolin.public.uri
 			NEWT_ID:           "${NEWT_ID:?err}"
 			NEWT_SECRET:       "${NEWT_SECRET:?err}"
 		}
 
 		container_name: pangolin_connector.name
 		networks: [
-			stk.networks.newt_gw_001._ref
+			stk.networks.newt_gw_001.name
 		]
 	}
 }

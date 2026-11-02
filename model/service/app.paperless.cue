@@ -1,6 +1,6 @@
 package service
 
-import inv "github.com/bkenks/infra/model/inventory"
+import "github.com/bkenks/infra/model/common"
 
 _paperless: {
 	cacheVersion:     "8"
@@ -8,7 +8,7 @@ _paperless: {
 	converterVersion: "8.25"
 	parserVersion:    "latest"
 	version:          "latest"
-	bindDir:          "\(inv.common.directory.server.docker_bindmounts)/apps/paperless"
+	bindDir:          "\(common.directory.server.docker_bindmounts)/apps/paperless"
 }
 
 paperless: S={
@@ -27,7 +27,7 @@ paperless: S={
 			restart: "on-failure:5"
 			environment: ALLOW_EMPTY_PASSWORD: "yes"
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.cache_data._ref):/data"]
+			volumes: ["\(S.volumes.cache_data.name):/data"]
 			healthcheck: #Snippet.services.healthcheck.redisPing
 		}
 		db: Svc={
@@ -40,8 +40,8 @@ paperless: S={
 				POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 			}
 			expose: [Svc._port]
-			volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql"]
-			networks: ["default", S.networks.tailscale_gw_001._ref]
+			volumes: ["\(S.volumes.db_data.name):/var/lib/postgresql"]
+			networks: ["default", S.networks.tailscale_gw_001.name]
 			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 		converter: Svc={
@@ -74,7 +74,7 @@ paperless: S={
 			environment: {
 				PAPERLESS_TIKA_ENABLED:            "1"
 				PAPERLESS_OCR_LANGUAGE:            "eng"
-				PAPERLESS_URL:                     "https://paper.\(inv.domain.public.ktbinternal_com)"
+				PAPERLESS_URL:                     "https://paper.\(common.domain.ktbinternal_dotcom)"
 				PAPERLESS_TIME_ZONE:               "America/New_York"
 				PAPERLESS_DATE_ORDER:              "MDY"
 				PAPERLESS_REDIS:                   "redis://\(S.services.cache.container_name):\(S.services.cache._port)"
@@ -88,12 +88,12 @@ paperless: S={
 			}
 			expose: [Svc._port]
 			volumes: [
-				"\(S.volumes.app_data._ref):/usr/src/paperless/data",
-				"\(S.volumes.app_media._ref):/usr/src/paperless/media",
+				"\(S.volumes.app_data.name):/usr/src/paperless/data",
+				"\(S.volumes.app_media.name):/usr/src/paperless/media",
 				"\(_paperless.bindDir)/export:/usr/src/paperless/export",
 				"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 			]
-			networks: ["default", S.networks.newt_gw_001._ref]
+			networks: ["default", S.networks.newt_gw_001.name]
 			healthcheck: {
 				test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:\(Svc._port)"]
 				interval: "30s"

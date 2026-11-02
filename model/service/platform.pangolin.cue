@@ -2,12 +2,15 @@ package service
 
 import (
 	"strings"
-	inv "github.com/bkenks/infra/model/inventory"
+	"github.com/bkenks/infra/model/common"
 )
 
 _pangolin: {
-	_dbm:          inv.common.directory.server.docker_bindmounts
-	configDir:     _dbm + "/pangolin/config"
+	_dbm:      common.directory.server.docker_bindmounts
+	configDir: _dbm + "/pangolin/config"
+
+	configs: common.configs + "/" + pangolin.name
+
 	geoliteMirror: "https://github.com/GitSquared/node-geolite2-redist/raw/refs/heads/master/redist/"
 	initDir:       "/app/config"
 	initScript: strings.Join([
@@ -29,12 +32,15 @@ _pangolin: {
 
 pangolin: S={
 	name: "pangolin"
-	_appHealthy: (S.services.app._ref): condition: "service_healthy"
+
 	networks: default: {
 		driver:      "bridge"
 		enable_ipv6: true
 	}
+
 	services: {
+		_appHealthy: (app.container_name): condition: "service_healthy"
+
 		app: Svc={
 			_version: "ee-1.24.0"
 			_port:    3001
@@ -51,8 +57,8 @@ pangolin: S={
 			}
 			volumes: [
 				"\(_pangolin.configDir):/app/config",
-				"\(S._configs)/config.yaml:/app/config/config.yml:ro",
-				"\(S._configs)/privateConfig.yaml:/app/config/privateConfig.yml:ro",
+				"\(_pangolin.configs)/config.yaml:/app/config/config.yml:ro",
+				"\(_pangolin.configs)/privateConfig.yaml:/app/config/privateConfig.yml:ro",
 			]
 			healthcheck: {
 				test: ["CMD", "curl", "-f", "http://localhost:\(Svc._port)/api/v1/"]
@@ -75,7 +81,7 @@ pangolin: S={
 				"--remoteConfig=http://\(S.services.app.container_name):\(S.services.app._port)/api/v1/",
 			]
 			container_name: "gerbil"
-			depends_on:     S._appHealthy
+			depends_on:     _appHealthy
 			cap_add: ["NET_ADMIN", "SYS_MODULE"]
 			ports: [
 				"51820:51820/udp",
@@ -95,11 +101,11 @@ pangolin: S={
 			command: ["--configFile=/etc/traefik/traefik_config.yml"]
 
 			container_name: "traefik"
-			depends_on:     S._appHealthy
-			network_mode:   "service:\(S.services.tunnel._ref)"
+			depends_on:     _appHealthy
+			network_mode:   "service:\(S.services.tunnel.container_name)"
 			volumes: [
-				"\(S._configs)/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
-				"\(S._configs)/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",
+				"\(_pangolin.configs)/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
+				"\(_pangolin.configs)/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",
 				"\(_pangolin.configDir)/letsencrypt:/letsencrypt",
 				"\(_pangolin.configDir)/traefik/logs:/var/log/traefik",
 			]

@@ -8,7 +8,7 @@ import (
 #DockerCompose: dockercompose.#Schema & {
 	// Compose uses this to form container names which can be utilized...
 	// in URLs, so we must conform to those URL constraints.
-	name!: enc.#Snake
+	name!: enc.#Kebab
 
 	networks: {
 		[string]: {
@@ -23,8 +23,8 @@ import (
 	}
 
 	services: {
-		[string]: Svc={
-			container_name!: enc.#Snake
+		[string]: {
+			container_name!: enc.#Kebab
 			restart:         *"unless-stopped" | string
 			logging: *{
 				driver: "json-file"

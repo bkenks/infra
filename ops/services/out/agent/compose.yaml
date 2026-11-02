@@ -3,8 +3,8 @@ name: agent
 networks: {}
 services:
   log-agent:
-    restart: unless-stopped
     container_name: agent-log-agent
+    restart: unless-stopped
     environment:
       HOST: ${HOST:?err}
     image: timberio/vector:0.58.0-alpine
@@ -15,7 +15,7 @@ services:
       options:
         max-size: 10m
     volumes:
-      - log_agent_buffer:/var/lib/vector
+      - log-agent-agent_buffer:/var/lib/vector
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ../../configs/agent/vector.yaml:/etc/vector/vector.yaml:ro
 volumes:

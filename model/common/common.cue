@@ -28,14 +28,12 @@ domain: #Domains & {
 }
 
 route: {
-	[routeName=_]: scma.#Route & {
-		name: routeName
-	}
-
 	pangolin: scma.#Route & {
 		public: {
-			scheme: "https"
-			host:   "pangolin." + domain.public.ktbcloud_com
+			scheme: scma.#URIScheme.https
+			host:   "pangolin." + domain.ktbcloud_dotcom
 		}
 	}
 }
+
+configs: "../../configs"

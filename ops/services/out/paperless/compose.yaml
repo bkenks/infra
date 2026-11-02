@@ -29,7 +29,7 @@ services:
         - ping
       timeout: 5s
     volumes:
-      - cache_data:/data
+      - paperless-cache_data:/data
   db:
     container_name: paperless-db
     environment:
@@ -55,7 +55,7 @@ services:
       - default
       - tailscale_gw_001
     volumes:
-      - db_data:/var/lib/postgresql
+      - paperless-db_data:/var/lib/postgresql
   converter:
     command:
       - gotenberg
@@ -129,8 +129,8 @@ services:
       - newt_gw_001
     restart: on-failure:5
     volumes:
-      - app_data:/usr/src/paperless/data
-      - app_media:/usr/src/paperless/media
+      - paperless-app_data:/usr/src/paperless/data
+      - paperless-app_media:/usr/src/paperless/media
       - /srv/docker/bind-mounts/apps/paperless/export:/usr/src/paperless/export
       - /srv/docker/bind-mounts/apps/paperless/consume:/usr/src/paperless/consume
 volumes:

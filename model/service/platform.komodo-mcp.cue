@@ -1,6 +1,6 @@
 package service
 
-import inv "github.com/bkenks/infra/model/inventory"
+import "github.com/bkenks/infra/model/common"
 
 komodo_mcp: S={
 	name: "komodo-mcp"
@@ -14,8 +14,8 @@ komodo_mcp: S={
 		image: "ghcr.io/mp-tool/komodo-mcp-server:\(_version)"
 		environment: {
 			MCP_TRANSPORT:     "http"
-			MCP_BASE_URL:      "https://\(S.name).\(inv.domain.public.ktbinternal_com)"
-			MCP_ALLOWED_HOSTS: "\(S.name).\(inv.domain.public.ktbinternal_com)"
+			MCP_BASE_URL:      "https://\(S.name).\(common.domain.ktbinternal_dotcom)"
+			MCP_ALLOWED_HOSTS: "\(S.name).\(common.domain.ktbinternal_dotcom)"
 			KOMODO_URL:        "http://host.docker.internal:\(komodo.services.app._port)"
 			MCP_TRUST_PROXY:   "1"
 			TZ:                "America/Chicago"
@@ -30,7 +30,7 @@ komodo_mcp: S={
 
 		// —————————————————————————
 		networks: [
-			S.networks.newt_gw_001._ref,
+			S.networks.newt_gw_001.name,
 		]
 	}
 

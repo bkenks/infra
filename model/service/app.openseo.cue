@@ -1,10 +1,10 @@
 package service
 
-import inv "github.com/bkenks/infra/model/inventory"
+import "github.com/bkenks/infra/model/common"
 
 _openseo: {
 	version: "0.1.13"
-	host:    "seo.\(inv.domain.public.ktbinternal_com)"
+	host:    "seo.\(common.domain.ktbinternal_dotcom)"
 }
 
 openseo: S={
@@ -33,8 +33,8 @@ openseo: S={
 			CRAWLER_ACCESS_SECRET:      "${CRAWLER_ACCESS_SECRET:-}"
 		}
 		expose: [Svc._port]
-		volumes: ["\(S.volumes.app_data._ref):/app/.wrangler"]
-		networks: [S.networks.newt_gw_001._ref]
+		volumes: ["\(S.volumes.app_data.name):/app/.wrangler"]
+		networks: [S.networks.newt_gw_001.name]
 		healthcheck: {
 			test: [
 				"CMD",
