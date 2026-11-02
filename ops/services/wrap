@@ -6,7 +6,5 @@
 
 set -euo pipefail
 
-# Secrets live in services/fnox.toml under a profile named after the stack directory.
-export FNOX_PROFILE=${FNOX_PROFILE:-$(basename "$PWD")}
-set -a; . /mnt/credentials/onepassword.env; set +a
+set -a; . /mnt/credentials/onepassword.env; set +a  # import 1Password credential
 exec fnox exec -- "$@"
