@@ -1,0 +1,45 @@
+---
+- name: Remove the systemd-resolved drop-in
+  ansible.builtin.file:
+    path: /etc/systemd/resolved.conf.d/99-coredns.conf
+    state: absent
+  become: true
+  notify: Restart systemd-resolved
+
+- name: Apply pending restarts
+  ansible.builtin.meta: flush_handlers
+
+- name: Stop and disable CoreDNS
+  ansible.builtin.systemd_service:
+    name: coredns
+    enabled: false
+    state: stopped
+  become: true
+  failed_when: false
+
+- name: Remove the CoreDNS unit
+  ansible.builtin.file:
+    path: /etc/systemd/system/coredns.service
+    state: absent
+  become: true
+
+- name: Reload systemd
+  ansible.builtin.systemd_service:
+    daemon_reload: true
+  become: true
+
+- name: Remove CoreDNS files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/coredns
+    - /usr/local/bin/coredns
+    - /opt/coredns
+  become: true
+
+- name: Remove the coredns user
+  ansible.builtin.user:
+    name: coredns
+    state: absent
+  become: true

@@ -7,7 +7,3 @@
     - name: Tailscale is joined
       ansible.builtin.import_role:
         name: tailscale
-
-    - name: CoreDNS is running
-      ansible.builtin.import_role:
-        name: coredns
