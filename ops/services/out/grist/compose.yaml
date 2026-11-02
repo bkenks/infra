@@ -4,9 +4,6 @@ networks:
   newt_gw_001:
     name: newt_gw_001
     external: true
-  tailscale_gw_001:
-    name: tailscale_gw_001
-    external: true
 services:
   app:
     container_name: grist-app
@@ -94,7 +91,6 @@ services:
       timeout: 10s
     networks:
       - default
-      - tailscale_gw_001
     volumes:
       - grist-db_data:/var/lib/postgresql/data
 volumes:

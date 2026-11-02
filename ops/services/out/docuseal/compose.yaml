@@ -1,0 +1,30 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: docuseal
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+services:
+  app:
+    container_name: docuseal-app
+    restart: unless-stopped
+    environment:
+      PORT: "3000"
+      FORCE_SSL: docuseal.ktbcloud.com
+      DATABASE_URL: ${DATABASE_URL:?err}
+      SECRET_KEY_BASE: ${SECRET_KEY_BASE:?err}
+    image: docker.io/docuseal/docuseal:2.5.3
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    expose:
+      - 3000
+    networks:
+      - default
+      - newt_gw_001
+    volumes:
+      - docuseal-app_data:/data/docuseal
+volumes:
+  app_data:
+    name: docuseal-app_data

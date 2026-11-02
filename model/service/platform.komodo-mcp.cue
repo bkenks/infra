@@ -4,11 +4,11 @@ import "github.com/bkenks/infra/model/common"
 
 _komodo_mcp: {
 	version: "1.5.0"
-	host:    "\(komodo_mcp.name).\(common.domain.ktbinternal_dotcom)"
+	host:    "\(komodo_mcp.compose.name).\(common.domain.ktbinternal_dotcom)"
 	port:    8000
 }
 
-komodo_mcp: S={
+komodo_mcp: compose: S={
 	name: "komodo-mcp"
 	networks: newt_gw_001: #Network.newt_gw_001
 

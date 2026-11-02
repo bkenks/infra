@@ -64,7 +64,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME:?err}
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD:?err}
-    image: mongo:8.2.4
+    image: docker.io/library/mongo:8.2.4
     labels:
       komodo.skip: ""
     logging:

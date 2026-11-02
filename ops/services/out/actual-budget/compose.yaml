@@ -1,0 +1,34 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: actual-budget
+networks:
+  newt_gw_001:
+    name: newt_gw_001
+    external: true
+services:
+  app:
+    container_name: actual-budget-app
+    restart: unless-stopped
+    environment:
+      ACTUAL_PORT: "5006"
+    image: docker.io/actualbudget/actual-server:latest
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    expose:
+      - 5006
+    healthcheck:
+      interval: 60s
+      retries: 3
+      test:
+        - CMD-SHELL
+        - node scripts/health-check.js
+      timeout: 10s
+      start_period: 20s
+    networks:
+      - newt_gw_001
+    volumes:
+      - actual-budget-app_data:/data
+volumes:
+  app_data:
+    name: actual-budget-app_data

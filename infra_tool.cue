@@ -2,6 +2,7 @@ package infra
 
 import (
 	"encoding/yaml"
+	"encoding/toml"
 	"path"
 	"strings"
 	"tool/exec"
@@ -47,8 +48,8 @@ command: render: {
 	// Each stack renders to <name>/compose.yaml. Stub stacks without services are not
 	// valid Compose files yet.
 	stacks: {
-		for stackKey, stack in service if len(stack.services) > 0 {
-			let deployDir = path.Join([outDir, stack.name])
+		for stackKey, stack in service if len(stack.compose.services) > 0 {
+			let deployDir = path.Join([outDir, stack.compose.name])
 
 			(stackKey): {
 				mkdir: file.MkdirAll & {
@@ -58,7 +59,14 @@ command: render: {
 				write: file.Create & {
 					$after: mkdir
 					filename: path.Join([deployDir, "compose.yaml"])
-					contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(stack)
+					contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(stack.compose)
+				}
+				if stack.fnox != _|_ {
+					writeFnox: file.Create & {
+						$after: mkdir
+						filename: path.Join([deployDir, "fnox.toml"])
+						contents: "# GENERATED from CUE — DO NOT EDIT.\n" + toml.Marshal(stack.fnox)
+					}
 				}
 			}
 		}

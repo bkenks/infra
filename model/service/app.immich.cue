@@ -11,7 +11,7 @@ _immich: {
 	bindDir:    "\(common.directory.server.docker_bindmounts)/apps/immich"
 }
 
-immich: S={
+immich: compose: S={
 	name: "immich"
 	networks: newt_gw_001: #Network.newt_gw_001
 	services: {

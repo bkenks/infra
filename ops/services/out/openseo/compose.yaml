@@ -7,6 +7,7 @@ networks:
 services:
   app:
     container_name: openseo-app
+    restart: unless-stopped
     environment:
       CLOUDFLARE_INCLUDE_PROCESS_ENV: "true"
       PORT: "3001"
@@ -21,7 +22,6 @@ services:
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:-}
       CRAWLER_ACCESS_SECRET: ${CRAWLER_ACCESS_SECRET:-}
     image: ghcr.io/every-app/open-seo:0.1.13
-    restart: on-failure:5
     logging:
       driver: json-file
       options:

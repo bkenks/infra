@@ -14,7 +14,7 @@ _komodo: {
 	bindDir: _bm + "/dcm"
 }
 
-komodo: S={
+komodo: compose: S={
 	name: "komodo"
 	volumes: keys: name: "komodo-app_keys"
 	networks: newt_gw_001: #Network.newt_gw_001

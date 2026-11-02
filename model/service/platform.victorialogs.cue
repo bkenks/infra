@@ -5,7 +5,7 @@ _victorialogs: {
 	dataPath: "/victoria-logs-data"
 }
 
-victorialogs: S={
+victorialogs: compose: S={
 	name: "victorialogs"
 	volumes: data: name: "victorialogs-logs_data"
 	networks: newt_gw_001: #Network.newt_gw_001

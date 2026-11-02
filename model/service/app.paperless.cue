@@ -17,7 +17,7 @@ _paperless: {
 	bindDir:          "\(common.directory.server.docker_bindmounts)/apps/paperless"
 }
 
-paperless: S={
+paperless: compose: S={
 	name: "paperless"
 	volumes: {for svcVol in ["cache_data", "db_data", "app_data", "app_media"] {
 		(svcVol): name: "paperless-\(svcVol)"

@@ -5,7 +5,7 @@ _actual_budget: {
 	version: "latest"
 }
 
-actual_budget: S={
+actual_budget: compose: S={
 	name: "actual-budget"
 	volumes: app_data: name: "actual-budget-app_data"
 	networks: {

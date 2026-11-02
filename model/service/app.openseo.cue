@@ -8,7 +8,7 @@ _openseo: {
 	host:    "seo.\(common.domain.ktbinternal_dotcom)"
 }
 
-openseo: S={
+openseo: compose: S={
 	name: "openseo"
 	volumes: app_data: name: "openseo-app_data"
 	networks: newt_gw_001: #Network.newt_gw_001

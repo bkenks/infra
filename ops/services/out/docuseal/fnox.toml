@@ -1,0 +1,15 @@
+# GENERATED from CUE — DO NOT EDIT.
+[providers]
+[providers.onepassword]
+account = 'FUKUXFLIDREQDELXYP2PALUAVY'
+type = '1password'
+vault = 'infra'
+
+[secrets]
+[secrets.DATABASE_URL]
+provider = 'onepassword'
+value = 'docuseal/SECRET_KEY_BASE'
+
+[secrets.SECRET_KEY_BASE]
+provider = 'onepassword'
+value = 'docuseal/DATABASE_URL'

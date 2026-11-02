@@ -14,7 +14,7 @@ _pangolin: {
 	_dbm:           common.directory.server.docker_bindmounts
 	configDir:      _dbm + "/pangolin/config"
 
-	configs: common.configs + "/" + pangolin.name
+	configs: common.configs + "/" + pangolin.compose.name
 
 	geoliteMirror: "https://github.com/GitSquared/node-geolite2-redist/raw/refs/heads/master/redist/"
 	initDir:       "/app/config"
@@ -35,7 +35,7 @@ _pangolin: {
 	], " && ")
 }
 
-pangolin: S={
+pangolin: compose: S={
 	name: "pangolin"
 
 	networks: default: {

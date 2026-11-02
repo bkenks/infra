@@ -47,4 +47,16 @@ package service
 			docker_sock: "/var/run/docker.sock:/var/run/docker.sock"
 		}
 	}
+
+	fnox: {
+		defaultProvider: {
+			_name: "onepassword"
+
+			(_name): {
+				account: "FUKUXFLIDREQDELXYP2PALUAVY"
+				type:    "1password"
+				vault:   "infra"
+			}
+		}
+	}
 }

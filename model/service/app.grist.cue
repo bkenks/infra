@@ -12,7 +12,7 @@ _grist: {
 	cacheVersion: "8"
 }
 
-grist: S={
+grist: compose: S={
 	name: "grist"
 
 	volumes: {

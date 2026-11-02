@@ -7,7 +7,7 @@ _agent: {
 	variant: "alpine"
 }
 
-agent: S={
+agent: compose: S={
 	name: "agent"
 
 	volumes: {

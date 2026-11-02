@@ -28,10 +28,10 @@ _stream: {
 		RADARR_API_KEY: "${RADARR_API_KEY:?err}"
 		SONARR_API_KEY: "${SONARR_API_KEY:?err}"
 	}
-	configs: common.configs + "/" + stream.name
+	configs: common.configs + "/" + stream.compose.name
 }
 
-stream: S={
+stream: compose: S={
 	name: "stream"
 	_webNetworks: ["default", S.networks.newt_gw_001.name]
 	networks: newt_gw_001: #Network.newt_gw_001

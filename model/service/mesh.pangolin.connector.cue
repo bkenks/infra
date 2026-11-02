@@ -6,7 +6,7 @@ _pangolin_connector: {
 	version: "1.16.0"
 }
 
-pangolin_connector: S={
+pangolin_connector: compose: S={
 	name: "pangolin-connector"
 	networks: {
 		newt_gw_001: #Network.newt_gw_001

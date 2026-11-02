@@ -1,6 +1,3 @@
 # GENERATED from CUE — DO NOT EDIT.
 docker_networks:
-  - tailscale_gw_001
-  - pangolin_gw_001
   - newt_gw_001
-  - db_001
