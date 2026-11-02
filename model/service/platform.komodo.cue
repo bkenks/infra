@@ -3,6 +3,8 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _komodo: {
+	port:         9120
+	mongoPort:    27017
 	version:      "2.1.2"
 	mongoVersion: "8.2.4"
 
@@ -24,7 +26,7 @@ komodo: S={
 				KOMODO_HOST:              "https://komo.\(common.domain.ktbinternal_dotcom)"
 				KOMODO_WEBHOOK_BASE_URL:  "https://komo-hooks.\(common.domain.ktbcloud_dotcom)"
 				KOMODO_TITLE:             "Komodo"
-				KOMODO_DATABASE_ADDRESS:  "\(S.services.db.container_name):\(S.services.db._port)"
+				KOMODO_DATABASE_ADDRESS:  "\(S.services.db.container_name):\(_komodo.mongoPort)"
 				KOMODO_DATABASE_USERNAME: "${KOMODO_DATABASE_USERNAME:?err}"
 				KOMODO_DATABASE_PASSWORD: "${KOMODO_DATABASE_PASSWORD:?err}"
 				KOMODO_JWT_SECRET:        "${KOMODO_JWT_SECRET:?err}"
@@ -50,8 +52,7 @@ komodo: S={
 				KOMODO_LOGGING_PRETTY:        "true"
 				KOMODO_PRETTY_STARTUP_CONFIG: "true"
 			}
-			_port: 9120
-			ports: ["\(_port):\(_port)"]
+			ports: ["\(_komodo.port):\(_komodo.port)"]
 			volumes: [
 				"\(S.volumes.keys.name):/config/keys",
 				"\(_komodo.bindDir)/komodo/data/backups:/backups",
@@ -63,12 +64,11 @@ komodo: S={
 		db: {
 			image: "mongo:\(_komodo.mongoVersion)"
 			command: ["--quiet", "--wiredTigerCacheSizeGB", "0.25"]
-			_port: 27017
 			environment: {
 				MONGO_INITDB_ROOT_USERNAME: "${MONGO_INITDB_ROOT_USERNAME:?err}"
 				MONGO_INITDB_ROOT_PASSWORD: "${MONGO_INITDB_ROOT_PASSWORD:?err}"
 			}
-			ports: ["\(_port):\(_port)"]
+			ports: ["\(_komodo.mongoPort):\(_komodo.mongoPort)"]
 			volumes: [
 				"\(_komodo.bindDir)/mongo/data:/data/db",
 				"\(_komodo.bindDir)/mongo/config:/data/configdb",

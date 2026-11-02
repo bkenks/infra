@@ -3,6 +3,7 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _immich: {
+	port:       2283
 	version:    "v2.7.5"
 	dbImage:    "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23"
 	cacheImage: "docker.io/valkey/valkey:9@sha256:8436e10bc65c94886a91d4415b6a6dfa9cb5a306fb3b996e5bb67cd2b4854193"
@@ -31,8 +32,7 @@ immich: S={
 			volumes: ["\(_immich.bindDir)/model-cache:/cache"]
 		}
 		cache: image: _immich.cacheImage
-		app: Svc={
-			_port: 2283
+		app: {
 			image: "ghcr.io/immich-app/immich-server:\(_immich.version)"
 			depends_on: {
 				db: condition:    "service_started"
@@ -46,7 +46,7 @@ immich: S={
 				DB_DATABASE_NAME: S.name
 				DB_PASSWORD:      "${DB_PASSWORD:?err}"
 			}
-			expose: [Svc._port]
+			expose: [_immich.port]
 			volumes: ["/mnt/immich-library:/data"]
 			networks: ["default", S.networks.newt_gw_001.name]
 			devices: ["/dev/dri:/dev/dri"]

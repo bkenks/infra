@@ -3,6 +3,9 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _grist: {
+	port:         8484
+	cachePort:    6379
+	dbPort:       5432
 	version:      "1.7"
 	dbVersion:    "16"
 	cacheVersion: "8"
@@ -18,20 +21,18 @@ grist: S={
 	}
 
 	networks: {
-		newt_gw_001:      #Network.newt_gw_001
-		tailscale_gw_001: #Network.tailscale_gw_001
+		newt_gw_001: #Network.newt_gw_001
 	}
 
 	services: {
-		app: Svc={
-			_port: 8484
+		app: {
 			image: "docker.io/gristlabs/grist:\(_grist.version)"
 			depends_on: {
 				cache: condition: "service_healthy"
 				db: condition:    "service_healthy"
 			}
 			environment: {
-				REDIS_URL:            "redis://\(S.services.cache.container_name):\(S.services.cache._port)"
+				REDIS_URL:            "redis://\(S.services.cache.container_name):\(_grist.cachePort)"
 				APP_HOME_URL:         "https://grist.\(common.domain.ktbcloud_dotcom)"
 				GRIST_SESSION_SECRET: "${GRIST_SESSION_SECRET:?err}"
 				GRIST_DEFAULT_EMAIL:  "${GRIST_DEFAULT_EMAIL:?err}"
@@ -39,12 +40,12 @@ grist: S={
 				GRIST_SERVER_EDITION: "full"
 				TYPEORM_TYPE:         "postgres"
 				TYPEORM_HOST:         S.services.db.container_name
-				TYPEORM_PORT:         "\(S.services.db._port)"
+				TYPEORM_PORT:         "\(_grist.dbPort)"
 				TYPEORM_DATABASE:     S.name
 				TYPEORM_USERNAME:     S.name
 				TYPEORM_PASSWORD:     "${POSTGRES_PASSWORD:?err}"
 			}
-			expose: [Svc._port]
+			expose: [_grist.port]
 			volumes: ["\(S.volumes.app_data.name):/persist"]
 			networks: ["default", S.networks.newt_gw_001.name]
 			healthcheck: {
@@ -52,7 +53,7 @@ grist: S={
 					"CMD",
 					"node",
 					"-e",
-					"fetch('http://localhost:\(Svc._port)/status').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
+					"fetch('http://localhost:\(_grist.port)/status').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))",
 				]
 				interval:     "30s"
 				timeout:      "10s"
@@ -60,16 +61,14 @@ grist: S={
 				start_period: "30s"
 			}
 		}
-		cache: Svc={
-			_port: 6379
+		cache: {
 			image: "docker.io/library/redis:\(_grist.cacheVersion)"
 
-			expose: [Svc._port]
+			expose: [_grist.cachePort]
 			volumes: ["\(S.volumes.cache_data.name):/data"]
 			healthcheck: #Snippet.services.healthcheck.redisPing
 		}
-		db: Svc={
-			_port: 5432
+		db: {
 			image: "docker.io/library/postgres:\(_grist.dbVersion)"
 
 			environment: {
@@ -77,9 +76,9 @@ grist: S={
 				POSTGRES_DB:       S.name
 				POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 			}
-			expose: [Svc._port]
+			expose: [_grist.dbPort]
 			volumes: ["\(S.volumes.db_data.name):/var/lib/postgresql/data"]
-			networks: ["default", S.networks.tailscale_gw_001.name]
+			networks: ["default"]
 			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
 	}

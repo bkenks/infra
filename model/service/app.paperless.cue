@@ -3,6 +3,11 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _paperless: {
+	cachePort:        6379
+	dbPort:           5432
+	converterPort:    3000
+	parserPort:       9998
+	port:             8000
 	cacheVersion:     "8"
 	dbVersion:        "18"
 	converterVersion: "8.25"
@@ -17,21 +22,18 @@ paperless: S={
 		(svcVol): name: "paperless-\(svcVol)"
 	}}
 	networks: {
-		newt_gw_001:      #Network.newt_gw_001
-		tailscale_gw_001: #Network.tailscale_gw_001
+		newt_gw_001: #Network.newt_gw_001
 	}
 	services: {
-		cache: Svc={
-			_port:   6379
+		cache: {
 			image:   "docker.io/library/redis:\(_paperless.cacheVersion)"
 			restart: "on-failure:5"
 			environment: ALLOW_EMPTY_PASSWORD: "yes"
-			expose: [Svc._port]
+			expose: [_paperless.cachePort]
 			volumes: ["\(S.volumes.cache_data.name):/data"]
 			healthcheck: #Snippet.services.healthcheck.redisPing
 		}
-		db: Svc={
-			_port:   5432
+		db: {
 			image:   "docker.io/library/postgres:\(_paperless.dbVersion)"
 			restart: "on-failure:5"
 			environment: {
@@ -39,13 +41,12 @@ paperless: S={
 				POSTGRES_DB:       S.name
 				POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 			}
-			expose: [Svc._port]
+			expose: [_paperless.dbPort]
 			volumes: ["\(S.volumes.db_data.name):/var/lib/postgresql"]
-			networks: ["default", S.networks.tailscale_gw_001.name]
+			networks: ["default"]
 			healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 		}
-		converter: Svc={
-			_port:   3000
+		converter: {
 			image:   "docker.io/gotenberg/gotenberg:\(_paperless.converterVersion)"
 			restart: "on-failure:5"
 			command: [
@@ -53,16 +54,14 @@ paperless: S={
 				"--chromium-disable-javascript=true",
 				"--chromium-allow-list=file:///tmp/.*",
 			]
-			expose: [Svc._port]
+			expose: [_paperless.converterPort]
 		}
-		parser: Svc={
-			_port:   9998
+		parser: {
 			image:   "docker.io/apache/tika:\(_paperless.parserVersion)"
 			restart: "on-failure:5"
-			expose: [Svc._port]
+			expose: [_paperless.parserPort]
 		}
-		app: Svc={
-			_port:   8000
+		app: {
 			image:   "ghcr.io/paperless-ngx/paperless-ngx:\(_paperless.version)"
 			restart: "on-failure:5"
 			depends_on: {
@@ -77,16 +76,16 @@ paperless: S={
 				PAPERLESS_URL:                     "https://paper.\(common.domain.ktbinternal_dotcom)"
 				PAPERLESS_TIME_ZONE:               "America/New_York"
 				PAPERLESS_DATE_ORDER:              "MDY"
-				PAPERLESS_REDIS:                   "redis://\(S.services.cache.container_name):\(S.services.cache._port)"
-				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter.container_name):\(S.services.converter._port)"
-				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser.container_name):\(S.services.parser._port)"
+				PAPERLESS_REDIS:                   "redis://\(S.services.cache.container_name):\(_paperless.cachePort)"
+				PAPERLESS_TIKA_GOTENBERG_ENDPOINT: "http://\(S.services.converter.container_name):\(_paperless.converterPort)"
+				PAPERLESS_TIKA_ENDPOINT:           "http://\(S.services.parser.container_name):\(_paperless.parserPort)"
 				PAPERLESS_DBHOST:                  S.services.db.container_name
 				PAPERLESS_DBUSER:                  S.name
 				PAPERLESS_DBNAME:                  S.name
 				PAPERLESS_DBPASS:                  "${PAPERLESS_DBPASS:?err}"
 				PAPERLESS_SECRET_KEY:              "${PAPERLESS_SECRET_KEY:?err}"
 			}
-			expose: [Svc._port]
+			expose: [_paperless.port]
 			volumes: [
 				"\(S.volumes.app_data.name):/usr/src/paperless/data",
 				"\(S.volumes.app_media.name):/usr/src/paperless/media",
@@ -95,7 +94,7 @@ paperless: S={
 			]
 			networks: ["default", S.networks.newt_gw_001.name]
 			healthcheck: {
-				test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:\(Svc._port)"]
+				test: ["CMD", "curl", "-fs", "-S", "--max-time", "2", "http://localhost:\(_paperless.port)"]
 				interval: "30s"
 				timeout:  "10s"
 				retries:  5

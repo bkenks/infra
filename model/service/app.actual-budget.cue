@@ -1,11 +1,29 @@
 package service
 
-actual_budget: {
+_actual_budget: {
+	port:    5006
+	version: "latest"
+}
+
+actual_budget: S={
 	name: "actual-budget"
-	volumes: data: {}
+	volumes: app_data: name: "actual-budget-app_data"
 	networks: {
-		newt_gw_001:      #Network.newt_gw_001
-		tailscale_gw_001: #Network.tailscale_gw_001
+		newt_gw_001: #Network.newt_gw_001
 	}
-	services: _
+
+	services: app: {
+		image: "docker.io/actualbudget/actual-server:\(_actual_budget.version)"
+		environment: ACTUAL_PORT: "\(_actual_budget.port)"
+		expose: [_actual_budget.port]
+		volumes: ["\(S.volumes.app_data.name):/data"]
+		networks: [S.networks.newt_gw_001.name]
+		healthcheck: {
+			test: ["CMD-SHELL", "node scripts/health-check.js"]
+			interval:     "60s"
+			timeout:      "10s"
+			retries:      3
+			start_period: "20s"
+		}
+	}
 }

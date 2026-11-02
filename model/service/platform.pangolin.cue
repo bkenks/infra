@@ -6,6 +6,7 @@ import (
 )
 
 _pangolin: {
+	port:      3001
 	_dbm:      common.directory.server.docker_bindmounts
 	configDir: _dbm + "/pangolin/config"
 
@@ -41,9 +42,8 @@ pangolin: S={
 	services: {
 		_appHealthy: (app.container_name): condition: "service_healthy"
 
-		app: Svc={
+		app: {
 			_version: "ee-1.24.0"
-			_port:    3001
 
 			container_name: "pangolin"
 			image:          "docker.io/fosrl/pangolin:\(_version)"
@@ -61,7 +61,7 @@ pangolin: S={
 				"\(_pangolin.configs)/privateConfig.yaml:/app/config/privateConfig.yml:ro",
 			]
 			healthcheck: {
-				test: ["CMD", "curl", "-f", "http://localhost:\(Svc._port)/api/v1/"]
+				test: ["CMD", "curl", "-f", "http://localhost:\(_pangolin.port)/api/v1/"]
 				interval: "10s"
 				timeout:  "10s"
 				retries:  15
@@ -78,7 +78,7 @@ pangolin: S={
 			command: [
 				"--reachableAt=http://\(Svc.container_name):3004",
 				"--generateAndSaveKeyTo=/var/config/key",
-				"--remoteConfig=http://\(S.services.app.container_name):\(S.services.app._port)/api/v1/",
+				"--remoteConfig=http://\(S.services.app.container_name):\(_pangolin.port)/api/v1/",
 			]
 			container_name: "gerbil"
 			depends_on:     _appHealthy
