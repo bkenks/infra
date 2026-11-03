@@ -1,0 +1,22 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: git-clone
+networks: {}
+services:
+  git:
+    command:
+      - set -e && rm -rf /repos/.infra.tmp && git clone --depth 1 https://github.com/bkenks/infra.git /repos/.infra.tmp && rm -rf /repos/infra && mv /repos/.infra.tmp /repos/infra
+    container_name: git-clone
+    entrypoint:
+      - /bin/sh
+      - -c
+    image: docker.io/alpine/git:v2.49.1
+    restart: "no"
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    volumes:
+      - type: bind
+        source: /volume1/repos
+        target: /repos
+volumes: {}

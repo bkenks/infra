@@ -1,0 +1,17 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: pangolin-connector-nas
+networks: {}
+services:
+  newt:
+    container_name: newt
+    environment:
+      NEWT_ID: ${NEWT_ID:?err}
+      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      NEWT_SECRET: ${NEWT_SECRET:?err}
+    image: docker.io/fosrl/newt:1.16.0
+    restart: unless-stopped
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+volumes: {}
