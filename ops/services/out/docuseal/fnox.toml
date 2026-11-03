@@ -6,9 +6,9 @@ type = '1password'
 vault = 'infra'
 
 [secrets]
-[secrets.DATABASE_URL]
+[secrets.POSTGRES_PASSWORD]
 provider = 'onepassword'
-value = 'docuseal/DATABASE_URL'
+value = 'docuseal/POSTGRES_PASSWORD'
 
 [secrets.SECRET_KEY_BASE]
 provider = 'onepassword'

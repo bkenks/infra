@@ -28,7 +28,7 @@ import (
 
 		services: {
 			[ServiceName=_]: {
-				_ref: ServiceName
+				_ref:           ServiceName
 				container_name: *"\(StackName)-\(ServiceName)" | _
 			}
 		}

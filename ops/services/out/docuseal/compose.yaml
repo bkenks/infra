@@ -8,23 +8,53 @@ services:
   app:
     container_name: docuseal-app
     restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
     environment:
       PORT: "3000"
       FORCE_SSL: docuseal.ktbcloud.com
-      DATABASE_URL: ${DATABASE_URL:?err}
+      DATABASE_URL: postgresql://rootish:${POSTGRES_PASSWORD:?err}@docuseal-db:5432/docuseal
       SECRET_KEY_BASE: ${SECRET_KEY_BASE:?err}
+    expose:
+      - 3000
     image: docker.io/docuseal/docuseal:2.5.3
     logging:
       driver: json-file
       options:
         max-size: 10m
-    expose:
-      - 3000
     networks:
       - default
       - newt_gw_001
     volumes:
       - app_data:/data/docuseal
+  db:
+    container_name: docuseal-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rootish
+      POSTGRES_DB: docuseal
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+    image: docker.io/library/postgres:18
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    expose:
+      - 5432
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test:
+        - CMD-SHELL
+        - pg_isready --username=rootish
+      timeout: 10s
+    networks:
+      - default
+    volumes:
+      - db_data:/var/lib/postgresql
 volumes:
   app_data:
     name: docuseal-app_data
+  db_data:
+    name: postgres-db_data
