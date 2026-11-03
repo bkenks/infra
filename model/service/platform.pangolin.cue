@@ -60,7 +60,7 @@ pangolin: {
 		}
 
 		services: {
-			_appHealthy: (app.container_name): condition: "service_healthy"
+			_appHealthy: (app._ref): condition: "service_healthy"
 
 			app: {
 				container_name: "pangolin"
@@ -117,7 +117,7 @@ pangolin: {
 
 				container_name: "traefik"
 				depends_on:     _appHealthy
-				network_mode:   "service:\(S.services.tunnel.container_name)"
+				network_mode:   "service:\(S.services.tunnel._ref)"
 				volumes: [
 					"\(_pangolin.configs)/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
 					"\(_pangolin.configs)/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",

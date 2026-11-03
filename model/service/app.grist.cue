@@ -63,15 +63,15 @@ grist: {
 					TYPEORM_PASSWORD:     "${POSTGRES_PASSWORD:?err}"
 				}
 				expose: [_grist.port]
-				volumes: ["\(S.volumes.app_data.name):/persist"]
-				networks: ["default", S.networks.newt_gw_001.name]
+				volumes: ["\(S.volumes.app_data._ref):/persist"]
+				networks: ["default", S.networks.newt_gw_001._ref]
 				healthcheck: #Snippet.services.healthcheck.nodeFetch & {#port: _grist.port, #path: "/status"}
 			}
 			cache: {
 				image: "docker.io/library/redis:\(_grist.cacheVersion)"
 
 				expose: [_grist.cachePort]
-				volumes: ["\(S.volumes.cache_data.name):/data"]
+				volumes: ["\(S.volumes.cache_data._ref):/data"]
 				healthcheck: #Snippet.services.healthcheck.redisPing
 			}
 			db: {
@@ -83,7 +83,7 @@ grist: {
 					POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 				}
 				expose: [_grist.dbPort]
-				volumes: ["\(S.volumes.db_data.name):/var/lib/postgresql/data"]
+				volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql/data"]
 				networks: ["default"]
 				healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 			}

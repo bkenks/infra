@@ -78,11 +78,11 @@ komodo: {
 				}
 				ports: ["\(_komodo.port):\(_komodo.port)"]
 				volumes: [
-					"\(S.volumes.keys.name):/config/keys",
+					"\(S.volumes.keys._ref):/config/keys",
 					"\(_komodo.bindDir)/komodo/data/backups:/backups",
 					"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 				]
-				networks: ["default", S.networks.newt_gw_001.name]
+				networks: ["default", S.networks.newt_gw_001._ref]
 				labels: #Snippet.services.labels.komodo_skip
 			}
 			db: {

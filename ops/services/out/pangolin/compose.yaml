@@ -52,7 +52,7 @@ services:
       - --remoteConfig=http://pangolin:3001/api/v1/
     container_name: gerbil
     depends_on:
-      pangolin:
+      app:
         condition: service_healthy
     image: docker.io/fosrl/gerbil:1.5.2
     logging:
@@ -83,9 +83,9 @@ services:
       options:
         max-size: 10m
     depends_on:
-      pangolin:
+      app:
         condition: service_healthy
-    network_mode: service:gerbil
+    network_mode: service:tunnel
     volumes:
       - ../../configs/pangolin/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro
       - ../../configs/pangolin/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro

@@ -48,8 +48,8 @@ openseo: {
 				CRAWLER_ACCESS_SECRET:      "${CRAWLER_ACCESS_SECRET:-}"
 			}
 			expose: [_openseo.port]
-			volumes: ["\(S.volumes.app_data.name):/app/.wrangler"]
-			networks: [S.networks.newt_gw_001.name]
+			volumes: ["\(S.volumes.app_data._ref):/app/.wrangler"]
+			networks: [S.networks.newt_gw_001._ref]
 			healthcheck: #Snippet.services.healthcheck.nodeFetch & {#port: _openseo.port, #path: "/api/health", retries: 3, start_period: "300s"}
 		}
 	}

@@ -47,7 +47,7 @@ services:
       - default
       - newt_gw_001
     volumes:
-      - grist-app_data:/persist
+      - app_data:/persist
   cache:
     container_name: grist-cache
     restart: unless-stopped
@@ -67,7 +67,7 @@ services:
         - ping
       timeout: 5s
     volumes:
-      - grist-cache_data:/data
+      - cache_data:/data
   db:
     container_name: grist-db
     restart: unless-stopped
@@ -92,7 +92,7 @@ services:
     networks:
       - default
     volumes:
-      - grist-db_data:/var/lib/postgresql/data
+      - db_data:/var/lib/postgresql/data
 volumes:
   app_data:
     name: grist-app_data

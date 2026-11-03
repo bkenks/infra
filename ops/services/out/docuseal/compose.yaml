@@ -24,7 +24,7 @@ services:
       - default
       - newt_gw_001
     volumes:
-      - docuseal-app_data:/data/docuseal
+      - app_data:/data/docuseal
 volumes:
   app_data:
     name: docuseal-app_data

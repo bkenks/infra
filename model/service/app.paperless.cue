@@ -46,7 +46,7 @@ paperless: {
 				image: "docker.io/library/redis:\(_paperless.cacheVersion)"
 				environment: ALLOW_EMPTY_PASSWORD: "yes"
 				expose: [_paperless.cachePort]
-				volumes: ["\(S.volumes.cache_data.name):/data"]
+				volumes: ["\(S.volumes.cache_data._ref):/data"]
 				healthcheck: #Snippet.services.healthcheck.redisPing
 			}
 			db: {
@@ -57,7 +57,7 @@ paperless: {
 					POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
 				}
 				expose: [_paperless.dbPort]
-				volumes: ["\(S.volumes.db_data.name):/var/lib/postgresql"]
+				volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql"]
 				networks: ["default"]
 				healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
 			}
@@ -99,12 +99,12 @@ paperless: {
 				}
 				expose: [_paperless.port]
 				volumes: [
-					"\(S.volumes.app_data.name):/usr/src/paperless/data",
-					"\(S.volumes.app_media.name):/usr/src/paperless/media",
+					"\(S.volumes.app_data._ref):/usr/src/paperless/data",
+					"\(S.volumes.app_media._ref):/usr/src/paperless/media",
 					"\(_paperless.bindDir)/export:/usr/src/paperless/export",
 					"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 				]
-				networks: ["default", S.networks.newt_gw_001.name]
+				networks: ["default", S.networks.newt_gw_001._ref]
 				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _paperless.port}
 			}
 		}

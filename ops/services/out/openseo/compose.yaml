@@ -41,7 +41,7 @@ services:
     networks:
       - newt_gw_001
     volumes:
-      - openseo-app_data:/app/.wrangler
+      - app_data:/app/.wrangler
 volumes:
   app_data:
     name: openseo-app_data

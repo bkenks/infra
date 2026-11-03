@@ -28,7 +28,7 @@ services:
     networks:
       - newt_gw_001
     volumes:
-      - actual-budget-app_data:/data
+      - app_data:/data
 volumes:
   app_data:
     name: actual-budget-app_data

@@ -23,7 +23,7 @@ services:
     ports:
       - "19428:9428"
     volumes:
-      - victorialogs-logs_data:/victoria-logs-data
+      - data:/victoria-logs-data
 volumes:
   data:
     name: victorialogs-logs_data

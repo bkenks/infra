@@ -15,7 +15,7 @@ services:
       options:
         max-size: 10m
     volumes:
-      - log-agent-agent_buffer:/var/lib/vector
+      - log_agent_buffer:/var/lib/vector
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ../../configs/agent/vector.yaml:/etc/vector/vector.yaml:ro
 volumes:

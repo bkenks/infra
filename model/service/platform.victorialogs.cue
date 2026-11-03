@@ -16,8 +16,8 @@ victorialogs: compose: S={
 			"-retentionPeriod=90d",
 		]
 		ports: ["19428:9428"]
-		volumes: ["\(S.volumes.data.name):\(_victorialogs.dataPath)"]
-		networks: [S.networks.newt_gw_001.name]
+		volumes: ["\(S.volumes.data._ref):\(_victorialogs.dataPath)"]
+		networks: [S.networks.newt_gw_001._ref]
 		labels: #Snippet.services.labels.komodo_skip
 	}
 }

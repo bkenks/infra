@@ -47,12 +47,12 @@ stream: {
 
 	compose: S={
 		name: "stream"
-		_webNetworks: ["default", S.networks.newt_gw_001.name]
+		_webNetworks: ["default", S.networks.newt_gw_001._ref]
 		networks: newt_gw_001: #Network.newt_gw_001
 		services: {
 			_arrsHealthy: {
-				(movies.container_name): condition: "service_healthy"
-				(tv.container_name): condition:     "service_healthy"
+				(movies._ref): condition: "service_healthy"
+				(tv._ref): condition:     "service_healthy"
 			}
 
 			subtitles: {

@@ -62,7 +62,7 @@ immich: {
 				}
 				expose: [_immich.port]
 				volumes: ["/mnt/immich-library:/data"]
-				networks: ["default", S.networks.newt_gw_001.name]
+				networks: ["default", S.networks.newt_gw_001._ref]
 				devices: ["/dev/dri:/dev/dri"]
 			}
 		}

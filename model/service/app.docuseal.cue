@@ -38,8 +38,8 @@ docuseal: {
 				SECRET_KEY_BASE: "${SECRET_KEY_BASE:?err}"
 			}
 			expose: [_docuseal.port]
-			volumes: ["\(S.volumes.app_data.name):/data/docuseal"]
-			networks: ["default", S.networks.newt_gw_001.name]
+			volumes: ["\(S.volumes.app_data._ref):/data/docuseal"]
+			networks: ["default", S.networks.newt_gw_001._ref]
 		}
 	}
 }

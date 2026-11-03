@@ -33,7 +33,7 @@ komodo_mcp: compose: S={
 
 		// —————————————————————————
 		networks: [
-			S.networks.newt_gw_001.name,
+			S.networks.newt_gw_001._ref,
 		]
 	}
 }

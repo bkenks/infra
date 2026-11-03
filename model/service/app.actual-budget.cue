@@ -16,8 +16,8 @@ actual_budget: compose: S={
 		image: "docker.io/actualbudget/actual-server:\(_actual_budget.version)"
 		environment: ACTUAL_PORT: "\(_actual_budget.port)"
 		expose: [_actual_budget.port]
-		volumes: ["\(S.volumes.app_data.name):/data"]
-		networks: [S.networks.newt_gw_001.name]
+		volumes: ["\(S.volumes.app_data._ref):/data"]
+		networks: [S.networks.newt_gw_001._ref]
 		healthcheck: {
 			test: ["CMD-SHELL", "node scripts/health-check.js"]
 			interval:     "60s"

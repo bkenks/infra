@@ -51,9 +51,9 @@ services:
       - ../../configs/stream/configarr:/app/config:ro
       - /srv/docker/bind-mounts/stream/configarr/repos:/app/repos
     depends_on:
-      stream-movies:
+      movies:
         condition: service_healthy
-      stream-tv:
+      tv:
         condition: service_healthy
   janitor:
     container_name: stream-janitor
@@ -72,9 +72,9 @@ services:
     volumes:
       - ../../configs/stream/decluttarr:/app/config:ro
     depends_on:
-      stream-movies:
+      movies:
         condition: service_healthy
-      stream-tv:
+      tv:
         condition: service_healthy
   media:
     container_name: stream-media

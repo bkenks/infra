@@ -51,7 +51,7 @@ services:
     ports:
       - "9120:9120"
     volumes:
-      - komodo-app_keys:/config/keys
+      - keys:/config/keys
       - /srv/docker/bind-mounts/dcm/komodo/data/backups:/backups
       - /srv/docker/bind-mounts/dcm/komodo/data/syncs:/syncs
   db:
