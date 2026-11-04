@@ -182,6 +182,7 @@ import (
 #Service: {
 	fnox?:   #Fnox
 	compose: #DockerCompose
+	files?: [...#File]
 }
 
 #Fnox: {
@@ -220,4 +221,11 @@ import (
 			} | {...}
 		}
 	}
+}
+
+// ——————————————————————————————————————————————————————————————————————————————————————————————————
+#File: {
+	name: string
+	contents: _
+	out: string
 }

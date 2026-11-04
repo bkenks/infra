@@ -1,6 +1,0 @@
-# GENERATED from CUE — DO NOT EDIT.
-[providers]
-[providers.onepassword]
-account = 'FUKUXFLIDREQDELXYP2PALUAVY'
-type = '1password'
-vault = 'infra'
