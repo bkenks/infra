@@ -8,7 +8,7 @@ options  = ["format", "--config", ".config/taplo.toml"]
 [formatter.cue]
 command  = "cue"
 includes = ["*.cue"]
-options  = ["fmt", "./..."]
+options  = ["fmt"]
 
 [formatter.prettier]
 command = "prettier"
