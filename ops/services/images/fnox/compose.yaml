@@ -1,0 +1,12 @@
+name: fnox
+
+volumes:
+  secrets:
+
+services:
+  fnox:
+    image: ghcr.io/bkenks/fnox:latest
+    env_file: ~/.env
+    volumes:
+      - ./work:/work
+      - secrets:/secrets

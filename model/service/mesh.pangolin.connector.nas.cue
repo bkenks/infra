@@ -3,7 +3,7 @@ package service
 import "github.com/bkenks/infra/model/common"
 
 _pangolin_connector_nas: {
-	version: "1.16.0"
+	version: "1.19.0"
 	secrets: Scr={
 		values: {
 			host:   "HOST"
@@ -59,6 +59,10 @@ pangolin_connector_nas: {
 				_pangolin_connector_nas.secrets.out.compose.secret
 				PANGOLIN_ENDPOINT: common.route.pangolin.public.uri
 			}
+
+			extra_hosts: [
+				#Snippet.services.extra_hosts.host_gateway,
+			]
 
 			container_name: S.services.newt._ref
 		}

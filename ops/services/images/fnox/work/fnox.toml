@@ -1,0 +1,7 @@
+[providers.onepassword]
+account = 'FUKUXFLIDREQDELXYP2PALUAVY'
+type = '1password'
+vault = 'infra'
+
+[secrets]
+ENC_KEY = { provider = "onepassword", value = "pocket-id/encryption_key" }

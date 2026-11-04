@@ -8,17 +8,17 @@ _git_clone: {
 	version:  "v2.49.1"
 	repoName: "infra"
 	repoUrl:  "https://github.com/bkenks/\(repoName).git"
-	
+
 	volumes: {
 		repos: {
-			type: "bind"
+			type:   "bind"
 			source: "/volume1/repos"
 			target: "/repos"
 		}
 	}
 
-	_dest:  "\(volumes.repos.target)/\(repoName)"
-	_tmp:   "\(volumes.repos.target)/.\(repoName).tmp"
+	_dest: "\(volumes.repos.target)/\(repoName)"
+	_tmp:  "\(volumes.repos.target)/.\(repoName).tmp"
 
 	// Clone into a temp dir first; the old repo is only removed after
 	// the clone succeeds. tmp sits on the same mount so mv is a rename.
