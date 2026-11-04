@@ -1,0 +1,39 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: pocket-id
+networks: {}
+secrets:
+  encryption_key:
+    environment: ENC_KEY
+services:
+  pocket-id:
+    container_name: pocket-id-pocket-id
+    restart: unless-stopped
+    environment:
+      TRUST_PROXY: false
+      MAXMIND_LICENSE_KEY: ""
+      PUID: 1000
+      PGID: 1000
+      ENCRYPTION_KEY_FILE: /run/secrets/encryption_key
+    image: pocketid/pocket-id:v2
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    secrets:
+      - encryption_key
+    healthcheck:
+      interval: 1m30s
+      retries: 2
+      test:
+        - CMD
+        - /app/pocket-id
+        - healthcheck
+      timeout: 5s
+      start_period: 10s
+    ports:
+      - "1411:1411"
+    volumes:
+      - data:/app/data
+volumes:
+  data:
+    name: pocket-id_data

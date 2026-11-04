@@ -3,30 +3,45 @@ package service
 _pocket_id: {
 	version:     "v2"
 	port:        1411
-	enc_key_ref: "encryption_key"
+	encKeyRef: "encryption_key"
+	encKeyName: "ENC_KEY"
+	volumes: {
+		data: {
+			ref: "data"
+			name: "pocket-id_data"
+		}
+	}
 }
 
 pocket_id: {
-	compose: S={
+	fnox: {
+		secrets: {
+			(_pocket_id.encKeyName): { provider: "onepassword", value: "pocket-id/encryption_key"}
+		}
+	}
+
+	compose: {
 		name: "pocket-id"
 
 		secrets: {
-			(enc_key_ref):
-				environment: "ENC_KEY"
+			(_pocket_id.encKeyRef):
+				environment: _pocket_id.encKeyName
 		}
 
-		volumes: {}
+		volumes: {
+			(_pocket_id.volumes.data.ref): name: _pocket_id.volumes.data.name
+		}
 
 		services: "pocket-id": {
 			image:    "pocketid/pocket-id:\(_pocket_id.version)"
-			secrets: [enc_key_ref]
+			secrets: [_pocket_id.encKeyRef]
 			environment: {
 				TRUST_PROXY:         false
 				MAXMIND_LICENSE_KEY: ""
 				PUID:                1000
 				PGID:                1000
 
-				ENCRYPTION_KEY_FILE: "/run/secrets/\(enc_key_ref)"
+				ENCRYPTION_KEY_FILE: "/run/secrets/\(_pocket_id.encKeyRef)"
 			}
 
 			healthcheck: {
@@ -38,7 +53,7 @@ pocket_id: {
 			}
 			ports: ["\(_pocket_id.port):\(_pocket_id.port)"]
 			volumes: [
-				"./data:/app/data",
+				"\(_pocket_id.volumes.data.ref):/app/data",
 			]
 		}
 	}
