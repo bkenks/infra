@@ -182,6 +182,7 @@ import (
 #Service: {
 	fnox?:   #Fnox
 	compose: #DockerCompose
+	files?: [...#File]
 }
 
 #Fnox: {

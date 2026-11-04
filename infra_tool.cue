@@ -1,72 +1,98 @@
 package infra
 
 import (
-	"encoding/yaml"
-	"encoding/toml"
 	"path"
 	"strings"
-	"tool/exec"
+	"encoding/yaml"
+	"encoding/toml"
 	"tool/file"
+	"tool/exec"
 
-	"github.com/bkenks/infra/model/common"
-	"github.com/bkenks/infra/model/service"
-	"github.com/bkenks/infra/model/export"
+	cmn "github.com/bkenks/infra/model/common"
+	svc "github.com/bkenks/infra/model/service"
+	exp "github.com/bkenks/infra/model/export"
 )
+
+cueHeader: "# GENERATED from CUE — DO NOT EDIT.\n"
 
 command: render: {
 	repoRoot: exec.Run & {
 		cmd: ["git", "rev-parse", "--show-toplevel"]
-		stdout: string
-		root:   strings.TrimSpace(stdout)
+		stdout:  string
+		absPath: strings.TrimSpace(stdout)
 	}
 
+	out: {
+		files: {
+			networks: {name: "networks.yml", absPath: path.Join([store.absPath, name])}
+			hosts: {name: "hosts.yml", absPath: path.Join([store.absPath, name])}
+			paths: {name: "paths.yml", absPath: path.Join([store.absPath, name])}
+		}
+
+		store: {name: "store", absPath: path.Join([repoRoot.absPath, name])}
+
+		services: {absPath: path.Join([repoRoot.absPath, "ops", "services", "out"])}
+	}
+
+	// _o: mfst.Paths.out
+
 	storeNetworks: file.Create & {
-		filename: path.Join([repoRoot.root, "store", "networks.yml"])
-		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal({
-			docker_networks: [for name, _ in service.#Network {name}]
+		filename: out.files.networks.absPath
+		contents: cueHeader + yaml.Marshal({
+			docker_networks: [for name, _ in svc.#Network {name}]
 		})
 	}
 
 	storeHosts: file.Create & {
-		filename: path.Join([repoRoot.root, "store", "hosts.yml"])
-		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(export.ansible)
+		filename: out.files.hosts.absPath
+		contents: cueHeader + yaml.Marshal(exp.ansible)
 	}
 
 	storePaths: file.Create & {
-		let dir = common.directory.server
-		filename: path.Join([repoRoot.root, "store", "paths.yml"])
-		contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(dir)
+		let dir = cmn.directory.server
+		filename: out.files.paths.absPath
+		contents: cueHeader + yaml.Marshal(dir)
 	}
 
-	let outDir = path.Join([repoRoot.root, "ops", "services", "out"])
+	let outSvc = out.services.absPath
 
 	// out/ holds only generated stacks; wipe it so stacks removed from CUE are pruned.
 	clean: file.RemoveAll & {
-		path: outDir
+		path: outSvc
 	}
 
 	// Each stack renders to <name>/compose.yaml. Stub stacks without services are not
 	// valid Compose files yet.
 	stacks: {
-		for stackKey, stack in service if len(stack.compose.services) > 0 {
-			let deployDir = path.Join([outDir, stack.compose.name])
+		for stackKey, stack in svc {
+			let outStk = path.Join([outSvc, stack.compose.name])
 
 			(stackKey): {
 				mkdir: file.MkdirAll & {
 					$after: clean
-					path:   deployDir
+					path:   outStk
 				}
-				write: file.Create & {
-					$after: mkdir
-					filename: path.Join([deployDir, "compose.yaml"])
-					contents: "# GENERATED from CUE — DO NOT EDIT.\n" + yaml.Marshal(stack.compose)
+				if stack.compose.services != _|_ if len(stack.compose.services) > 0 {
+					writeCompose: file.Create & {
+						$after: mkdir
+						filename: path.Join([outStk, "compose.yaml"])
+						contents: cueHeader + yaml.Marshal(stack.compose)
+					}
 				}
-				if stack.fnox != _|_ {
+				if stack.fnox.secrets != _|_ if len(stack.fnox.secrets) > 0 {
 					writeFnox: file.Create & {
 						$after: mkdir
-						filename: path.Join([deployDir, "fnox.toml"])
-						contents: "# GENERATED from CUE — DO NOT EDIT.\n" + toml.Marshal(stack.fnox)
+						filename: path.Join([outStk, "fnox.toml"])
+						contents: cueHeader + toml.Marshal(stack.fnox)
 					}
+				}
+				if stack.files != _|_ if len(stack.files) > 0 {
+					for _, fv in stack.files {
+						("write" + fv.name): file.Create & {
+							$after: mkdir
+							filename: path.Join([outStk, fv.name])
+							contents: cueHeader + fv.out
+						}}
 				}
 			}
 		}
