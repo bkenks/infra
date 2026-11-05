@@ -79,7 +79,8 @@ command: render: {
 						contents: cueHeader + yaml.Marshal(stack.compose)
 					}
 				}
-				if stack.fnox.secrets != _|_ if len(stack.fnox.secrets) > 0 {
+				let _fx = {secrets: *{} | _, profiles: *{} | _} & stack.fnox
+				if len(_fx.secrets) > 0 || len(_fx.profiles) > 0 {
 					writeFnox: file.Create & {
 						$after: mkdir
 						filename: path.Join([outStk, "fnox.toml"])
