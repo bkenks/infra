@@ -26,7 +26,7 @@ services:
         - -f
         - http://localhost:3001/api/v1/
       timeout: 10s
-    image: docker.io/fosrl/pangolin:ee-1.24.0
+    image: docker.io/fosrl/pangolin:ee-1.26.0
     logging:
       driver: json-file
       options:

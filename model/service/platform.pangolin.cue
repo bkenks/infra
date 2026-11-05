@@ -6,7 +6,7 @@ import (
 )
 
 _pangolin: {
-	version:        "ee-1.24.0"
+	version:        "ee-1.26.0"
 	gerbilVersion:  "1.5.2"
 	traefikVersion: "v3.6"
 	busyboxVersion: "1.37.0"
