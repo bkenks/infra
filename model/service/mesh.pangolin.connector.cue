@@ -5,12 +5,12 @@ import (
 )
 
 pangolin_connector: {
-	_version: "1.16.0"
+	_version: "0.20.0"
 	_secrets: Scr={
 		values: {
 			host:   "HOST"
-			id:     "NEWT_ID"
-			secret: "NEWT_SECRET"
+			id:     "SITE_ID"
+			secret: "SITE_SECRET"
 		}
 		out: {
 			fnox: {
@@ -49,7 +49,6 @@ pangolin_connector: {
 	_svc: {
 		conn: "connector"
 	}
-	_port: 51830
 	_ipv4_address: "10.250.0.10"
 
 	fnox: _secrets.out.fnox
@@ -57,16 +56,14 @@ pangolin_connector: {
 	compose: C={
 		name: "pangolin-connector"
 		services: (_svc.conn): {
-			image: "docker.io/fosrl/newt:\(_version)"
+			image: "fosrl/pangolin-cli:\(_version)"
 			environment: {
 				_secrets.out.compose.id
 				_secrets.out.compose.secret
 				PANGOLIN_ENDPOINT: common.route.pangolin.public.uri
-				PORT: _port
 			}
 			container_name: C.name
 			extra_hosts: ["host.docker.internal:host-gateway"]
-			ports: ["\(_port):\(_port)"]
 			networks: (#Networks.pangolinSite.name): ipv4_address: _ipv4_address
 		}
 

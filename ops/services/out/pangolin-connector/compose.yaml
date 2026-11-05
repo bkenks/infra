@@ -8,13 +8,12 @@ services:
   connector:
     container_name: pangolin-connector
     environment:
-      NEWT_ID: ${NEWT_ID:?err}
+      SITE_ID: ${SITE_ID:?err}
       PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
-      PORT: 51830
-      NEWT_SECRET: ${NEWT_SECRET:?err}
+      SITE_SECRET: ${SITE_SECRET:?err}
     extra_hosts:
       - host.docker.internal:host-gateway
-    image: docker.io/fosrl/newt:1.16.0
+    image: fosrl/pangolin-cli:0.20.0
     restart: unless-stopped
     logging:
       driver: json-file
@@ -23,6 +22,4 @@ services:
     networks:
       pangolin-site:
         ipv4_address: 10.250.0.10
-    ports:
-      - "51830:51830"
 volumes: {}
