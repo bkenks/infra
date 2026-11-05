@@ -65,6 +65,10 @@ onepass_service_account__vaults: ["secrets:read_items"]
 docker_install_compose: true
 docker_users:
   - "{{ user_admin }}"
+docker_daemon_options:
+  default-address-pools:
+    - base: "172.16.0.0/12"
+      size: 24
 
 komodo_action: install
 komodo_user: root

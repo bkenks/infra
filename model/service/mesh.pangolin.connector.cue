@@ -1,10 +1,13 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"encoding/yaml"
+	"github.com/bkenks/infra/model/common"
+)
 
-_pangolin_connector: {
-	version: "1.16.0"
-	secrets: Scr={
+pangolin_connector: {
+	_version: "1.16.0"
+	_secrets: Scr={
 		values: {
 			host:   "HOST"
 			id:     "NEWT_ID"
@@ -44,29 +47,58 @@ _pangolin_connector: {
 			}
 		}
 	}
-}
+	_svc: {
+		conn: "connector"
+	}
+	_subnet: "172.30.0.0/24"
+	_net: {
+		ps: {
+			name: "pangolin-site"
+			ipam: {
+				config: [
+					{ subnet: _subnet }
+				]
+			}
+		}
+	}
 
-pangolin_connector: {
-	fnox: _pangolin_connector.secrets.out.fnox
+	fnox: _secrets.out.fnox
 
-	compose: S={
+	compose: C={
 		name: "pangolin-connector"
 		networks: {
 			newt_gw_001: #Network.newt_gw_001
 		}
 
-		services: connector: {
-			image: "docker.io/fosrl/newt:\(_pangolin_connector.version)"
+		services: (_svc.conn): {
+			image: "docker.io/fosrl/newt:\(_version)"
 			environment: {
-				_pangolin_connector.secrets.out.compose.id
-				_pangolin_connector.secrets.out.compose.secret
+				_secrets.out.compose.id
+				_secrets.out.compose.secret
 				PANGOLIN_ENDPOINT: common.route.pangolin.public.uri
 			}
 
-			container_name: S.name
+			container_name: C.name
 			networks: [
-				S.networks.newt_gw_001._ref
+				C.networks.newt_gw_001._ref
 			]
+		}
+	}
+
+	files: {
+		edge_override: {
+			name: "compose.edge.yaml"
+			contents: {
+				services: {
+					(_svc.conn): {
+						networks: [_net.ps.name]
+					}
+				}
+				networks: {
+					(_net.ps.name): _net.ps
+				}
+			}
+			out: yaml.Marshal(contents)
 		}
 	}
 }

@@ -1,0 +1,11 @@
+# GENERATED from CUE — DO NOT EDIT.
+services:
+  connector:
+    networks:
+      - pangolin-site
+networks:
+  pangolin-site:
+    name: pangolin-site
+    ipam:
+      config:
+        - subnet: 172.30.0.0/24

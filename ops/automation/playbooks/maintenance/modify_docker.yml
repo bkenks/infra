@@ -1,0 +1,9 @@
+---
+- name: Hosts run Docker and git
+  hosts: all
+
+  tasks:
+    - name: Docker is installed and configured
+      become: true
+      ansible.builtin.import_role:
+        name: geerlingguy.docker
