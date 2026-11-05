@@ -59,17 +59,17 @@ ignore_services = ["secrets"]
 
 ##
 
-[[stack]]
-name = "frappe"
-[stack.config]
-server = "bill"
-linked_repo = "infra"
-run_directory = "ops/services/frappe"
-compose_cmd_wrapper = """
-# sops exec-env .encrypted.env '[[COMPOSE_COMMAND]]'
-../wrap [[COMPOSE_COMMAND]]"""
-compose_cmd_wrapper_include = ["config", "build", "pull", "up", "run"]
-ignore_services = ["configurator", "migrator"]
+# [[stack]]
+# name = "frappe"
+# [stack.config]
+# server = "bill"
+# linked_repo = "infra"
+# run_directory = "ops/services/frappe"
+# compose_cmd_wrapper = """
+# # sops exec-env .encrypted.env '[[COMPOSE_COMMAND]]'
+# ../wrap [[COMPOSE_COMMAND]]"""
+# compose_cmd_wrapper_include = ["config", "build", "pull", "up", "run"]
+# ignore_services = ["configurator", "migrator"]
 
 ##
 
