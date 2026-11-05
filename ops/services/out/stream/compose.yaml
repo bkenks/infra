@@ -35,7 +35,11 @@ services:
       - /srv/docker/bind-mounts/stream/shared:/data
   seeder:
     container_name: stream-seeder
-    restart: unless-stopped
+    depends_on:
+      movies:
+        condition: service_healthy
+      tv:
+        condition: service_healthy
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -47,14 +51,10 @@ services:
       driver: json-file
       options:
         max-size: 10m
+    restart: on-failure:3
     volumes:
       - ../../configs/stream/configarr:/app/config:ro
       - /srv/docker/bind-mounts/stream/configarr/repos:/app/repos
-    depends_on:
-      movies:
-        condition: service_healthy
-      tv:
-        condition: service_healthy
   janitor:
     container_name: stream-janitor
     restart: unless-stopped

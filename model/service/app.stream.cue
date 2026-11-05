@@ -74,6 +74,7 @@ stream: {
 					"\(_stream.bindRoot)/configarr/repos:/app/repos",
 				]
 				depends_on: _arrsHealthy
+				restart: "on-failure:3"
 			}
 			janitor: {
 				image:       "ghcr.io/manimatter/decluttarr:\(_stream.decluttarrVersion)"
