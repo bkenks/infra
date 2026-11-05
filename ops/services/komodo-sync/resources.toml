@@ -370,13 +370,7 @@ name = "Auto Deploy"
 name = "Sync Resources"
 enabled = true
 executions = [
-  { execution.type = "RunSync", execution.params.sync = "Repo", enabled = true }
-]
-
-[[procedure.config.stage]]
-name = "Deploy Stacks"
-enabled = true
-executions = [
+  { execution.type = "RunSync", execution.params.sync = "Repo", enabled = true },
   { execution.type = "BatchDeployStackIfChanged", execution.params.pattern = "*", enabled = true }
 ]
 
