@@ -32,7 +32,6 @@ http:
           - main: ktbcloud.com
             sans:
               - "*.ktbcloud.com"
-              - "*.coder.ktbcloud.com"
     api-router:
       rule: Host(`pangolin.ktbcloud.com`) && PathPrefix(`/api/v1`)
       service: api-service

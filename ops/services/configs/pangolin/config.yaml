@@ -13,8 +13,6 @@ domains:
     base_domain: ktbinternal.com
   domain2:
     base_domain: ktbcloud.com
-  domain3:
-    base_domain: coder.ktbcloud.com
 server:
   cors:
     origins:
