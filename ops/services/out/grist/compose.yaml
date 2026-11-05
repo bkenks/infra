@@ -26,6 +26,10 @@ services:
       TYPEORM_DATABASE: grist
       TYPEORM_USERNAME: grist
       TYPEORM_PASSWORD: ${POSTGRES_PASSWORD:?err}
+      GRIST_OIDC_IDP_ISSUER: https://id.ktbcloud.com
+      GRIST_OIDC_IDP_CLIENT_ID: ${GRIST_OIDC_IDP_CLIENT_ID:?err}
+      GRIST_OIDC_IDP_CLIENT_SECRET: ${GRIST_OIDC_IDP_CLIENT_SECRET:?err}
+      GRIST_OIDC_IDP_SCOPES: openid email profile groups
     expose:
       - 8484
     healthcheck:

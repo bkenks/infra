@@ -8,12 +8,20 @@ vault = 'infra'
 [secrets]
 [secrets.GRIST_DEFAULT_EMAIL]
 provider = 'onepassword'
-value = 'grist/default_email'
+value = 'grist/DEFAULT_EMAIL'
+
+[secrets.GRIST_OIDC_IDP_CLIENT_ID]
+provider = 'onepassword'
+value = 'grist/OIDC_CLIENT_ID'
+
+[secrets.GRIST_OIDC_IDP_CLIENT_SECRET]
+provider = 'onepassword'
+value = 'grist/OIDC_CLIENT_SECRET'
 
 [secrets.GRIST_SESSION_SECRET]
 provider = 'onepassword'
-value = 'grist/session_secret'
+value = 'grist/SESSION_SECRET'
 
 [secrets.POSTGRES_PASSWORD]
 provider = 'onepassword'
-value = 'grist/postgres_password'
+value = 'grist/POSTGRES_PASSWORD'

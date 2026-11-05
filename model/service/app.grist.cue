@@ -11,20 +11,37 @@ _grist: {
 	dbVersion:    "16"
 	cacheVersion: "8"
 	secrets: {
-		session_secret: "GRIST_SESSION_SECRET"
-		default_email:  "GRIST_DEFAULT_EMAIL"
-		db_pass:        "POSTGRES_PASSWORD"
+		session_secret:   "GRIST_SESSION_SECRET"
+		default_email:    "GRIST_DEFAULT_EMAIL"
+		db_pass:          "POSTGRES_PASSWORD"
+		oidcClientID:     "GRIST_OIDC_IDP_CLIENT_ID"
+		oidcClientSecret: "GRIST_OIDC_IDP_CLIENT_SECRET"
 	}
+	opItem: "grist"
 }
 
 grist: {
+	_pocket_id_oidc: {
+		fnox: {
+			(_grist.secrets.oidcClientID): value:     "\(_grist.opItem)/OIDC_CLIENT_ID"
+			(_grist.secrets.oidcClientSecret): value: "\(_grist.opItem)/OIDC_CLIENT_SECRET"
+		}
+		environment: {
+			GRIST_OIDC_IDP_ISSUER:             "https://id.\(common.domain.ktbcloud_dotcom)"
+			(_grist.secrets.oidcClientID):     "${\(_grist.secrets.oidcClientID):?err}"
+			(_grist.secrets.oidcClientSecret): "${\(_grist.secrets.oidcClientSecret):?err}"
+			GRIST_OIDC_IDP_SCOPES:             "openid email profile groups"
+		}
+	}
+
 	fnox: {
 		secrets: {
 			[_]: provider: #Snippet.fnox.defaultProvider._name
 
-			(_grist.secrets.session_secret): value: "grist/session_secret"
-			(_grist.secrets.default_email): value:  "grist/default_email"
-			(_grist.secrets.db_pass): value:        "grist/postgres_password"
+			(_grist.secrets.session_secret): value: "\(_grist.opItem)/SESSION_SECRET"
+			(_grist.secrets.default_email): value:  "\(_grist.opItem)/DEFAULT_EMAIL"
+			(_grist.secrets.db_pass): value:        "\(_grist.opItem)/POSTGRES_PASSWORD"
+			_pocket_id_oidc.fnox
 		}
 	}
 
@@ -61,6 +78,7 @@ grist: {
 					TYPEORM_DATABASE:     S.name
 					TYPEORM_USERNAME:     S.name
 					TYPEORM_PASSWORD:     "${POSTGRES_PASSWORD:?err}"
+					_pocket_id_oidc.environment
 				}
 				expose: [_grist.port]
 				volumes: ["\(S.volumes.app_data._ref):/persist"]
