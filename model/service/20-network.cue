@@ -6,3 +6,10 @@ package service
 #Network: {
 	newt_gw_001: _
 }
+
+Networks: {
+	pangolinSite: {
+		name: "pangolin-site"
+		ipam: config: [{subnet: "172.30.0.0/24"}]
+	}
+}
