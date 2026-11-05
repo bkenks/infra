@@ -1,11 +1,24 @@
 # GENERATED from CUE — DO NOT EDIT.
-services:
-  connector:
-    networks:
-      - pangolin-site
+name: pangolin-connector
 networks:
   pangolin-site:
     name: pangolin-site
     ipam:
       config:
         - subnet: 172.30.0.0/24
+services:
+  connector:
+    container_name: pangolin-connector
+    restart: unless-stopped
+    environment:
+      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      NEWT_ID: ${NEWT_ID:?err}
+      NEWT_SECRET: ${NEWT_SECRET:?err}
+    image: docker.io/fosrl/newt:1.16.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      - pangolin-site
+volumes: {}

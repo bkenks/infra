@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/yaml"
 	"github.com/bkenks/infra/model/common"
+	"github.com/bkenks/infra/model/schema"
 )
 
 pangolin_connector: {
@@ -56,7 +57,7 @@ pangolin_connector: {
 			name: "pangolin-site"
 			ipam: {
 				config: [
-					{ subnet: _subnet }
+					{subnet: _subnet}
 				]
 			}
 		}
@@ -64,12 +65,9 @@ pangolin_connector: {
 
 	fnox: _secrets.out.fnox
 
-	compose: C={
+	// Shared by the default and edge variants; each adds its own networks.
+	_base: {
 		name: "pangolin-connector"
-		networks: {
-			newt_gw_001: #Network.newt_gw_001
-		}
-
 		services: (_svc.conn): {
 			image: "docker.io/fosrl/newt:\(_version)"
 			environment: {
@@ -77,26 +75,25 @@ pangolin_connector: {
 				_secrets.out.compose.secret
 				PANGOLIN_ENDPOINT: common.route.pangolin.public.uri
 			}
-
-			container_name: C.name
-			networks: [
-				C.networks.newt_gw_001._ref
-			]
+			container_name: _base.name
 		}
 	}
 
+	compose: C=_base & {
+		networks: {
+			newt_gw_001: #Network.newt_gw_001
+		}
+		services: (_svc.conn): networks: [
+			C.networks.newt_gw_001._ref,
+		]
+	}
+
 	files: {
-		edge_override: {
+		edge: {
 			name: "compose.edge.yaml"
-			contents: {
-				services: {
-					(_svc.conn): {
-						networks: [_net.ps.name]
-					}
-				}
-				networks: {
-					(_net.ps.name): _net.ps
-				}
+			contents: schema.#DockerCompose & _base & {
+				networks: (_net.ps.name): _net.ps
+				services: (_svc.conn): networks: [_net.ps.name]
 			}
 			out: yaml.Marshal(contents)
 		}

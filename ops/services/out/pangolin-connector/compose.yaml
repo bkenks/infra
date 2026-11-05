@@ -8,8 +8,8 @@ services:
   connector:
     container_name: pangolin-connector
     environment:
-      NEWT_ID: ${NEWT_ID:?err}
       PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      NEWT_ID: ${NEWT_ID:?err}
       NEWT_SECRET: ${NEWT_SECRET:?err}
     image: docker.io/fosrl/newt:1.16.0
     restart: unless-stopped
