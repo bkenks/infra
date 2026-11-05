@@ -34,12 +34,10 @@ command: render: {
 		services: {absPath: path.Join([repoRoot.absPath, "ops", "services", "out"])}
 	}
 
-	// _o: mfst.Paths.out
-
 	storeNetworks: file.Create & {
 		filename: out.files.networks.absPath
 		contents: cueHeader + yaml.Marshal({
-			docker_networks: [for name, _ in svc.#Network {name}]
+			docker_networks: [for _, n in svc.#Networks {n.asNew}]
 		})
 	}
 

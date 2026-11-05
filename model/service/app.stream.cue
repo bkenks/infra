@@ -47,8 +47,8 @@ stream: {
 
 	compose: S={
 		name: "stream"
-		_webNetworks: ["default", S.networks.newt_gw_001._ref]
-		networks: newt_gw_001: #Network.newt_gw_001
+		_webNetworks: ["default", #Networks.pangolinSite.name]
+		networks: {#Networks.pangolinSite.asExternal}
 		services: {
 			_arrsHealthy: {
 				(movies._ref): condition: "service_healthy"

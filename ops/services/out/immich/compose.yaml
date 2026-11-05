@@ -1,8 +1,8 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: immich
 networks:
-  newt_gw_001:
-    name: newt_gw_001
+  pangolin-site:
+    name: pangolin-site
     external: true
 services:
   db:
@@ -67,7 +67,7 @@ services:
         max-size: 10m
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - /mnt/immich-library:/data
 volumes: {}

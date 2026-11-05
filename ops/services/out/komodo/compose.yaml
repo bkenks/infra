@@ -1,8 +1,8 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: komodo
 networks:
-  newt_gw_001:
-    name: newt_gw_001
+  pangolin-site:
+    name: pangolin-site
     external: true
 services:
   app:
@@ -47,7 +47,7 @@ services:
         max-size: 10m
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     ports:
       - "9120:9120"
     volumes:

@@ -1,22 +1,28 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: pangolin-connector
 networks:
-  newt_gw_001:
-    name: newt_gw_001
+  pangolin-site:
+    name: pangolin-site
     external: true
 services:
   connector:
     container_name: pangolin-connector
     environment:
-      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
       NEWT_ID: ${NEWT_ID:?err}
+      PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      PORT: 51830
       NEWT_SECRET: ${NEWT_SECRET:?err}
+    extra_hosts:
+      - host.docker.internal:host-gateway
     image: docker.io/fosrl/newt:1.16.0
     restart: unless-stopped
+    ipv4_address: 10.250.0.10
     logging:
       driver: json-file
       options:
         max-size: 10m
     networks:
-      - newt_gw_001
+      - pangolin-site
+    ports:
+      - "51830:51830"
 volumes: {}

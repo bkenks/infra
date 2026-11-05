@@ -27,7 +27,7 @@ immich: {
 
 	compose: S={
 		name: "immich"
-		networks: newt_gw_001: #Network.newt_gw_001
+		networks: {#Networks.pangolinSite.asExternal}
 		services: {
 			db: {
 				image: _immich.dbImage
@@ -62,7 +62,7 @@ immich: {
 				}
 				expose: [_immich.port]
 				volumes: ["/mnt/immich-library:/data"]
-				networks: ["default", S.networks.newt_gw_001._ref]
+				networks: ["default", #Networks.pangolinSite.name]
 				devices: ["/dev/dri:/dev/dri"]
 			}
 		}

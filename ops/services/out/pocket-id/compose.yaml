@@ -12,7 +12,7 @@ services:
     container_name: pocket-id
     environment:
       APP_URL: https://id.ktbcloud.com
-      TRUST_PROXY: 172.30.0.0/24
+      TRUST_PROXY: 10.250.0.10
       MAXMIND_LICENSE_KEY: ""
       PUID: 1000
       PGID: 1000

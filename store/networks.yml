@@ -1,3 +1,6 @@
 # GENERATED from CUE — DO NOT EDIT.
 docker_networks:
-  - newt_gw_001
+  - name: pangolin-site
+    ipam:
+      config:
+        - subnet: 10.250.0.0/24

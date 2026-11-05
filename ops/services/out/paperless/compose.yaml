@@ -1,8 +1,8 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: paperless
 networks:
-  newt_gw_001:
-    name: newt_gw_001
+  pangolin-site:
+    name: pangolin-site
     external: true
 services:
   cache:
@@ -119,7 +119,7 @@ services:
         max-size: 10m
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - app_data:/usr/src/paperless/data
       - app_media:/usr/src/paperless/media

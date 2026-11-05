@@ -38,7 +38,7 @@ grist: {
 		}
 
 		networks: {
-			newt_gw_001: #Network.newt_gw_001
+			#Networks.pangolinSite.asExternal
 		}
 
 		services: {
@@ -64,7 +64,7 @@ grist: {
 				}
 				expose: [_grist.port]
 				volumes: ["\(S.volumes.app_data._ref):/persist"]
-				networks: ["default", S.networks.newt_gw_001._ref]
+				networks: ["default", #Networks.pangolinSite.name]
 				healthcheck: #Snippet.services.healthcheck.nodeFetch & {#port: _grist.port, #path: "/status"}
 			}
 			cache: {

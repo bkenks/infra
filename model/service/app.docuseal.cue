@@ -31,7 +31,7 @@ docuseal: {
 			db_data: name:  "postgres-db_data"
 		}
 		networks: {
-			newt_gw_001: #Network.newt_gw_001
+			#Networks.pangolinSite.asExternal
 		}
 
 		services: {
@@ -46,7 +46,7 @@ docuseal: {
 				}
 				expose: [_docuseal.port]
 				volumes: ["\(S.volumes.app_data._ref):/data/docuseal"]
-				networks: ["default", S.networks.newt_gw_001._ref]
+				networks: ["default", #Networks.pangolinSite.name]
 			}
 			db: {
 				image: "docker.io/library/postgres:\(_docuseal.dbVersion)"

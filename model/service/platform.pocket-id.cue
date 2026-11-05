@@ -13,9 +13,6 @@ _pocket_id: {
 			name: "pocket-id_data"
 		}
 	}
-	networks: {
-		gw: ""
-	}
 }
 
 pocket_id: {
@@ -28,25 +25,18 @@ pocket_id: {
 	compose: C={
 		name: "pocket-id"
 
-		secrets: {
-			(_pocket_id.encKeyRef):
-				environment: _pocket_id.encKeyName
-		}
+		secrets: (_pocket_id.encKeyRef): environment: _pocket_id.encKeyName
 
-		networks: {
-			(pangolin_connector._net.ps.name): {name: pangolin_connector._net.ps.name, external: true}
-		}
+		networks: {#Networks.pangolinSite.asExternal}
 
-		volumes: {
-			(_pocket_id.volumes.data.ref): name: _pocket_id.volumes.data.name
-		}
+		volumes: (_pocket_id.volumes.data.ref): name: _pocket_id.volumes.data.name
 
 		services: "pocket-id": {
 			image: "pocketid/pocket-id:\(_pocket_id.version)"
 			secrets: [_pocket_id.encKeyRef]
 			environment: {
 				APP_URL:             "https://id." + cmn.domain.ktbcloud_dotcom
-				TRUST_PROXY:         pangolin_connector._subnet
+				TRUST_PROXY:         pangolin_connector._ipv4_address
 				MAXMIND_LICENSE_KEY: ""
 				PUID:                1000
 				PGID:                1000
@@ -62,11 +52,9 @@ pocket_id: {
 				retries:      2
 				start_period: "10s"
 			}
-			volumes: [
-				"\(_pocket_id.volumes.data.ref):/app/data",
-			]
+			volumes: ["\(_pocket_id.volumes.data.ref):/app/data"]
 			expose: [_pocket_id.port]
-			networks: [pangolin_connector._net.ps.name]
+			networks: [#Networks.pangolinSite.name]
 		}
 	}
 }

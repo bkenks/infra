@@ -39,7 +39,7 @@ paperless: {
 			(svcVol): name: "paperless-\(svcVol)"
 		}}
 		networks: {
-			newt_gw_001: #Network.newt_gw_001
+			#Networks.pangolinSite.asExternal
 		}
 		services: {
 			cache: {
@@ -104,7 +104,7 @@ paperless: {
 					"\(_paperless.bindDir)/export:/usr/src/paperless/export",
 					"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 				]
-				networks: ["default", S.networks.newt_gw_001._ref]
+				networks: ["default", #Networks.pangolinSite.name]
 				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _paperless.port}
 			}
 		}

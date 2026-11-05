@@ -27,7 +27,7 @@ openseo: {
 	compose: S={
 		name: "openseo"
 		volumes: app_data: name: "openseo-app_data"
-		networks: newt_gw_001: #Network.newt_gw_001
+		networks: {#Networks.pangolinSite.asExternal}
 
 		services: app: {
 			image: "ghcr.io/every-app/open-seo:\(_openseo.version)"
@@ -49,7 +49,7 @@ openseo: {
 			}
 			expose: [_openseo.port]
 			volumes: ["\(S.volumes.app_data._ref):/app/.wrangler"]
-			networks: [S.networks.newt_gw_001._ref]
+			networks: [#Networks.pangolinSite.name]
 			healthcheck: #Snippet.services.healthcheck.nodeFetch & {#port: _openseo.port, #path: "/api/health", retries: 3, start_period: "300s"}
 		}
 	}

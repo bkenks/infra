@@ -1,8 +1,8 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: actual-budget
 networks:
-  newt_gw_001:
-    name: newt_gw_001
+  pangolin-site:
+    name: pangolin-site
     external: true
 services:
   app:
@@ -26,7 +26,7 @@ services:
       timeout: 10s
       start_period: 20s
     networks:
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - app_data:/data
 volumes:

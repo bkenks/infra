@@ -39,7 +39,7 @@ komodo: {
 	compose: S={
 		name: "komodo"
 		volumes: keys: name: "komodo-app_keys"
-		networks: newt_gw_001: #Network.newt_gw_001
+		networks: {#Networks.pangolinSite.asExternal}
 		services: {
 			app: {
 				image: "ghcr.io/moghtech/komodo-core:\(_komodo.version)"
@@ -82,7 +82,7 @@ komodo: {
 					"\(_komodo.bindDir)/komodo/data/backups:/backups",
 					"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 				]
-				networks: ["default", S.networks.newt_gw_001._ref]
+				networks: ["default", #Networks.pangolinSite.name]
 				labels: #Snippet.services.labels.komodo_skip
 			}
 			db: {

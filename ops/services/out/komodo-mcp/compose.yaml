@@ -1,8 +1,8 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: komodo-mcp
 networks:
-  newt_gw_001:
-    name: newt_gw_001
+  pangolin-site:
+    name: pangolin-site
     external: true
 services:
   app:
@@ -27,5 +27,5 @@ services:
       options:
         max-size: 10m
     networks:
-      - newt_gw_001
+      - pangolin-site
 volumes: {}

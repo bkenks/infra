@@ -8,9 +8,9 @@ _komodo_mcp: {
 	port:    8000
 }
 
-komodo_mcp: compose: S={
+komodo_mcp: compose: {
 	name: "komodo-mcp"
-	networks: newt_gw_001: #Network.newt_gw_001
+	networks: {#Networks.pangolinSite.asExternal}
 
 	services: app: {
 		// —————————————————————————
@@ -33,7 +33,7 @@ komodo_mcp: compose: S={
 
 		// —————————————————————————
 		networks: [
-			S.networks.newt_gw_001._ref,
+			#Networks.pangolinSite.name,
 		]
 	}
 }

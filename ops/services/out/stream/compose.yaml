@@ -1,8 +1,8 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: stream
 networks:
-  newt_gw_001:
-    name: newt_gw_001
+  pangolin-site:
+    name: pangolin-site
     external: true
 services:
   subtitles:
@@ -29,7 +29,7 @@ services:
       start_period: 30s
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/bazarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
@@ -127,7 +127,7 @@ services:
       start_period: 30s
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/prowlarr/config:/config
   movies:
@@ -154,7 +154,7 @@ services:
       start_period: 30s
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/radarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
@@ -182,7 +182,7 @@ services:
       start_period: 30s
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/sabnzbd/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
@@ -201,7 +201,7 @@ services:
         max-size: 10m
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/seerr/config:/app/config
   tv:
@@ -228,7 +228,7 @@ services:
       start_period: 30s
     networks:
       - default
-      - newt_gw_001
+      - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/sonarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data

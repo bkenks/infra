@@ -8,7 +8,7 @@ _victorialogs: {
 victorialogs: compose: S={
 	name: "victorialogs"
 	volumes: data: name: "victorialogs-logs_data"
-	networks: newt_gw_001: #Network.newt_gw_001
+	networks: {#Networks.pangolinSite.asExternal}
 	services: logs: {
 		image: "docker.io/victoriametrics/victoria-logs:\(_victorialogs.version)"
 		command: [
@@ -17,7 +17,7 @@ victorialogs: compose: S={
 		]
 		ports: ["19428:9428"]
 		volumes: ["\(S.volumes.data._ref):\(_victorialogs.dataPath)"]
-		networks: [S.networks.newt_gw_001._ref]
+		networks: [#Networks.pangolinSite.name]
 		labels: #Snippet.services.labels.komodo_skip
 	}
 }
