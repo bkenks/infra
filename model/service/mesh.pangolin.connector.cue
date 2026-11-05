@@ -66,9 +66,8 @@ pangolin_connector: {
 			}
 			container_name: C.name
 			extra_hosts: ["host.docker.internal:host-gateway"]
-			ipv4_address: _ipv4_address
 			ports: ["\(_port):\(_port)"]
-			networks: [#Networks.pangolinSite.name]
+			networks: (#Networks.pangolinSite.name): ipv4_address: _ipv4_address
 		}
 
 		networks: {

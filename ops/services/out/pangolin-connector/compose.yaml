@@ -16,13 +16,13 @@ services:
       - host.docker.internal:host-gateway
     image: docker.io/fosrl/newt:1.16.0
     restart: unless-stopped
-    ipv4_address: 10.250.0.10
     logging:
       driver: json-file
       options:
         max-size: 10m
     networks:
-      - pangolin-site
+      pangolin-site:
+        ipv4_address: 10.250.0.10
     ports:
       - "51830:51830"
 volumes: {}
