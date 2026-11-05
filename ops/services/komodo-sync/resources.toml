@@ -367,7 +367,14 @@ repo = "stackform-hq/"
 name = "Auto Deploy"
 
 [[procedure.config.stage]]
-name = "Stage 1"
+name = "Sync Resources"
+enabled = true
+executions = [
+  { execution.type = "RunSync", execution.params.sync = "Repo", enabled = true }
+]
+
+[[procedure.config.stage]]
+name = "Deploy Stacks"
 enabled = true
 executions = [
   { execution.type = "BatchDeployStackIfChanged", execution.params.pattern = "*", enabled = true }
