@@ -81,6 +81,9 @@ PG_ADMIN_PASS     = { provider = "onepassword", value = "postgres/PG_ADMIN_PASS"
 POSTGRES_PASSWORD = { provider = "onepassword", value = "postgres/POSTGRES_PASSWORD" }
 POSTGRES_USER     = { provider = "onepassword", value = "postgres/POSTGRES_USER" }
 
+[profiles.searxng.secrets]
+SEARXNG_SECRET = { provider = "onepassword", value = "searxng/SECRET_KEY" }
+
 [profiles.stream.secrets]
 RADARR_API_KEY = { provider = "onepassword", value = "stream/RADARR_API_KEY" }
 SONARR_API_KEY = { provider = "onepassword", value = "stream/SONARR_API_KEY" }

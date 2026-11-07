@@ -1,0 +1,78 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: searxng
+networks:
+  pangolin-site:
+    name: pangolin-site
+    external: true
+services:
+  app:
+    container_name: searxng-app
+    restart: unless-stopped
+    depends_on:
+      cache:
+        condition: service_healthy
+    environment:
+      SEARXNG_BASE_URL: https://search.ktbinternal.com/
+      SEARXNG_SECRET: ${SEARXNG_SECRET:?err}
+      SEARXNG_VALKEY_URL: valkey://searxng-cache:6379/0
+      SEARXNG_LIMITER: "false"
+    expose:
+      - 8080
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD
+        - /usr/local/searxng/.venv/bin/python
+        - -c
+        - import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')
+      timeout: 10s
+      start_period: 30s
+    image: docker.io/searxng/searxng:2026.11.6-ac11e14c5
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    networks:
+      - default
+      - pangolin-site
+    volumes:
+      - app_config:/etc/searxng
+      - app_data:/var/cache/searxng
+  cache:
+    container_name: searxng-cache
+    restart: unless-stopped
+    command:
+      - valkey-server
+      - --save
+      - "300"
+      - "1"
+      - --save
+      - "60"
+      - "1000"
+      - --loglevel
+      - warning
+    image: docker.io/valkey/valkey:9-alpine
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    expose:
+      - 6379
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD
+        - valkey-cli
+        - ping
+      timeout: 5s
+    volumes:
+      - cache_data:/data
+volumes:
+  app_config:
+    name: searxng-app_config
+  app_data:
+    name: searxng-app_data
+  cache_data:
+    name: searxng-cache_data
