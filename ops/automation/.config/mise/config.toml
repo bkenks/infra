@@ -17,4 +17,5 @@ mise run init:ansible
 "init:ansible"      = "ansible-galaxy install -r requirements.yml"
 "init:uv"           = "uv sync"
 lint                = "uv run ansible-lint --offline"
+"place-secrets"     = "uv run ansible-playbook playbooks/maintenance/place_secrets.yml"
 "playbook:run:full" = "uv run ansible-playbook playbooks/site.yml"
