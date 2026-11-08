@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/bkenks/infra/model/common"
+	"github.com/bkenks/infra/model/externals"
 )
 
 pangolin_connector: {
@@ -13,23 +13,25 @@ pangolin_connector: {
 			secret: "SITE_SECRET"
 		}
 		out: {
-			fnox: {
+			compose: {
+				host: (Scr.values.host):     "${\(Scr.values.host):?err}"
+				id: (Scr.values.id):         "${\(Scr.values.id):?err}"
+				secret: (Scr.values.secret): "${\(Scr.values.secret):?err}"
+			}
+			fnox: #Fnox & {
+				providers: #FnoxProviders
 				profiles: {
-					[ProfileName=_]: {
-						secrets: {
-							_P: {
-								provider: #Snippet.fnox.defaultProvider._name
-							}
+					[ProfileName=_]: secrets: {
+						_P: provider: #FnoxProviders._name
 
-							(Scr.values.host): default: ProfileName
+						(Scr.values.host): default: ProfileName
 
-							(Scr.values.id): _P & {
-								value: "hosts.\(ProfileName).newt/\(Scr.values.id)"
-							}
+						(Scr.values.id): _P & {
+							value: "hosts.\(ProfileName).newt/\(Scr.values.id)"
+						}
 
-							(Scr.values.secret): _P & {
-								value: "hosts.\(ProfileName).newt/\(Scr.values.secret)"
-							}
+						(Scr.values.secret): _P & {
+							value: "hosts.\(ProfileName).newt/\(Scr.values.secret)"
 						}
 					}
 
@@ -39,11 +41,6 @@ pangolin_connector: {
 					"000-03F": {}
 				}
 			}
-			compose: {
-				host: (Scr.values.host):     "${\(Scr.values.host):?err}"
-				id: (Scr.values.id):         "${\(Scr.values.id):?err}"
-				secret: (Scr.values.secret): "${\(Scr.values.secret):?err}"
-			}
 		}
 	}
 	_svc: {
@@ -51,7 +48,7 @@ pangolin_connector: {
 	}
 	_ipv4_address: "10.250.0.10"
 
-	fnox: _secrets.out.fnox
+	files: "fnox.toml": {format: "toml", contents: _secrets.out.fnox}
 
 	compose: C={
 		name: "pangolin-connector"
@@ -60,15 +57,15 @@ pangolin_connector: {
 			environment: {
 				_secrets.out.compose.id
 				_secrets.out.compose.secret
-				PANGOLIN_ENDPOINT: common.route.pangolin.public.uri
+				PANGOLIN_ENDPOINT: externals.routes.pangolin.public.uri
 			}
 			container_name: C.name
 			extra_hosts: ["host.docker.internal:host-gateway"]
-			networks: (#Networks.pangolinSite.name): ipv4_address: _ipv4_address
+			networks: (externals.dockerNetworks.pangolinSite.name): ipv4_address: _ipv4_address
 		}
 
 		networks: {
-			#Networks.pangolinSite.asExternal
+			externals.dockerNetworks.pangolinSite.asExternal
 		}
 	}
 }

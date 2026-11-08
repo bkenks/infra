@@ -179,17 +179,36 @@ import (
 }
 
 // ——————————————————————————————————————————————————————————————————————————————————————————————————
+// #Service is one deployable stack.
+//
+// The top section is the service's logical spec — the common things every
+// service defines. The bottom section is what gets rendered: a compose
+// stack plus any number of output files (compose.yaml, fnox.toml, mounted
+// configs, ...). Stacks choose their own file outputs, so replacing a
+// tooling concern means a stack stops emitting that file — no schema changes.
 #Service: {
-	fnox?:   #Fnox
-	compose: #DockerCompose
-	files?: [string]: #File
-}
+	// —— logical spec ——
+	ports?: [string]: int & >0 & <=65535
 
-#Fnox: {
-	root?: bool
-	profiles?: {...}
-	providers?: {...}
-	secrets?: {...}
+	volumes?: [Name=string]: {
+		source!: string // named volume source or host path
+		mount!:  string // path inside the container
+	}
+
+	// secrets maps an environment variable name to where its value comes
+	// from, e.g. "grist/SESSION_SECRET". Tooling-specific renderings of it
+	// (like fnox.toml) are built on top; see _fnox in policy.cue.
+	secrets?: [Env=string]: {
+		source!: string
+		as?:     string // env var name; defaults to the key
+	}
+
+	// —— rendered outputs ——
+	compose: #DockerCompose
+
+	// files are extra files rendered beside compose.yaml. The map key is
+	// the file name; non-string contents are serialized per format.
+	files?: [Path=string]: #File
 }
 
 #DockerCompose: dockercompose.#Schema & {
@@ -224,8 +243,10 @@ import (
 }
 
 // ——————————————————————————————————————————————————————————————————————————————————————————————————
+// #File is one generated file. The map key in #Service.files is the file
+// name. String contents are written verbatim; other values are serialized
+// with format.
 #File: {
-	name: string
-	contents: {...}
-	out: string
+	contents!: _
+	format!:   *"yaml" | "toml"
 }

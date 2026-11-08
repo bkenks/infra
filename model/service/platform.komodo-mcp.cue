@@ -1,16 +1,18 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _komodo_mcp: {
 	version: "1.5.0"
-	host:    "\(komodo_mcp.compose.name).\(common.domain.ktbinternal_dotcom)"
+	host:    "\(komodo_mcp.compose.name).\(externals.domains.ktbinternal_dotcom)"
 	port:    8000
 }
 
 komodo_mcp: compose: {
 	name: "komodo-mcp"
-	networks: {#Networks.pangolinSite.asExternal}
+	networks: {externals.dockerNetworks.pangolinSite.asExternal}
 
 	services: app: {
 		// —————————————————————————
@@ -33,7 +35,7 @@ komodo_mcp: compose: {
 
 		// —————————————————————————
 		networks: [
-			#Networks.pangolinSite.name,
+			externals.dockerNetworks.pangolinSite.name,
 		]
 	}
 }

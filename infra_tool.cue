@@ -8,7 +8,7 @@ import (
 	"tool/file"
 	"tool/exec"
 
-	cmn "github.com/bkenks/infra/model/common"
+	"github.com/bkenks/infra/model/externals"
 	svc "github.com/bkenks/infra/model/service"
 	exp "github.com/bkenks/infra/model/export"
 )
@@ -37,7 +37,7 @@ command: render: {
 	storeNetworks: file.Create & {
 		filename: out.files.networks.absPath
 		contents: cueHeader + yaml.Marshal({
-			docker_networks: [for _, n in svc.#Networks {n.asNew}]
+			docker_networks: [for _, n in externals.dockerNetworks {n.asNew}]
 		})
 	}
 
@@ -47,7 +47,7 @@ command: render: {
 	}
 
 	storePaths: file.Create & {
-		let dir = cmn.directory.server
+		let dir = externals.dirs.host
 		filename: out.files.paths.absPath
 		contents: cueHeader + yaml.Marshal(dir)
 	}
@@ -59,8 +59,8 @@ command: render: {
 		path: outSvc
 	}
 
-	// Each stack renders to <name>/compose.yaml. Stub stacks without services are not
-	// valid Compose files yet.
+	// Each stack renders to <compose.name>/. Stub stacks without services are
+	// not valid Compose files yet.
 	stacks: {
 		for stackKey, stack in svc {
 			let outStk = path.Join([outSvc, stack.compose.name])
@@ -77,21 +77,21 @@ command: render: {
 						contents: cueHeader + yaml.Marshal(stack.compose)
 					}
 				}
-				let _fx = {secrets: *{} | _, profiles: *{} | _} & stack.fnox
-				if len(_fx.secrets) > 0 || len(_fx.profiles) > 0 {
-					writeFnox: file.Create & {
-						$after: mkdir
-						filename: path.Join([outStk, "fnox.toml"])
-						contents: cueHeader + toml.Marshal(stack.fnox)
-					}
-				}
+
+				// Each entry in stack.files is one generated file. Stacks own
+				// their file list, so adding or dropping an output (fnox.toml,
+				// configs, ...) is a model change, not a tool change.
 				if stack.files != _|_ if len(stack.files) > 0 {
-					for _, fv in stack.files {
-						("write" + fv.name): file.Create & {
+					for fpath, fv in stack.files {
+						("write_" + fpath): file.Create & {
 							$after: mkdir
-							filename: path.Join([outStk, fv.name])
-							contents: cueHeader + fv.out
-						}}
+							filename: path.Join([outStk, fpath])
+							contents: cueHeader + [
+								if fv.format == "toml" {toml.Marshal(fv.contents)},
+								if fv.format != "toml" {yaml.Marshal(fv.contents)},
+							][0]
+						}
+					}
 				}
 			}
 		}

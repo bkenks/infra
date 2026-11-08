@@ -1,6 +1,8 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _stream: {
 	bazarrPort:        6767
@@ -21,34 +23,28 @@ _stream: {
 	sonarrDigest:      "sha256:02b4d538d351d6e35882a021c08e8600fe95d28860fb1dd724b597166e7221ca"
 
 	tz:         "America/New_York"
-	bindRoot:   "\(common.directory.server.docker_bindmounts)/stream"
+	bindRoot:   "\(externals.dirs.host.docker_bindmounts)/stream"
 	sharedData: "\(bindRoot)/shared"
 	lsioEnv: {PUID: "1000", PGID: "1000", TZ: tz}
 	arrApiKeys: {
 		RADARR_API_KEY: "${RADARR_API_KEY:?err}"
 		SONARR_API_KEY: "${SONARR_API_KEY:?err}"
 	}
-	configs: common.configs + "/" + stream.compose.name
-	secrets: {
-		radarr_key: "RADARR_API_KEY"
-		sonarr_key: "SONARR_API_KEY"
-	}
+	configs: externals.dirs.repo.configs + "/" + stream.compose.name
 }
 
-stream: {
-	fnox: {
-		secrets: {
-			[_]: provider: #Snippet.fnox.defaultProvider._name
-
-			(_stream.secrets.radarr_key): value: "stream/RADARR_API_KEY"
-			(_stream.secrets.sonarr_key): value: "stream/SONARR_API_KEY"
-		}
+stream: D={
+	secrets: {
+		RADARR_API_KEY: source: "stream/RADARR_API_KEY"
+		SONARR_API_KEY: source: "stream/SONARR_API_KEY"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: S={
 		name: "stream"
-		_webNetworks: ["default", #Networks.pangolinSite.name]
-		networks: {#Networks.pangolinSite.asExternal}
+		_webNetworks: ["default", externals.dockerNetworks.pangolinSite.name]
+		networks: {externals.dockerNetworks.pangolinSite.asExternal}
 		services: {
 			_arrsHealthy: {
 				(movies._ref): condition: "service_healthy"
@@ -74,7 +70,7 @@ stream: {
 					"\(_stream.bindRoot)/configarr/repos:/app/repos",
 				]
 				depends_on: _arrsHealthy
-				restart: "on-failure:3"
+				restart:    "on-failure:3"
 			}
 			janitor: {
 				image:       "ghcr.io/manimatter/decluttarr:\(_stream.decluttarrVersion)"

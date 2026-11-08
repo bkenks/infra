@@ -1,5 +1,9 @@
 package service
 
+import (
+	"github.com/bkenks/infra/model/externals"
+)
+
 _actual_budget: {
 	port:    5006
 	version: "latest"
@@ -9,7 +13,7 @@ actual_budget: compose: S={
 	name: "actual-budget"
 	volumes: app_data: name: "actual-budget-app_data"
 	networks: {
-		#Networks.pangolinSite.asExternal
+		externals.dockerNetworks.pangolinSite.asExternal
 	}
 
 	services: app: {
@@ -17,7 +21,7 @@ actual_budget: compose: S={
 		environment: ACTUAL_PORT: "\(_actual_budget.port)"
 		expose: [_actual_budget.port]
 		volumes: ["\(S.volumes.app_data._ref):/data"]
-		networks: [#Networks.pangolinSite.name]
+		networks: [externals.dockerNetworks.pangolinSite.name]
 		healthcheck: {
 			test: ["CMD-SHELL", "node scripts/health-check.js"]
 			interval:     "60s"
