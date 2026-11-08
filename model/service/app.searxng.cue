@@ -41,10 +41,11 @@ searxng: {
 				image: "docker.io/searxng/searxng:\(_searxng.version)"
 				depends_on: cache: condition: "service_healthy"
 				environment: {
-					SEARXNG_BASE_URL:   "https://\(_searxng.host)/"
-					SEARXNG_SECRET:     "${\(_searxng.secrets.secret_key):?err}"
-					SEARXNG_VALKEY_URL: "valkey://\(S.services.cache.container_name):\(_searxng.cachePort)/0"
-					SEARXNG_LIMITER:    "false"
+					SEARXNG_BASE_URL:       "https://\(_searxng.host)/"
+					SEARXNG_SECRET:         "${\(_searxng.secrets.secret_key):?err}"
+					SEARXNG_VALKEY_URL:     "valkey://\(S.services.cache.container_name):\(_searxng.cachePort)/0"
+					SEARXNG_LIMITER:        "false"
+					SEARXNG_SEARCH_FORMATS: "html,json"
 				}
 				expose: [_searxng.port]
 				volumes: [
