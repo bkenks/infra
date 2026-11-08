@@ -1,5 +1,5 @@
 ---
-pre-push:
+pre-commit:
   jobs:
     - name: "ANSIBLE | lint"
       root: "ops/automation/"
