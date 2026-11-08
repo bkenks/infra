@@ -1,0 +1,12 @@
+---
+system__should_set_hostname: false
+system__should_enable_swap: false
+system__should_enable_unattended_upgrades: false
+system__should_cap_journal: false
+system__should_reboot: false
+system__packages:
+  - neovim
+  - tree
+  - age
+  - rsync
+  - jq

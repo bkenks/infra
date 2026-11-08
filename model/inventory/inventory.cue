@@ -37,4 +37,12 @@ hosts: {
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}
+	
+	blip: schema.#Host & {
+		fqdn: "blip.lan"
+		kind: schema.#Kind.physical
+		roles: [schema.#Role.apps]
+		os:   schema.#OS.ubuntu
+		arch: schema.#Arch.amd64
+	}
 }

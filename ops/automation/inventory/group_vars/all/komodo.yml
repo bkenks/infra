@@ -1,0 +1,16 @@
+---
+komodo_action: install
+komodo_user: root
+komodo_group: root
+komodo_home: /root
+komodo_service_scope: system
+allow_create_komodo_user: false
+allow_modify_komodo_user: false
+komodo_version: "2.1.2"
+komodo_bin_dir: /usr/local/bin
+komodo_config_dir: /etc/komodo
+komodo_root_directory: /etc/komodo
+komodo_server_enabled: true
+komodo_periphery_port: 8120
+komodo_ssl_enabled: true
+komodo_core_public_key: "MCowBQYDK2VuAyEAhH3uosT3alwPFZsU4hAJLwmWLTjeXPwz8jkFDgux5BA="

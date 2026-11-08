@@ -29,7 +29,7 @@ system__timesync_services:
   - systemd-timesyncd
   - chrony
 
-system__timezone: Etc/UTC
+system__timezone: America/New_York
 
 system__wol_interface: "{{ ansible_default_ipv4.interface }}"
 system__wol_mode: g

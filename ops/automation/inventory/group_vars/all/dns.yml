@@ -1,0 +1,4 @@
+---
+coredns__config_files:
+  - "{{ inventory_dir }}/../files/dns/Corefile"
+  - "{{ inventory_dir }}/../files/dns/internal.zone"

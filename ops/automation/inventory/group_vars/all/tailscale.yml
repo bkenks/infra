@@ -1,0 +1,2 @@
+---
+tailscale__authkey: "{{ lookup('env', 'TS_AUTHKEY') }}"

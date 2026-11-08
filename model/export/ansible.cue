@@ -15,6 +15,9 @@ ansible: all: {
 					"role_\(r)": hosts: (n): {}
 				}
 			}
+			if h.kind != _|_ {
+				"kind_\(h.kind)": hosts: (n): {}
+			}
 		}
 	}
 }

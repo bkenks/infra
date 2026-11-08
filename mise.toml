@@ -16,7 +16,7 @@ vendir         = "0.46.2"
 
 [vars]
 config_dir    = "{{config_root}}/.config"
-repo_template = "https://github.com/bkenks/tmpl.configs"
+repo_template = "https://github.com/bkenks/tmpl.repo"
 
 
 [tasks]
@@ -25,9 +25,8 @@ repo_template = "https://github.com/bkenks/tmpl.configs"
 "cue:vet"      = "cue vet -c ./..."
 "enable-tasks" = "fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x"
 "format"       = "treefmt"
-"generate:id"  = 'echo $(openssl rand -hex 3)'
-"generate:urn" = 'echo "urn:uuid:$(uuidgen | tr A-Z a-z)"'
 "vendir:pull"  = "vendir sync"
+"open-ansible" = "codium {{config_root}}/ops/automation"
 
 [tasks."docker:build:fnox"]
 description = 'Build and push image: {{vars.image_ref}}'

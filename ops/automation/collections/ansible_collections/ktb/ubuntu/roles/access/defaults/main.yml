@@ -6,8 +6,24 @@ access__should_enable_fail2ban: true
 access__should_enable_firewall: true
 
 access__admin_user: admin
-access__authorized_keys: []
-access__is_authorized_keys_exclusive: true
+
+# Public keys come from two places, merged and deduplicated:
+# - the SSH agent (ssh-add -L), which is where 1Password and similar agents
+#   expose keys that have no on-disk material. The 1Password socket fallback
+#   covers shells where SSH_AUTH_SOCK is not exported.
+# - *.pub IdentityFile entries in ssh config for this host.
+access__ssh_identity_pubkeys: >-
+  {{ lookup('ansible.builtin.pipe', 'ssh -G ' ~ inventory_hostname).splitlines()
+     | select('match', '^identityfile .*[.]pub$')
+     | map('regex_replace', '^identityfile ', '') | map('expanduser') | list }}
+access__ssh_agent_pubkeys: >-
+  {{ lookup('ansible.builtin.pipe',
+      'ssh-add -L 2>/dev/null || SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ssh-add -L 2>/dev/null || true')
+     .splitlines() | select('match', '^(ssh|sk|ecdsa)-') | list }}
+access__authorized_keys: >-
+  {{ (access__ssh_agent_pubkeys
+      + query('ansible.builtin.file', *access__ssh_identity_pubkeys)) | unique }}
+access__is_authorized_keys_exclusive: false
 access__should_grant_passwordless_sudo: true
 
 access__ssh_port: 22

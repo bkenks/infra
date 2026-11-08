@@ -1,12 +1,17 @@
 ---
-- name: Assert the admin user can get in before root is locked
+- name: Assert the connection is a non-root user
   ansible.builtin.assert:
     that:
-      - access__should_create_admin_user
-      - access__authorized_keys | length > 0
+      - ansible_facts.user_id != 'root'
     fail_msg: >-
-      Refusing to lock root: access__authorized_keys is empty or the admin
-      user is not being created, so locking root would leave no way in.
+      Refusing to lock root while connected as root: there would be no
+      non-root way back in afterwards.
+
+- name: Assert the connection can elevate without a password
+  ansible.builtin.command: sudo -n whoami
+  changed_when: false
+  register: access__sudo_probe
+  failed_when: access__sudo_probe.stdout != 'root'
 
 - name: Lock the root account password
   ansible.builtin.user:
