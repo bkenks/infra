@@ -1,0 +1,39 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: openhands
+networks:
+  pangolin-site:
+    name: pangolin-site
+    external: true
+services:
+  app:
+    container_name: openhands-app
+    restart: unless-stopped
+    environment:
+      OH_SECRET_KEY: ${OH_SECRET_KEY:?err}
+      LOCAL_BACKEND_API_KEY: ${LOCAL_BACKEND_API_KEY:?err}
+      TZ: America/Chicago
+    image: ghcr.io/openhands/agent-canvas:1.37.0
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+    expose:
+      - 8000
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD
+        - node
+        - -e
+        - 'fetch(''http://localhost:8000/'').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))'
+      timeout: 10s
+      start_period: 30s
+    networks:
+      - pangolin-site
+    volumes:
+      - app_state:/home/openhands/.openhands
+      - /srv/docker/bind-mounts/apps/openhands/projects:/projects
+volumes:
+  app_state:
+    name: openhands-app_state

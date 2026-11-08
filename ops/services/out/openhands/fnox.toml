@@ -1,0 +1,15 @@
+# GENERATED from CUE — DO NOT EDIT.
+[providers]
+[providers.onepassword]
+account = 'FUKUXFLIDREQDELXYP2PALUAVY'
+type = '1password'
+vault = 'infra'
+
+[secrets]
+[secrets.LOCAL_BACKEND_API_KEY]
+provider = 'onepassword'
+value = 'openhands/LOCAL_BACKEND_API_KEY'
+
+[secrets.OH_SECRET_KEY]
+provider = 'onepassword'
+value = 'openhands/OH_SECRET_KEY'
