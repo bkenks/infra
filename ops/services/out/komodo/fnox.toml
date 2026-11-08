@@ -2,30 +2,30 @@
 [providers]
 [providers.onepassword]
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'
-type    = '1password'
-vault   = 'infra'
+type = '1password'
+vault = 'infra'
 
 [secrets]
 [secrets.KOMODO_DATABASE_PASSWORD]
 provider = 'onepassword'
-value    = 'komodo/KOMODO_DATABASE_PASSWORD'
+value = 'komodo/KOMODO_DATABASE_PASSWORD'
 
 [secrets.KOMODO_DATABASE_USERNAME]
 provider = 'onepassword'
-value    = 'komodo/KOMODO_DATABASE_USERNAME'
+value = 'komodo/KOMODO_DATABASE_USERNAME'
 
 [secrets.KOMODO_JWT_SECRET]
 provider = 'onepassword'
-value    = 'komodo/KOMODO_JWT_SECRET'
+value = 'komodo/KOMODO_JWT_SECRET'
 
 [secrets.KOMODO_WEBHOOK_SECRET]
 provider = 'onepassword'
-value    = 'komodo/KOMODO_WEBHOOK_SECRET'
+value = 'komodo/KOMODO_WEBHOOK_SECRET'
 
 [secrets.MONGO_INITDB_ROOT_PASSWORD]
 provider = 'onepassword'
-value    = 'komodo/MONGO_INITDB_ROOT_PASSWORD'
+value = 'komodo/MONGO_INITDB_ROOT_PASSWORD'
 
 [secrets.MONGO_INITDB_ROOT_USERNAME]
 provider = 'onepassword'
-value    = 'komodo/MONGO_INITDB_ROOT_USERNAME'
+value = 'komodo/MONGO_INITDB_ROOT_USERNAME'

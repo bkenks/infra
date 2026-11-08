@@ -2,14 +2,14 @@
 [providers]
 [providers.onepassword]
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'
-type    = '1password'
-vault   = 'infra'
+type = '1password'
+vault = 'infra'
 
 [secrets]
 [secrets.POSTGRES_PASSWORD]
 provider = 'onepassword'
-value    = 'docuseal/POSTGRES_PASSWORD'
+value = 'docuseal/POSTGRES_PASSWORD'
 
 [secrets.SECRET_KEY_BASE]
 provider = 'onepassword'
-value    = 'docuseal/SECRET_KEY_BASE'
+value = 'docuseal/SECRET_KEY_BASE'

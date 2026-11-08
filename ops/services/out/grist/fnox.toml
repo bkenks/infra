@@ -2,26 +2,26 @@
 [providers]
 [providers.onepassword]
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'
-type    = '1password'
-vault   = 'infra'
+type = '1password'
+vault = 'infra'
 
 [secrets]
 [secrets.GRIST_DEFAULT_EMAIL]
 provider = 'onepassword'
-value    = 'grist/DEFAULT_EMAIL'
+value = 'grist/DEFAULT_EMAIL'
 
 [secrets.GRIST_OIDC_IDP_CLIENT_ID]
 provider = 'onepassword'
-value    = 'grist/OIDC_CLIENT_ID'
+value = 'grist/OIDC_CLIENT_ID'
 
 [secrets.GRIST_OIDC_IDP_CLIENT_SECRET]
 provider = 'onepassword'
-value    = 'grist/OIDC_CLIENT_SECRET'
+value = 'grist/OIDC_CLIENT_SECRET'
 
 [secrets.GRIST_SESSION_SECRET]
 provider = 'onepassword'
-value    = 'grist/SESSION_SECRET'
+value = 'grist/SESSION_SECRET'
 
 [secrets.POSTGRES_PASSWORD]
 provider = 'onepassword'
-value    = 'grist/POSTGRES_PASSWORD'
+value = 'grist/POSTGRES_PASSWORD'

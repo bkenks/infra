@@ -2,14 +2,14 @@
 [providers]
 [providers.onepassword]
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'
-type    = '1password'
-vault   = 'infra'
+type = '1password'
+vault = 'infra'
 
 [secrets]
 [secrets.RADARR_API_KEY]
 provider = 'onepassword'
-value    = 'stream/RADARR_API_KEY'
+value = 'stream/RADARR_API_KEY'
 
 [secrets.SONARR_API_KEY]
 provider = 'onepassword'
-value    = 'stream/SONARR_API_KEY'
+value = 'stream/SONARR_API_KEY'
