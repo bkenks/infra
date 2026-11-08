@@ -1,6 +1,8 @@
 package service
 
-import cmn "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _pocket_id: {
 	version:    "v2"
@@ -15,19 +17,19 @@ _pocket_id: {
 	}
 }
 
-pocket_id: {
-	fnox: {
-		secrets: {
-			(_pocket_id.encKeyName): {provider: "onepassword", value: "pocket-id/encryption_key"}
-		}
+pocket_id: D={
+	secrets: {
+		ENC_KEY: source: "pocket-id/encryption_key"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: C={
 		name: "pocket-id"
 
 		secrets: (_pocket_id.encKeyRef): environment: _pocket_id.encKeyName
 
-		networks: {#Networks.pangolinSite.asExternal}
+		networks: {externals.dockerNetworks.pangolinSite.asExternal}
 
 		volumes: (_pocket_id.volumes.data.ref): name: _pocket_id.volumes.data.name
 
@@ -35,7 +37,7 @@ pocket_id: {
 			image: "pocketid/pocket-id:\(_pocket_id.version)"
 			secrets: [_pocket_id.encKeyRef]
 			environment: {
-				APP_URL:             "https://id." + cmn.domain.ktbcloud_dotcom
+				APP_URL:             "https://id." + externals.domains.ktbcloud_dotcom
 				TRUST_PROXY:         pangolin_connector._ipv4_address
 				MAXMIND_LICENSE_KEY: ""
 				PUID:                1000
@@ -54,7 +56,7 @@ pocket_id: {
 			}
 			volumes: ["\(_pocket_id.volumes.data.ref):/app/data"]
 			expose: [_pocket_id.port]
-			networks: [#Networks.pangolinSite.name]
+			networks: [externals.dockerNetworks.pangolinSite.name]
 		}
 	}
 }

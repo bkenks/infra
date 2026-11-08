@@ -1,33 +1,28 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _openseo: {
 	port:    3001
 	version: "0.1.13"
-	host:    "seo.\(common.domain.ktbinternal_dotcom)"
-	secrets: {
-		dataforseo_key: "DATAFORSEO_API_KEY"
-		openrouter_key: "OPENROUTER_API_KEY"
-		auth_secret:    "BETTER_AUTH_SECRET"
-	}
+	host:    "seo.\(externals.domains.ktbinternal_dotcom)"
 }
 
-openseo: {
-	fnox: {
-		secrets: {
-			[_]: provider: #Snippet.fnox.defaultProvider._name
-
-			(_openseo.secrets.dataforseo_key): value: "openseo/DATAFORSEO_API_KEY"
-			(_openseo.secrets.openrouter_key): value: "openrouter/credential"
-			(_openseo.secrets.auth_secret): value:    "openseo/BETTER_AUTH_SECRET"
-		}
+openseo: D={
+	secrets: {
+		DATAFORSEO_API_KEY: source: "openseo/DATAFORSEO_API_KEY"
+		OPENROUTER_API_KEY: source: "openrouter/credential"
+		BETTER_AUTH_SECRET: source: "openseo/BETTER_AUTH_SECRET"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: S={
 		name: "openseo"
 		volumes: app_data: name: "openseo-app_data"
-		networks: {#Networks.pangolinSite.asExternal}
+		networks: {externals.dockerNetworks.pangolinSite.asExternal}
 
 		services: app: {
 			image: "ghcr.io/every-app/open-seo:\(_openseo.version)"
@@ -49,7 +44,7 @@ openseo: {
 			}
 			expose: [_openseo.port]
 			volumes: ["\(S.volumes.app_data._ref):/app/.wrangler"]
-			networks: [#Networks.pangolinSite.name]
+			networks: [externals.dockerNetworks.pangolinSite.name]
 			healthcheck: #Snippet.services.healthcheck.nodeFetch & {#port: _openseo.port, #path: "/api/health", retries: 3, start_period: "300s"}
 		}
 	}

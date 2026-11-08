@@ -1,6 +1,8 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _agent: {
 	version: "0.58.0"
@@ -21,7 +23,7 @@ agent: {
 			volumes: [
 				"\(S.volumes.log_agent_buffer._ref):/var/lib/vector",
 				"\(#Snippet.services.volumes.docker_sock):ro",
-				"\(common.configs)/\(S.name)/vector.yaml:/etc/vector/vector.yaml:ro",
+				"\(externals.dirs.repo.configs)/\(S.name)/vector.yaml:/etc/vector/vector.yaml:ro",
 			]
 			labels: #Snippet.services.labels.komodo_skip
 		}

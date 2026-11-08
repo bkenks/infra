@@ -1,6 +1,8 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _immich: {
 	port:       2283
@@ -8,26 +10,20 @@ _immich: {
 	dbImage:    "ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23"
 	cacheImage: "docker.io/valkey/valkey:9@sha256:8436e10bc65c94886a91d4415b6a6dfa9cb5a306fb3b996e5bb67cd2b4854193"
 	tz:         "America/New_York"
-	bindDir:    "\(common.directory.server.docker_bindmounts)/apps/immich"
-	secrets: {
-		db_pass: "DB_PASSWORD"
-		pg_pass: "POSTGRES_PASSWORD"
-	}
+	bindDir:    "\(externals.dirs.host.docker_bindmounts)/apps/immich"
 }
 
-immich: {
-	fnox: {
-		secrets: {
-			[_]: provider: #Snippet.fnox.defaultProvider._name
-
-			(_immich.secrets.db_pass): value: "immich/DB_PASSWORD"
-			(_immich.secrets.pg_pass): value: "immich/POSTGRES_PASSWORD"
-		}
+immich: D={
+	secrets: {
+		DB_PASSWORD: source:       "immich/DB_PASSWORD"
+		POSTGRES_PASSWORD: source: "immich/POSTGRES_PASSWORD"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: S={
 		name: "immich"
-		networks: {#Networks.pangolinSite.asExternal}
+		networks: {externals.dockerNetworks.pangolinSite.asExternal}
 		services: {
 			db: {
 				image: _immich.dbImage
@@ -62,7 +58,7 @@ immich: {
 				}
 				expose: [_immich.port]
 				volumes: ["/mnt/immich-library:/data"]
-				networks: ["default", #Networks.pangolinSite.name]
+				networks: ["default", externals.dockerNetworks.pangolinSite.name]
 				devices: ["/dev/dri:/dev/dri"]
 			}
 		}

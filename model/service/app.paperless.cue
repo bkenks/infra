@@ -1,9 +1,11 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _paperless: {
-	host:             "paper.\(common.domain.ktbinternal_dotcom)"
+	host:             "paper.\(externals.domains.ktbinternal_dotcom)"
 	cachePort:        6379
 	dbPort:           5432
 	converterPort:    3000
@@ -14,24 +16,17 @@ _paperless: {
 	converterVersion: "8.25"
 	parserVersion:    "latest"
 	version:          "latest"
-	bindDir:          "\(common.directory.server.docker_bindmounts)/apps/paperless"
-	secrets: {
-		db_pass:    "PAPERLESS_DBPASS"
-		secret_key: "PAPERLESS_SECRET_KEY"
-		pg_pass:    "POSTGRES_PASSWORD"
-	}
+	bindDir:          "\(externals.dirs.host.docker_bindmounts)/apps/paperless"
 }
 
-paperless: {
-	fnox: {
-		secrets: {
-			[_]: provider: #Snippet.fnox.defaultProvider._name
-
-			(_paperless.secrets.db_pass): value:    "paperless/PAPERLESS_DBPASS"
-			(_paperless.secrets.secret_key): value: "paperless/PAPERLESS_SECRET_KEY"
-			(_paperless.secrets.pg_pass): value:    "paperless/POSTGRES_PASSWORD"
-		}
+paperless: D={
+	secrets: {
+		PAPERLESS_DBPASS: source:     "paperless/PAPERLESS_DBPASS"
+		PAPERLESS_SECRET_KEY: source: "paperless/PAPERLESS_SECRET_KEY"
+		POSTGRES_PASSWORD: source:    "paperless/POSTGRES_PASSWORD"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: S={
 		name: "paperless"
@@ -39,7 +34,7 @@ paperless: {
 			(svcVol): name: "paperless-\(svcVol)"
 		}}
 		networks: {
-			#Networks.pangolinSite.asExternal
+			externals.dockerNetworks.pangolinSite.asExternal
 		}
 		services: {
 			cache: {
@@ -104,7 +99,7 @@ paperless: {
 					"\(_paperless.bindDir)/export:/usr/src/paperless/export",
 					"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 				]
-				networks: ["default", #Networks.pangolinSite.name]
+				networks: ["default", externals.dockerNetworks.pangolinSite.name]
 				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _paperless.port}
 			}
 		}

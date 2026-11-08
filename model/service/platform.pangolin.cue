@@ -2,7 +2,8 @@ package service
 
 import (
 	"strings"
-	"github.com/bkenks/infra/model/common"
+
+	"github.com/bkenks/infra/model/externals"
 )
 
 _pangolin: {
@@ -11,10 +12,10 @@ _pangolin: {
 	traefikVersion: "v3.6"
 	busyboxVersion: "1.37.0"
 	port:           3001
-	_dbm:           common.directory.server.docker_bindmounts
+	_dbm:           externals.dirs.host.docker_bindmounts
 	configDir:      _dbm + "/pangolin/config"
 
-	configs: common.configs + "/" + pangolin.compose.name
+	configs: externals.dirs.repo.configs + "/" + pangolin.compose.name
 
 	geoliteMirror: "https://github.com/GitSquared/node-geolite2-redist/raw/refs/heads/master/redist/"
 	initDir:       "/app/config"
@@ -33,23 +34,16 @@ _pangolin: {
 		"chmod -R 755 \(initDir)/traefik \(initDir)/letsencrypt \(initDir)/GeoLite2-*.mmdb",
 		"chmod 600 \(initDir)/letsencrypt/acme.json",
 	], " && ")
-	secrets: {
-		cf_token:      "CF_DNS_API_TOKEN"
-		smtp_pass:     "EMAIL_SMTP_PASS"
-		server_secret: "SERVER_SECRET"
-	}
 }
 
-pangolin: {
-	fnox: {
-		secrets: {
-			[_]: provider: #Snippet.fnox.defaultProvider._name
-
-			(_pangolin.secrets.cf_token): value:      "traefik/CF_DNS_API_TOKEN"
-			(_pangolin.secrets.smtp_pass): value:     "apps.pangolin/EMAIL_SMTP_PASS"
-			(_pangolin.secrets.server_secret): value: "apps.pangolin/SERVER_SECRET"
-		}
+pangolin: D={
+	secrets: {
+		CF_DNS_API_TOKEN: source: "traefik/CF_DNS_API_TOKEN"
+		EMAIL_SMTP_PASS: source:  "apps.pangolin/EMAIL_SMTP_PASS"
+		SERVER_SECRET: source:    "apps.pangolin/SERVER_SECRET"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: S={
 		name: "pangolin"

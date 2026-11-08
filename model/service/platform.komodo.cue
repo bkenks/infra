@@ -1,45 +1,37 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _komodo: {
-	host:         "komo.\(common.domain.ktbinternal_dotcom)"
-	webhookHost:  "komo-hooks.\(common.domain.ktbcloud_dotcom)"
+	host:         "komo.\(externals.domains.ktbinternal_dotcom)"
+	webhookHost:  "komo-hooks.\(externals.domains.ktbcloud_dotcom)"
 	port:         9120
 	mongoPort:    27017
 	version:      "2.1.2"
 	mongoVersion: "8.2.4"
 
-	_bm:     common.directory.server.docker_bindmounts
+	_bm:     externals.dirs.host.docker_bindmounts
 	bindDir: _bm + "/dcm"
-	secrets: {
-		db_user:        "KOMODO_DATABASE_USERNAME"
-		db_pass:        "KOMODO_DATABASE_PASSWORD"
-		jwt_secret:     "KOMODO_JWT_SECRET"
-		webhook_secret: "KOMODO_WEBHOOK_SECRET"
-		mongo_user:     "MONGO_INITDB_ROOT_USERNAME"
-		mongo_pass:     "MONGO_INITDB_ROOT_PASSWORD"
-	}
 }
 
-komodo: {
-	fnox: {
-		secrets: {
-			[_]: provider: #Snippet.fnox.defaultProvider._name
-
-			(_komodo.secrets.db_user): value:        "komodo/KOMODO_DATABASE_USERNAME"
-			(_komodo.secrets.db_pass): value:        "komodo/KOMODO_DATABASE_PASSWORD"
-			(_komodo.secrets.jwt_secret): value:     "komodo/KOMODO_JWT_SECRET"
-			(_komodo.secrets.webhook_secret): value: "komodo/KOMODO_WEBHOOK_SECRET"
-			(_komodo.secrets.mongo_user): value:     "komodo/MONGO_INITDB_ROOT_USERNAME"
-			(_komodo.secrets.mongo_pass): value:     "komodo/MONGO_INITDB_ROOT_PASSWORD"
-		}
+komodo: D={
+	secrets: {
+		KOMODO_DATABASE_USERNAME: source:   "komodo/KOMODO_DATABASE_USERNAME"
+		KOMODO_DATABASE_PASSWORD: source:   "komodo/KOMODO_DATABASE_PASSWORD"
+		KOMODO_JWT_SECRET: source:          "komodo/KOMODO_JWT_SECRET"
+		KOMODO_WEBHOOK_SECRET: source:      "komodo/KOMODO_WEBHOOK_SECRET"
+		MONGO_INITDB_ROOT_USERNAME: source: "komodo/MONGO_INITDB_ROOT_USERNAME"
+		MONGO_INITDB_ROOT_PASSWORD: source: "komodo/MONGO_INITDB_ROOT_PASSWORD"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: S={
 		name: "komodo"
 		volumes: keys: name: "komodo-app_keys"
-		networks: {#Networks.pangolinSite.asExternal}
+		networks: {externals.dockerNetworks.pangolinSite.asExternal}
 		services: {
 			app: {
 				image: "ghcr.io/moghtech/komodo-core:\(_komodo.version)"
@@ -82,7 +74,7 @@ komodo: {
 					"\(_komodo.bindDir)/komodo/data/backups:/backups",
 					"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 				]
-				networks: ["default", #Networks.pangolinSite.name]
+				networks: ["default", externals.dockerNetworks.pangolinSite.name]
 				labels: #Snippet.services.labels.komodo_skip
 			}
 			db: {

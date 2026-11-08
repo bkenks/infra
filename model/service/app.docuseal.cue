@@ -1,28 +1,24 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _docuseal: {
 	port:      3000
 	dbPort:    5432
 	version:   "2.5.3"
 	dbVersion: "18"
-	host:      "docuseal.\(common.domain.ktbcloud_dotcom)"
-	secrets: {
-		key_base: "SECRET_KEY_BASE"
-		db_pass:  "POSTGRES_PASSWORD"
-	}
+	host:      "docuseal.\(externals.domains.ktbcloud_dotcom)"
 }
 
-docuseal: {
-	fnox: {
-		secrets: {
-			[_]: provider: #Snippet.fnox.defaultProvider._name
-
-			(_docuseal.secrets.key_base): value: "docuseal/SECRET_KEY_BASE"
-			(_docuseal.secrets.db_pass): value:  "docuseal/POSTGRES_PASSWORD"
-		}
+docuseal: D={
+	secrets: {
+		SECRET_KEY_BASE: source:   "docuseal/SECRET_KEY_BASE"
+		POSTGRES_PASSWORD: source: "docuseal/POSTGRES_PASSWORD"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: S={
 		name: "docuseal"
@@ -31,7 +27,7 @@ docuseal: {
 			db_data: name:  "postgres-db_data"
 		}
 		networks: {
-			#Networks.pangolinSite.asExternal
+			externals.dockerNetworks.pangolinSite.asExternal
 		}
 
 		services: {
@@ -46,7 +42,7 @@ docuseal: {
 				}
 				expose: [_docuseal.port]
 				volumes: ["\(S.volumes.app_data._ref):/data/docuseal"]
-				networks: ["default", #Networks.pangolinSite.name]
+				networks: ["default", externals.dockerNetworks.pangolinSite.name]
 			}
 			db: {
 				image: "docker.io/library/postgres:\(_docuseal.dbVersion)"

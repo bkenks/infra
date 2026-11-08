@@ -1,27 +1,24 @@
 package service
 
-import "github.com/bkenks/infra/model/common"
+import (
+	"github.com/bkenks/infra/model/externals"
+)
 
 _searxng: {
-	host:         "search.\(common.domain.ktbinternal_dotcom)"
+	host:         "search.\(externals.domains.ktbinternal_dotcom)"
 	port:         8080
 	cachePort:    6379
 	version:      "2026.11.6-ac11e14c5"
 	cacheVersion: "9-alpine"
-	secrets: {
-		secret_key: "SEARXNG_SECRET"
-	}
-	opItem: "searxng"
+	opItem:       "searxng"
 }
 
-searxng: {
-	fnox: {
-		secrets: {
-			[_]: provider: #Snippet.fnox.defaultProvider._name
-
-			(_searxng.secrets.secret_key): value: "\(_searxng.opItem)/SECRET_KEY"
-		}
+searxng: D={
+	secrets: {
+		SEARXNG_SECRET: source: "\(_searxng.opItem)/SECRET_KEY"
 	}
+
+	files: "fnox.toml": {format: "toml", contents: D._fnox}
 
 	compose: S={
 		name: "searxng"
@@ -33,7 +30,7 @@ searxng: {
 		}
 
 		networks: {
-			#Networks.pangolinSite.asExternal
+			externals.dockerNetworks.pangolinSite.asExternal
 		}
 
 		services: {
@@ -42,7 +39,7 @@ searxng: {
 				depends_on: cache: condition: "service_healthy"
 				environment: {
 					SEARXNG_BASE_URL:       "https://\(_searxng.host)/"
-					SEARXNG_SECRET:         "${\(_searxng.secrets.secret_key):?err}"
+					SEARXNG_SECRET:         "${SEARXNG_SECRET:?err}"
 					SEARXNG_VALKEY_URL:     "valkey://\(S.services.cache.container_name):\(_searxng.cachePort)/0"
 					SEARXNG_LIMITER:        "false"
 					SEARXNG_SEARCH_FORMATS: "html,json"
@@ -53,7 +50,7 @@ searxng: {
 					"\(S.volumes.app_config._ref):/etc/searxng",
 					"\(S.volumes.app_data._ref):/var/cache/searxng",
 				]
-				networks: ["default", #Networks.pangolinSite.name]
+				networks: ["default", externals.dockerNetworks.pangolinSite.name]
 				// Image ships no curl; use the app's venv Python.
 				healthcheck: {
 					test: [
