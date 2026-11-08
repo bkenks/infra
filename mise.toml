@@ -25,8 +25,8 @@ repo_template = "https://github.com/bkenks/tmpl.repo"
 "cue:vet"      = "cue vet -c ./..."
 "enable-tasks" = "fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x"
 "format"       = "treefmt"
-"vendir:pull"  = "vendir sync"
 "open-ansible" = "codium {{config_root}}/ops/automation"
+"vendir:pull"  = "vendir sync"
 
 [tasks."docker:build:fnox"]
 description = 'Build and push image: {{vars.image_ref}}'

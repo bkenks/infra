@@ -15,7 +15,7 @@ openhands: D={
 		LOCAL_BACKEND_API_KEY: source: "openhands/LOCAL_BACKEND_API_KEY"
 		OH_SECRET_KEY: {
 			source: "openhands/OH_SECRET_KEY"
-			as: "OH_SECRET_KEY"
+			as:     "OH_SECRET_KEY"
 		}
 	}
 
@@ -32,8 +32,8 @@ openhands: D={
 				// Public mode: the key is not injected into the frontend;
 				// the gateway in front supplies access control.
 				(secrets.OH_SECRET_KEY.as): "${\(secrets.OH_SECRET_KEY.as):?err}"
-				LOCAL_BACKEND_API_KEY: "${LOCAL_BACKEND_API_KEY:?err}"
-				TZ:                    "America/Chicago"
+				LOCAL_BACKEND_API_KEY:      "${LOCAL_BACKEND_API_KEY:?err}"
+				TZ:                         "America/Chicago"
 			}
 			expose: [_openhands.port]
 			volumes: [

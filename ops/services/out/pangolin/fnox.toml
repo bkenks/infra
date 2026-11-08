@@ -2,18 +2,18 @@
 [providers]
 [providers.onepassword]
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'
-type = '1password'
-vault = 'infra'
+type    = '1password'
+vault   = 'infra'
 
 [secrets]
 [secrets.CF_DNS_API_TOKEN]
 provider = 'onepassword'
-value = 'traefik/CF_DNS_API_TOKEN'
+value    = 'traefik/CF_DNS_API_TOKEN'
 
 [secrets.EMAIL_SMTP_PASS]
 provider = 'onepassword'
-value = 'apps.pangolin/EMAIL_SMTP_PASS'
+value    = 'apps.pangolin/EMAIL_SMTP_PASS'
 
 [secrets.SERVER_SECRET]
 provider = 'onepassword'
-value = 'apps.pangolin/SERVER_SECRET'
+value    = 'apps.pangolin/SERVER_SECRET'

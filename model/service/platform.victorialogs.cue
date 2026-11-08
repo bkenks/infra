@@ -22,6 +22,6 @@ victorialogs: compose: S={
 		ports: ["19428:9428"]
 		volumes: ["\(S.volumes.data._ref):\(_victorialogs.dataPath)"]
 		networks: [externals.dockerNetworks.pangolinSite.name]
-		labels: #Snippet.services.labels.komodo_skip
+		labels: #Snippet.services.labels.komodoSkip
 	}
 }

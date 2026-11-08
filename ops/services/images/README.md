@@ -1,6 +1,7 @@
 # Docker Images
 
 ## Multi Platform Builds (MacOS)
+
 **Prereqs:** Colima, Docker, Buildx
 
 ### Setup
@@ -18,7 +19,7 @@ memory: 4
 arch: aarch64
 runtime: docker
 vmType: vz
-rosetta: true  # allows fast amd64 building on MacOS
+rosetta: true # allows fast amd64 building on MacOS
 binfmt: true
 nestedVirtualization: false
 cpuType: ""
@@ -46,7 +47,7 @@ docker run --privileged --rm tonistiigi/binfmt --install all
 
 **Build and push:**
 
-*Can't store other platform images on host by default, so push completed builds right away*
+_Can't store other platform images on host by default, so push completed builds right away_
 
 ```shell
 docker buildx build \

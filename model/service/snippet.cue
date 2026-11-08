@@ -37,14 +37,14 @@ package service
 				start_period: *"30s" | string
 			}
 		}
-		extra_hosts: {
-			host_gateway: "host.docker.internal:host-gateway"
+		extraHosts: {
+			hostGateway: "host.docker.internal:host-gateway"
 		}
 		labels: {
-			komodo_skip: "komodo.skip": ""
+			komodoSkip: "komodo.skip": ""
 		}
 		volumes: {
-			docker_sock: "/var/run/docker.sock:/var/run/docker.sock"
+			dockerSock: "/var/run/docker.sock:/var/run/docker.sock"
 		}
 	}
 }

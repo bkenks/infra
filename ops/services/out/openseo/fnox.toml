@@ -2,18 +2,18 @@
 [providers]
 [providers.onepassword]
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'
-type = '1password'
-vault = 'infra'
+type    = '1password'
+vault   = 'infra'
 
 [secrets]
 [secrets.BETTER_AUTH_SECRET]
 provider = 'onepassword'
-value = 'openseo/BETTER_AUTH_SECRET'
+value    = 'openseo/BETTER_AUTH_SECRET'
 
 [secrets.DATAFORSEO_API_KEY]
 provider = 'onepassword'
-value = 'openseo/DATAFORSEO_API_KEY'
+value    = 'openseo/DATAFORSEO_API_KEY'
 
 [secrets.OPENROUTER_API_KEY]
 provider = 'onepassword'
-value = 'openrouter/credential'
+value    = 'openrouter/credential'

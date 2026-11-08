@@ -22,10 +22,10 @@ agent: {
 			environment: HOST: "${HOST:?err}"
 			volumes: [
 				"\(S.volumes.log_agent_buffer._ref):/var/lib/vector",
-				"\(#Snippet.services.volumes.docker_sock):ro",
+				"\(#Snippet.services.volumes.dockerSock):ro",
 				"\(externals.dirs.repo.configs)/\(S.name)/vector.yaml:/etc/vector/vector.yaml:ro",
 			]
-			labels: #Snippet.services.labels.komodo_skip
+			labels: #Snippet.services.labels.komodoSkip
 		}
 	}
 }

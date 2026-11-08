@@ -75,7 +75,7 @@ komodo: D={
 					"\(_komodo.bindDir)/komodo/data/syncs:/syncs",
 				]
 				networks: ["default", externals.dockerNetworks.pangolinSite.name]
-				labels: #Snippet.services.labels.komodo_skip
+				labels: #Snippet.services.labels.komodoSkip
 			}
 			db: {
 				image: "docker.io/library/mongo:\(_komodo.mongoVersion)"
@@ -89,7 +89,7 @@ komodo: D={
 					"\(_komodo.bindDir)/mongo/data:/data/db",
 					"\(_komodo.bindDir)/mongo/config:/data/configdb",
 				]
-				labels: #Snippet.services.labels.komodo_skip
+				labels: #Snippet.services.labels.komodoSkip
 			}
 		}
 	}

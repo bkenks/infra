@@ -2,14 +2,14 @@
 [providers]
 [providers.onepassword]
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'
-type = '1password'
-vault = 'infra'
+type    = '1password'
+vault   = 'infra'
 
 [secrets]
 [secrets.DB_PASSWORD]
 provider = 'onepassword'
-value = 'immich/DB_PASSWORD'
+value    = 'immich/DB_PASSWORD'
 
 [secrets.POSTGRES_PASSWORD]
 provider = 'onepassword'
-value = 'immich/POSTGRES_PASSWORD'
+value    = 'immich/POSTGRES_PASSWORD'

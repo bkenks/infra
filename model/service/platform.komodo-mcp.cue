@@ -28,9 +28,9 @@ komodo_mcp: compose: {
 		expose: [_komodo_mcp.port]
 
 		// —————————————————————————
-		labels: #Snippet.services.labels.komodo_skip
+		labels: #Snippet.services.labels.komodoSkip
 		extra_hosts: [
-			#Snippet.services.extra_hosts.host_gateway,
+			#Snippet.services.extraHosts.hostGateway,
 		]
 
 		// —————————————————————————
