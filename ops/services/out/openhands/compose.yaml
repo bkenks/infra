@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   app:
-    container_name: openhands-app
     restart: unless-stopped
+    container_name: openhands-app
     environment:
       OH_SECRET_KEY: ${OH_SECRET_KEY:?err}
       LOCAL_BACKEND_API_KEY: ${LOCAL_BACKEND_API_KEY:?err}

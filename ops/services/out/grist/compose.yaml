@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   app:
-    container_name: grist-app
     restart: unless-stopped
+    container_name: grist-app
     depends_on:
       cache:
         condition: service_healthy
@@ -49,8 +49,8 @@ services:
     volumes:
       - app_data:/persist
   cache:
-    container_name: grist-cache
     restart: unless-stopped
+    container_name: grist-cache
     image: docker.io/library/redis:8
     expose:
       - 6379
@@ -65,8 +65,8 @@ services:
     volumes:
       - cache_data:/data
   db:
-    container_name: grist-db
     restart: unless-stopped
+    container_name: grist-db
     environment:
       POSTGRES_USER: grist
       POSTGRES_DB: grist

@@ -39,6 +39,7 @@ services:
       - ../../configs/pangolin/config.yaml:/app/config/config.yml:ro
       - ../../configs/pangolin/privateConfig.yaml:/app/config/privateConfig.yml:ro
   tunnel:
+    restart: unless-stopped
     cap_add:
       - NET_ADMIN
       - SYS_MODULE
@@ -59,17 +60,16 @@ services:
       - "80:80"
       - "22:22"
       - "18022:18022"
-    restart: unless-stopped
     volumes:
       - /srv/docker/bind-mounts/pangolin/config:/var/config
   proxy:
+    restart: unless-stopped
     command:
       - --configFile=/etc/traefik/traefik_config.yml
     container_name: traefik
     environment:
       CF_DNS_API_TOKEN: ${CF_DNS_API_TOKEN:?err}
     image: docker.io/library/traefik:v3.6
-    restart: unless-stopped
     depends_on:
       app:
         condition: service_healthy
@@ -79,4 +79,3 @@ services:
       - ../../configs/pangolin/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro
       - /srv/docker/bind-mounts/pangolin/config/letsencrypt:/letsencrypt
       - /srv/docker/bind-mounts/pangolin/config/traefik/logs:/var/log/traefik
-volumes: {}

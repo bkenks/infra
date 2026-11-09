@@ -1,6 +1,5 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: git-clone
-networks: {}
 services:
   git:
     command:
@@ -15,4 +14,3 @@ services:
       - type: bind
         source: /volume1/repos
         target: /repos
-volumes: {}

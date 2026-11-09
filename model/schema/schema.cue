@@ -71,22 +71,21 @@ _AssignIDs: [ID=_]: {_ID: ID}
 #DockerCompose: dc.#Schema & {
 	name!: encoding.#Kebab
 
-	networks: {
+	networks?: {
 		[string]: {
 			name!: string
 		}
 	}
 
-	volumes: {
+	volumes?: {
 		[string]: {
 			name!: string
 		}
 	}
 
-	services: {
+	services?: {
 		[string]: {
 			container_name!: encoding.#Kebab
-			restart:         *"unless-stopped" | string
 		}
 	}
 }

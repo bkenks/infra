@@ -9,6 +9,7 @@ secrets:
     environment: ENC_KEY
 services:
   pocket-id:
+    restart: unless-stopped
     container_name: pocket-id
     environment:
       APP_URL: https://id.ktbcloud.com
@@ -31,7 +32,6 @@ services:
     image: pocketid/pocket-id:v2
     networks:
       - pangolin-site
-    restart: unless-stopped
     secrets:
       - encryption_key
     volumes:

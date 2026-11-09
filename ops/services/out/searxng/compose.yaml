@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   app:
-    container_name: searxng-app
     restart: unless-stopped
+    container_name: searxng-app
     depends_on:
       cache:
         condition: service_healthy
@@ -37,8 +37,8 @@ services:
       - app_config:/etc/searxng
       - app_data:/var/cache/searxng
   cache:
-    container_name: searxng-cache
     restart: unless-stopped
+    container_name: searxng-cache
     command:
       - valkey-server
       - --save

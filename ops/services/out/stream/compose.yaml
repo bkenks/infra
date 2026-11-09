@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   subtitles:
-    container_name: stream-subtitles
     restart: unless-stopped
+    container_name: stream-subtitles
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -48,8 +48,8 @@ services:
       - ../../configs/stream/configarr:/app/config:ro
       - /srv/docker/bind-mounts/stream/configarr/repos:/app/repos
   janitor:
-    container_name: stream-janitor
     restart: unless-stopped
+    container_name: stream-janitor
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -65,8 +65,8 @@ services:
       tv:
         condition: service_healthy
   media:
-    container_name: stream-media
     restart: unless-stopped
+    container_name: stream-media
     devices:
       - /dev/dri:/dev/dri
     environment:
@@ -88,8 +88,8 @@ services:
       - /srv/docker/bind-mounts/stream/plex/config:/config
       - /srv/docker/bind-mounts/stream/shared/media:/data/media
   indexer:
-    container_name: stream-indexer
     restart: unless-stopped
+    container_name: stream-indexer
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -111,8 +111,8 @@ services:
     volumes:
       - /srv/docker/bind-mounts/stream/prowlarr/config:/config
   movies:
-    container_name: stream-movies
     restart: unless-stopped
+    container_name: stream-movies
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -135,8 +135,8 @@ services:
       - /srv/docker/bind-mounts/stream/radarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
   downloader:
-    container_name: stream-downloader
     restart: unless-stopped
+    container_name: stream-downloader
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -159,8 +159,8 @@ services:
       - /srv/docker/bind-mounts/stream/sabnzbd/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
   requests:
-    container_name: stream-requests
     restart: unless-stopped
+    container_name: stream-requests
     environment:
       TZ: America/New_York
     image: ghcr.io/seerr-team/seerr:v3.0.1
@@ -173,8 +173,8 @@ services:
     volumes:
       - /srv/docker/bind-mounts/stream/seerr/config:/app/config
   tv:
-    container_name: stream-tv
     restart: unless-stopped
+    container_name: stream-tv
     environment:
       PUID: "1000"
       PGID: "1000"
@@ -196,4 +196,3 @@ services:
     volumes:
       - /srv/docker/bind-mounts/stream/sonarr/config:/config
       - /srv/docker/bind-mounts/stream/shared:/data
-volumes: {}

@@ -18,4 +18,3 @@ services:
     networks:
       pangolin-site:
         ipv4_address: 10.250.0.10
-volumes: {}

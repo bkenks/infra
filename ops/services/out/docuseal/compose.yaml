@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   app:
-    container_name: docuseal-app
     restart: unless-stopped
+    container_name: docuseal-app
     depends_on:
       db:
         condition: service_healthy
@@ -25,8 +25,8 @@ services:
     volumes:
       - app_data:/data/docuseal
   db:
-    container_name: docuseal-db
     restart: unless-stopped
+    container_name: docuseal-db
     environment:
       POSTGRES_USER: rootish
       POSTGRES_DB: docuseal

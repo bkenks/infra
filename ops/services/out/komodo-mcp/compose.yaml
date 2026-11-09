@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   app:
-    container_name: komodo-mcp-app
     restart: unless-stopped
+    container_name: komodo-mcp-app
     environment:
       MCP_TRANSPORT: http
       MCP_BASE_URL: https://komodo-mcp.ktbinternal.com
@@ -24,4 +24,3 @@ services:
       komodo.skip: ""
     networks:
       - pangolin-site
-volumes: {}

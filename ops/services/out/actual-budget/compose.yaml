@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   app:
-    container_name: actual-budget-app
     restart: unless-stopped
+    container_name: actual-budget-app
     environment:
       ACTUAL_PORT: "5006"
     image: docker.io/actualbudget/actual-server:latest

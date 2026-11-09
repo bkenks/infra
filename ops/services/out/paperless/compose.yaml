@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   cache:
-    container_name: paperless-cache
     restart: unless-stopped
+    container_name: paperless-cache
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
     image: docker.io/library/redis:8
@@ -24,8 +24,8 @@ services:
     volumes:
       - cache_data:/data
   db:
-    container_name: paperless-db
     restart: unless-stopped
+    container_name: paperless-db
     environment:
       POSTGRES_USER: paperless
       POSTGRES_DB: paperless
@@ -45,8 +45,8 @@ services:
     volumes:
       - db_data:/var/lib/postgresql
   converter:
-    container_name: paperless-converter
     restart: unless-stopped
+    container_name: paperless-converter
     command:
       - gotenberg
       - --chromium-disable-javascript=true
@@ -55,14 +55,14 @@ services:
     expose:
       - 3000
   parser:
-    container_name: paperless-parser
     restart: unless-stopped
+    container_name: paperless-parser
     image: docker.io/apache/tika:latest
     expose:
       - 9998
   app:
-    container_name: paperless-app
     restart: unless-stopped
+    container_name: paperless-app
     depends_on:
       cache:
         condition: service_healthy

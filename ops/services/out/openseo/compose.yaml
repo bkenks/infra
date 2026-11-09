@@ -6,8 +6,8 @@ networks:
     external: true
 services:
   app:
-    container_name: openseo-app
     restart: unless-stopped
+    container_name: openseo-app
     environment:
       CLOUDFLARE_INCLUDE_PROCESS_ENV: "true"
       PORT: "3001"

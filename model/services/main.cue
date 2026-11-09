@@ -9,18 +9,19 @@ _AssignIDs: [ID=_]: {_ID: ID}
 [_]: S={
 	compose?: sch.#DockerCompose & {
 		services?: _AssignIDs
-		services?: [Name=string]: {
-			container_name: *"\(S.compose.name)-\(Name)" | string
+		services?: [Name=_]: {
+			container_name: *"\(S.compose.name)-\(Name)" | _
+			restart: *"unless-stopped" | _
 		}
 
 		volumes?: _AssignIDs
-		volumes?: [Name=string]: {
-			name: *"\(S.compose.name)_\(Name)" | string
+		volumes?: [Name=_]: {
+			name: *"\(S.compose.name)_\(Name)" | _
 		}
 
 		networks?: _AssignIDs
-		networks?: [Name=string]: {
-			name: *"\(S.compose.name)_\(Name)" | string
+		networks?: [Name=_]: {
+			name: *"\(S.compose.name)_\(Name)" | _
 		}
 	}
 

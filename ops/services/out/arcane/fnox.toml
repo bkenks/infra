@@ -1,0 +1,11 @@
+# GENERATED from CUE — DO NOT EDIT.
+[providers]
+[providers.onepassword]
+account = 'FUKUXFLIDREQDELXYP2PALUAVY'
+type = '1password'
+vault = 'infra'
+
+[secrets]
+[secrets.ENCRYPTION_KEY]
+provider = 'onepassword'
+value = 'arcane/SECRET_KEY_BASE'

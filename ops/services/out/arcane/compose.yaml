@@ -1,0 +1,23 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: arcane
+services:
+  arcane:
+    restart: unless-stopped
+    cgroup: host
+    container_name: arcane
+    environment:
+      APP_URL: http://localhost:3552
+      PUID: 1000
+      PGID: 1000
+      ENCRYPTION_KEY: ${ENCRYPTION_KEY:?err}
+      PROJECTS_DIRECTORY: /opt/docker
+    image: ghcr.io/getarcaneapp/manager:latest
+    ports:
+      - "3552:3552"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - data:/app/data
+      - /opt/docker:/opt/docker
+volumes:
+  data:
+    name: arcane_data
