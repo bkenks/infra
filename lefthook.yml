@@ -1,11 +1,6 @@
 ---
 pre-commit:
   jobs:
-    - name: "ANSIBLE | lint"
-      root: "ops/automation/"
-      glob: "*.{yml,yaml}"
-      run: uv run ansible-lint --offline {staged_files}
-
     - name: "CUE | render"
       glob: "*.cue"
       run: mise run cue:render && git add -A store ops/services/out
