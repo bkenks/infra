@@ -9,7 +9,8 @@ arcane: D={
 		name: "arcane"
 
 		services: arcane: {
-			_port: 3552
+			_port:        3552
+			_projectsDir: "/projects"
 
 			image:          "ghcr.io/getarcaneapp/manager:latest"
 			container_name: "arcane"
@@ -17,18 +18,21 @@ arcane: D={
 			volumes: [
 				snip.services.volumes.dockerSock,
 				"\(C.volumes.data._ID):/app/data",
-				"/opt/docker:/opt/docker",
+				"\(C.volumes.projects._ID):\(_projectsDir)",
 			]
 			environment: {
 				APP_URL:            "http://localhost:\(_port)"
 				PUID:               1000
 				PGID:               1000
 				ENCRYPTION_KEY:     "${\(D.fnox.secrets.ENCRYPTION_KEY._ID):?err}"
-				PROJECTS_DIRECTORY: "/opt/docker"
+				PROJECTS_DIRECTORY: _projectsDir
 			}
 			cgroup: "host"
 		}
-		volumes: data: name: "arcane_data"
+		volumes: {
+			data: name:     "arcane_data"
+			projects: name: "arcane_projects"
+		}
 	}
 
 	fnox: {
