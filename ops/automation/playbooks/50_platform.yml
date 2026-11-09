@@ -8,7 +8,7 @@
       ansible.builtin.import_role:
         name: docker_stack_files
       vars:
-        docker_stack_files__stacks_dir: "{{ docker_stacks }}"
+        docker_stack_files__stacks_dir: "{{ dockerStacks }}"
         docker_stack_files__repo: "https://github.com/bkenks/infra.git"
         docker_stack_files__name: platform
         docker_stack_files__repo_subdir: ops/services
@@ -18,7 +18,7 @@
       become: true
       ansible.builtin.command:
         cmd: ../../wrap docker compose up -d
-        chdir: "{{ docker_stacks }}/platform/out/komodo"
+        chdir: "{{ dockerStacks }}/platform/out/komodo"
       register: komodo_core__up
       changed_when: komodo_core__up.stderr is search('Creat|Recreat|Start')
 

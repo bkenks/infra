@@ -1,18 +1,19 @@
-package service
+package services
 
 import (
-	"github.com/bkenks/infra/model/externals"
+	ext "github.com/bkenks/infra/model/externals"
+	snip "github.com/bkenks/infra/model/services/snippets"
 )
 
 _komodo_mcp: {
 	version: "1.5.0"
-	host:    "\(komodo_mcp.compose.name).\(externals.domains.ktbinternal_dotcom)"
+	host:    "\(komodo_mcp.compose.name).\(ext.domains.ktbInternal)"
 	port:    8000
 }
 
 komodo_mcp: compose: {
 	name: "komodo-mcp"
-	networks: {externals.dockerNetworks.pangolinSite.asExternal}
+	networks: {ext.dockerNetworks.pangolinSite.asExternal}
 
 	services: app: {
 		// —————————————————————————
@@ -28,14 +29,14 @@ komodo_mcp: compose: {
 		expose: [_komodo_mcp.port]
 
 		// —————————————————————————
-		labels: #Snippet.services.labels.komodoSkip
+		labels: snip.services.labels.komodoSkip
 		extra_hosts: [
-			#Snippet.services.extraHosts.hostGateway,
+			snip.services.extraHosts.hostGateway,
 		]
 
 		// —————————————————————————
 		networks: [
-			externals.dockerNetworks.pangolinSite.name,
+			ext.dockerNetworks.pangolinSite.name,
 		]
 	}
 }

@@ -13,10 +13,6 @@ services:
       LOCAL_BACKEND_API_KEY: ${LOCAL_BACKEND_API_KEY:?err}
       TZ: America/Chicago
     image: ghcr.io/openhands/agent-canvas:1.37.0
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 8000
     healthcheck:

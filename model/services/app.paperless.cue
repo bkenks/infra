@@ -1,11 +1,12 @@
-package service
+package services
 
 import (
-	"github.com/bkenks/infra/model/externals"
+	ext "github.com/bkenks/infra/model/externals"
+	snip "github.com/bkenks/infra/model/services/snippets"
 )
 
 _paperless: {
-	host:             "paper.\(externals.domains.ktbinternal_dotcom)"
+	host:             "paper.\(ext.domains.ktbInternal)"
 	cachePort:        6379
 	dbPort:           5432
 	converterPort:    3000
@@ -16,17 +17,24 @@ _paperless: {
 	converterVersion: "8.25"
 	parserVersion:    "latest"
 	version:          "latest"
-	bindDir:          "\(externals.dirs.host.docker_bindmounts)/apps/paperless"
+	bindDir:          "\(ext.dirs.host.dockerBindMounts)/apps/paperless"
 }
 
 paperless: D={
-	secrets: {
-		PAPERLESS_DBPASS: source:     "paperless/PAPERLESS_DBPASS"
-		PAPERLESS_SECRET_KEY: source: "paperless/PAPERLESS_SECRET_KEY"
-		POSTGRES_PASSWORD: source:    "paperless/POSTGRES_PASSWORD"
-	}
+	_scr: D.fnox.secrets
 
-	files: "fnox.toml": {format: "toml", contents: D._fnox}
+	// files: "fnox.toml": {format: "toml", contents: D._fnox}
+
+	fnox: {
+		snip.fnox.InfraProvider
+
+		secrets: {
+			[_]: provider:               D.fnox.providers.onepassword._ID
+			PAPERLESS_DBPASS: value:     "paperless/PAPERLESS_DBPASS"
+			PAPERLESS_SECRET_KEY: value: "paperless/PAPERLESS_SECRET_KEY"
+			POSTGRES_PASSWORD: value:    "paperless/POSTGRES_PASSWORD"
+		}
+	}
 
 	compose: S={
 		name: "paperless"
@@ -34,27 +42,27 @@ paperless: D={
 			(svcVol): name: "paperless-\(svcVol)"
 		}}
 		networks: {
-			externals.dockerNetworks.pangolinSite.asExternal
+			ext.dockerNetworks.pangolinSite.asExternal
 		}
 		services: {
 			cache: {
 				image: "docker.io/library/redis:\(_paperless.cacheVersion)"
 				environment: ALLOW_EMPTY_PASSWORD: "yes"
 				expose: [_paperless.cachePort]
-				volumes: ["\(S.volumes.cache_data._ref):/data"]
-				healthcheck: #Snippet.services.healthcheck.redisPing
+				volumes: ["\(S.volumes.cache_data._ID):/data"]
+				healthcheck: snip.services.healthcheck.redisPing
 			}
 			db: {
 				image: "docker.io/library/postgres:\(_paperless.dbVersion)"
 				environment: {
-					POSTGRES_USER:     S.name
-					POSTGRES_DB:       S.name
-					POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?err}"
+					POSTGRES_USER:                S.name
+					POSTGRES_DB:                  S.name
+					(_scr.POSTGRES_PASSWORD._ID): "${\(_scr.POSTGRES_PASSWORD._ID):?err}"
 				}
 				expose: [_paperless.dbPort]
-				volumes: ["\(S.volumes.db_data._ref):/var/lib/postgresql"]
+				volumes: ["\(S.volumes.db_data._ID):/var/lib/postgresql"]
 				networks: ["default"]
-				healthcheck: #Snippet.services.healthcheck.pgIsReady & {#user: S.name}
+				healthcheck: snip.services.healthcheck.pgIsReady & {#user: S.name}
 			}
 			converter: {
 				image: "docker.io/gotenberg/gotenberg:\(_paperless.converterVersion)"
@@ -89,18 +97,18 @@ paperless: D={
 					PAPERLESS_DBHOST:                  S.services.db.container_name
 					PAPERLESS_DBUSER:                  S.name
 					PAPERLESS_DBNAME:                  S.name
-					PAPERLESS_DBPASS:                  "${PAPERLESS_DBPASS:?err}"
-					PAPERLESS_SECRET_KEY:              "${PAPERLESS_SECRET_KEY:?err}"
+					(_scr.PAPERLESS_DBPASS._ID):       "${\(_scr.PAPERLESS_DBPASS._ID):?err}"
+					(_scr.PAPERLESS_SECRET_KEY._ID):   "${\(_scr.PAPERLESS_SECRET_KEY._ID):?err}"
 				}
 				expose: [_paperless.port]
 				volumes: [
-					"\(S.volumes.app_data._ref):/usr/src/paperless/data",
-					"\(S.volumes.app_media._ref):/usr/src/paperless/media",
+					"\(S.volumes.app_data._ID):/usr/src/paperless/data",
+					"\(S.volumes.app_media._ID):/usr/src/paperless/media",
 					"\(_paperless.bindDir)/export:/usr/src/paperless/export",
 					"\(_paperless.bindDir)/consume:/usr/src/paperless/consume",
 				]
-				networks: ["default", externals.dockerNetworks.pangolinSite.name]
-				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _paperless.port}
+				networks: ["default", ext.dockerNetworks.pangolinSite.name]
+				healthcheck: snip.services.healthcheck.httpGet & {#port: _paperless.port}
 			}
 		}
 	}

@@ -1,9 +1,10 @@
-package service
+package services
 
 import (
 	"strings"
 
-	"github.com/bkenks/infra/model/externals"
+	ext "github.com/bkenks/infra/model/externals"
+	snip "github.com/bkenks/infra/model/services/snippets"
 )
 
 _pangolin: {
@@ -12,10 +13,10 @@ _pangolin: {
 	traefikVersion: "v3.6"
 	busyboxVersion: "1.37.0"
 	port:           3001
-	_dbm:           externals.dirs.host.docker_bindmounts
+	_dbm:           ext.dirs.host.dockerBindMounts
 	configDir:      _dbm + "/pangolin/config"
 
-	configs: externals.dirs.repo.configs + "/" + pangolin.compose.name
+	configs: ext.dirs.repo.configs + "/" + pangolin.compose.name
 
 	geoliteMirror: "https://github.com/GitSquared/node-geolite2-redist/raw/refs/heads/master/redist/"
 	initDir:       "/app/config"
@@ -37,13 +38,20 @@ _pangolin: {
 }
 
 pangolin: D={
-	secrets: {
-		CF_DNS_API_TOKEN: source: "traefik/CF_DNS_API_TOKEN"
-		EMAIL_SMTP_PASS: source:  "apps.pangolin/EMAIL_SMTP_PASS"
-		SERVER_SECRET: source:    "apps.pangolin/SERVER_SECRET"
-	}
+	_scr: D.fnox.secrets
 
-	files: "fnox.toml": {format: "toml", contents: D._fnox}
+	// files: "fnox.toml": {format: "toml", contents: D._fnox}
+
+	fnox: {
+		snip.fnox.InfraProvider
+
+		secrets: {
+			[_]: provider:           D.fnox.providers.onepassword._ID
+			CF_DNS_API_TOKEN: value: "traefik/CF_DNS_API_TOKEN"
+			EMAIL_SMTP_PASS: value:  "apps.pangolin/EMAIL_SMTP_PASS"
+			SERVER_SECRET: value:    "apps.pangolin/SERVER_SECRET"
+		}
+	}
 
 	compose: S={
 		name: "pangolin"
@@ -54,7 +62,7 @@ pangolin: D={
 		}
 
 		services: {
-			_appHealthy: (app._ref): condition: "service_healthy"
+			_appHealthy: (app._ID): condition: "service_healthy"
 
 			app: {
 				container_name: "pangolin"
@@ -64,8 +72,8 @@ pangolin: D={
 					command: ["sh", "-c", _pangolin.initScript]
 				}]
 				environment: {
-					EMAIL_SMTP_PASS: "${EMAIL_SMTP_PASS:?err}"
-					SERVER_SECRET:   "${SERVER_SECRET:?err}"
+					(_scr.EMAIL_SMTP_PASS._ID): "${\(_scr.EMAIL_SMTP_PASS._ID):?err}"
+					(_scr.SERVER_SECRET._ID):   "${\(_scr.SERVER_SECRET._ID):?err}"
 				}
 				volumes: [
 					"\(_pangolin.configDir):/app/config",
@@ -106,12 +114,12 @@ pangolin: D={
 			}
 			proxy: {
 				image: "docker.io/library/traefik:\(_pangolin.traefikVersion)"
-				environment: CF_DNS_API_TOKEN: "${CF_DNS_API_TOKEN:?err}"
+				environment: (_scr.CF_DNS_API_TOKEN._ID): "${\(_scr.CF_DNS_API_TOKEN._ID):?err}"
 				command: ["--configFile=/etc/traefik/traefik_config.yml"]
 
 				container_name: "traefik"
 				depends_on:     _appHealthy
-				network_mode:   "service:\(S.services.tunnel._ref)"
+				network_mode:   "service:\(S.services.tunnel._ID)"
 				volumes: [
 					"\(_pangolin.configs)/traefik_config.yaml:/etc/traefik/traefik_config.yml:ro",
 					"\(_pangolin.configs)/dynamic_config.yaml:/etc/traefik/dynamic_config.yml:ro",

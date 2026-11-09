@@ -19,10 +19,6 @@ services:
     expose:
       - 3000
     image: docker.io/docuseal/docuseal:2.5.3
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     networks:
       - default
       - pangolin-site
@@ -36,10 +32,6 @@ services:
       POSTGRES_DB: docuseal
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
     image: docker.io/library/postgres:18
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 5432
     healthcheck:

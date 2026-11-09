@@ -29,10 +29,6 @@ services:
       timeout: 5s
       start_period: 10s
     image: pocketid/pocket-id:v2
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     networks:
       - pangolin-site
     restart: unless-stopped

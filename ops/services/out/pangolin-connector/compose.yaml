@@ -8,17 +8,13 @@ services:
   connector:
     container_name: pangolin-connector
     environment:
-      SITE_ID: ${SITE_ID:?err}
       PANGOLIN_ENDPOINT: https://pangolin.ktbcloud.com
+      SITE_ID: ${SITE_ID:?err}
       SITE_SECRET: ${SITE_SECRET:?err}
     extra_hosts:
       - host.docker.internal:host-gateway
     image: fosrl/pangolin-cli:0.20.0
     restart: unless-stopped
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     networks:
       pangolin-site:
         ipv4_address: 10.250.0.10

@@ -1,4 +1,4 @@
-package service
+package services
 
 import (
 	"github.com/bkenks/infra/model/externals"
@@ -11,16 +11,16 @@ _actual_budget: {
 
 actual_budget: compose: S={
 	name: "actual-budget"
-	volumes: app_data: name: "actual-budget-app_data"
-	networks: {
-		externals.dockerNetworks.pangolinSite.asExternal
-	}
+
+	volumes: data: name: "actual-budget-app_data"
+
+	networks: externals.dockerNetworks.pangolinSite.asExternal
 
 	services: app: {
 		image: "docker.io/actualbudget/actual-server:\(_actual_budget.version)"
 		environment: ACTUAL_PORT: "\(_actual_budget.port)"
 		expose: [_actual_budget.port]
-		volumes: ["\(S.volumes.app_data._ref):/data"]
+		volumes: ["\(S.volumes.data._ID):/data"]
 		networks: [externals.dockerNetworks.pangolinSite.name]
 		healthcheck: {
 			test: ["CMD-SHELL", "node scripts/health-check.js"]

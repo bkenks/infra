@@ -11,10 +11,6 @@ services:
     environment:
       ALLOW_EMPTY_PASSWORD: "yes"
     image: docker.io/library/redis:8
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 6379
     healthcheck:
@@ -35,10 +31,6 @@ services:
       POSTGRES_DB: paperless
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
     image: docker.io/library/postgres:18
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 5432
     healthcheck:
@@ -60,20 +52,12 @@ services:
       - --chromium-disable-javascript=true
       - --chromium-allow-list=file:///tmp/.*
     image: docker.io/gotenberg/gotenberg:8.25
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 3000
   parser:
     container_name: paperless-parser
     restart: unless-stopped
     image: docker.io/apache/tika:latest
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 9998
   app:
@@ -113,10 +97,6 @@ services:
       timeout: 10s
       start_period: 30s
     image: ghcr.io/paperless-ngx/paperless-ngx:latest
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     networks:
       - default
       - pangolin-site

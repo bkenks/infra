@@ -1,7 +1,8 @@
-package service
+package services
 
 import (
-	"github.com/bkenks/infra/model/externals"
+	ext "github.com/bkenks/infra/model/externals"
+	snip "github.com/bkenks/infra/model/services/snippets"
 )
 
 _victorialogs: {
@@ -12,7 +13,7 @@ _victorialogs: {
 victorialogs: compose: S={
 	name: "victorialogs"
 	volumes: data: name: "victorialogs-logs_data"
-	networks: {externals.dockerNetworks.pangolinSite.asExternal}
+	networks: {ext.dockerNetworks.pangolinSite.asExternal}
 	services: logs: {
 		image: "docker.io/victoriametrics/victoria-logs:\(_victorialogs.version)"
 		command: [
@@ -20,8 +21,8 @@ victorialogs: compose: S={
 			"-retentionPeriod=90d",
 		]
 		ports: ["19428:9428"]
-		volumes: ["\(S.volumes.data._ref):\(_victorialogs.dataPath)"]
-		networks: [externals.dockerNetworks.pangolinSite.name]
-		labels: #Snippet.services.labels.komodoSkip
+		volumes: ["\(S.volumes.data._ID):\(_victorialogs.dataPath)"]
+		networks: [ext.dockerNetworks.pangolinSite.name]
+		labels: snip.services.labels.komodoSkip
 	}
 }

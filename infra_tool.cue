@@ -8,9 +8,9 @@ import (
 	"tool/file"
 	"tool/exec"
 
-	"github.com/bkenks/infra/model/externals"
-	svc "github.com/bkenks/infra/model/service"
-	exp "github.com/bkenks/infra/model/export"
+	ext "github.com/bkenks/infra/model/externals"
+	svc "github.com/bkenks/infra/model/services"
+	exp "github.com/bkenks/infra/model/exports"
 )
 
 cueHeader: "# GENERATED from CUE — DO NOT EDIT.\n"
@@ -37,7 +37,7 @@ command: render: {
 	storeNetworks: file.Create & {
 		filename: out.files.networks.absPath
 		contents: cueHeader + yaml.Marshal({
-			docker_networks: [for _, n in externals.dockerNetworks {n.asNew}]
+			docker_networks: [for _, n in ext.dockerNetworks {n.asNew}]
 		})
 	}
 
@@ -47,7 +47,7 @@ command: render: {
 	}
 
 	storePaths: file.Create & {
-		let dir = externals.dirs.host
+		let dir = ext.dirs.host
 		filename: out.files.paths.absPath
 		contents: cueHeader + yaml.Marshal(dir)
 	}
@@ -75,6 +75,13 @@ command: render: {
 						$after: mkdir
 						filename: path.Join([outStk, "compose.yaml"])
 						contents: cueHeader + yaml.Marshal(stack.compose)
+					}
+				}
+				if stack.fnox != _|_ if len(stack.fnox) > 0 {
+					writeFnox: file.Create & {
+						$after: mkdir
+						filename: path.Join([outStk, "fnox.toml"])
+						contents: cueHeader + toml.Marshal(stack.fnox)
 					}
 				}
 

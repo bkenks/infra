@@ -1,7 +1,8 @@
-package service
+package services
 
 import (
-	"github.com/bkenks/infra/model/externals"
+	ext "github.com/bkenks/infra/model/externals"
+	snip "github.com/bkenks/infra/model/services/snippets"
 )
 
 _pocket_id: {
@@ -18,18 +19,25 @@ _pocket_id: {
 }
 
 pocket_id: D={
-	secrets: {
-		ENC_KEY: source: "pocket-id/encryption_key"
-	}
+	_scr: D.fnox.secrets
 
-	files: "fnox.toml": {format: "toml", contents: D._fnox}
+	// files: "fnox.toml": {format: "toml", contents: D._fnox}
+
+	fnox: {
+		snip.fnox.InfraProvider
+
+		secrets: {
+			[_]: provider:  D.fnox.providers.onepassword._ID
+			ENC_KEY: value: "pocket-id/encryption_key"
+		}
+	}
 
 	compose: C={
 		name: "pocket-id"
 
 		secrets: (_pocket_id.encKeyRef): environment: _pocket_id.encKeyName
 
-		networks: {externals.dockerNetworks.pangolinSite.asExternal}
+		networks: {ext.dockerNetworks.pangolinSite.asExternal}
 
 		volumes: (_pocket_id.volumes.data.ref): name: _pocket_id.volumes.data.name
 
@@ -37,8 +45,8 @@ pocket_id: D={
 			image: "pocketid/pocket-id:\(_pocket_id.version)"
 			secrets: [_pocket_id.encKeyRef]
 			environment: {
-				APP_URL:             "https://id." + externals.domains.ktbcloud_dotcom
-				TRUST_PROXY:         pangolin_connector._ipv4_address
+				APP_URL:             "https://id." + ext.domains.ktbCloud
+				TRUST_PROXY:         pangolinConnector._ipv4_address
 				MAXMIND_LICENSE_KEY: ""
 				PUID:                1000
 				PGID:                1000
@@ -56,7 +64,7 @@ pocket_id: D={
 			}
 			volumes: ["\(_pocket_id.volumes.data.ref):/app/data"]
 			expose: [_pocket_id.port]
-			networks: [externals.dockerNetworks.pangolinSite.name]
+			networks: [ext.dockerNetworks.pangolinSite.name]
 		}
 	}
 }

@@ -4,8 +4,7 @@ import (
 	"github.com/bkenks/infra/model/schema"
 )
 
-hosts: schema.#Hosts
-hosts: {
+hosts: schema.#Hosts & {
 	"000-015": schema.#Host & {
 		fqdn: "000-015.lan"
 		kind: schema.#Kind.physical

@@ -16,8 +16,6 @@ services:
     environment:
       REDIS_URL: redis://grist-cache:6379
       APP_HOME_URL: https://grist.ktbcloud.com
-      GRIST_SESSION_SECRET: ${GRIST_SESSION_SECRET:?err}
-      GRIST_DEFAULT_EMAIL: ${GRIST_DEFAULT_EMAIL:?err}
       GRIST_FORCE_LOGIN: "true"
       GRIST_SERVER_EDITION: full
       TYPEORM_TYPE: postgres
@@ -27,9 +25,11 @@ services:
       TYPEORM_USERNAME: grist
       TYPEORM_PASSWORD: ${POSTGRES_PASSWORD:?err}
       GRIST_OIDC_IDP_ISSUER: https://id.ktbcloud.com
+      GRIST_OIDC_IDP_SCOPES: openid email profile groups
+      GRIST_SESSION_SECRET: ${GRIST_SESSION_SECRET:?err}
+      GRIST_DEFAULT_EMAIL: ${GRIST_DEFAULT_EMAIL:?err}
       GRIST_OIDC_IDP_CLIENT_ID: ${GRIST_OIDC_IDP_CLIENT_ID:?err}
       GRIST_OIDC_IDP_CLIENT_SECRET: ${GRIST_OIDC_IDP_CLIENT_SECRET:?err}
-      GRIST_OIDC_IDP_SCOPES: openid email profile groups
     expose:
       - 8484
     healthcheck:
@@ -43,10 +43,6 @@ services:
       timeout: 10s
       start_period: 30s
     image: docker.io/gristlabs/grist:1.7
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     networks:
       - default
       - pangolin-site
@@ -56,10 +52,6 @@ services:
     container_name: grist-cache
     restart: unless-stopped
     image: docker.io/library/redis:8
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 6379
     healthcheck:
@@ -80,10 +72,6 @@ services:
       POSTGRES_DB: grist
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
     image: docker.io/library/postgres:16
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 5432
     healthcheck:

@@ -11,10 +11,6 @@ services:
     environment:
       ACTUAL_PORT: "5006"
     image: docker.io/actualbudget/actual-server:latest
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 5006
     healthcheck:
@@ -28,7 +24,7 @@ services:
     networks:
       - pangolin-site
     volumes:
-      - app_data:/data
+      - data:/data
 volumes:
-  app_data:
+  data:
     name: actual-budget-app_data

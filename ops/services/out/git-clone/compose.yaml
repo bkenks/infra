@@ -11,10 +11,6 @@ services:
       - -c
     image: docker.io/alpine/git:v2.49.1
     restart: "no"
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - type: bind
         source: /volume1/repos

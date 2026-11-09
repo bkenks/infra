@@ -2,9 +2,6 @@
 [profiles]
 [profiles.000-015]
 [profiles.000-015.secrets]
-[profiles.000-015.secrets.HOST]
-default = '000-015'
-
 [profiles.000-015.secrets.SITE_ID]
 provider = 'onepassword'
 value = 'hosts.000-015.newt/SITE_ID'
@@ -15,9 +12,6 @@ value = 'hosts.000-015.newt/SITE_SECRET'
 
 [profiles.000-02A]
 [profiles.000-02A.secrets]
-[profiles.000-02A.secrets.HOST]
-default = '000-02A'
-
 [profiles.000-02A.secrets.SITE_ID]
 provider = 'onepassword'
 value = 'hosts.000-02A.newt/SITE_ID'
@@ -28,9 +22,6 @@ value = 'hosts.000-02A.newt/SITE_SECRET'
 
 [profiles.000-03F]
 [profiles.000-03F.secrets]
-[profiles.000-03F.secrets.HOST]
-default = '000-03F'
-
 [profiles.000-03F.secrets.SITE_ID]
 provider = 'onepassword'
 value = 'hosts.000-03F.newt/SITE_ID'
@@ -39,11 +30,18 @@ value = 'hosts.000-03F.newt/SITE_ID'
 provider = 'onepassword'
 value = 'hosts.000-03F.newt/SITE_SECRET'
 
+[profiles.blip]
+[profiles.blip.secrets]
+[profiles.blip.secrets.SITE_ID]
+provider = 'onepassword'
+value = 'hosts.blip.newt/SITE_ID'
+
+[profiles.blip.secrets.SITE_SECRET]
+provider = 'onepassword'
+value = 'hosts.blip.newt/SITE_SECRET'
+
 [profiles.pango]
 [profiles.pango.secrets]
-[profiles.pango.secrets.HOST]
-default = 'pango'
-
 [profiles.pango.secrets.SITE_ID]
 provider = 'onepassword'
 value = 'hosts.pango.newt/SITE_ID'

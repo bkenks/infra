@@ -22,6 +22,7 @@ repo_template = "https://github.com/bkenks/tmpl.repo"
 [tasks]
 "copier:copy"  = "copier copy --trust {{vars.repo_template}} ."
 "copier:pull"  = "copier update --trust -a {{vars.config_dir}}/.copier-answers.configs.yml"
+"cue:render"   = "cue cmd render"
 "cue:vet"      = "cue vet -c ./..."
 "enable-tasks" = "fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x"
 "format"       = "treefmt"

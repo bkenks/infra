@@ -30,10 +30,6 @@ services:
       timeout: 10s
       start_period: 30s
     image: docker.io/searxng/searxng:2026.11.6-ac11e14c5
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     networks:
       - default
       - pangolin-site
@@ -54,10 +50,6 @@ services:
       - --loglevel
       - warning
     image: docker.io/valkey/valkey:9-alpine
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     expose:
       - 6379
     healthcheck:

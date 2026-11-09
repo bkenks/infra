@@ -1,7 +1,8 @@
-package service
+package services
 
 import (
-	"github.com/bkenks/infra/model/externals"
+	ext "github.com/bkenks/infra/model/externals"
+	snip "github.com/bkenks/infra/model/services/snippets"
 )
 
 _stream: {
@@ -23,32 +24,39 @@ _stream: {
 	sonarrDigest:      "sha256:02b4d538d351d6e35882a021c08e8600fe95d28860fb1dd724b597166e7221ca"
 
 	tz:         "America/New_York"
-	bindRoot:   "\(externals.dirs.host.docker_bindmounts)/stream"
+	bindRoot:   "\(ext.dirs.host.dockerBindMounts)/stream"
 	sharedData: "\(bindRoot)/shared"
 	lsioEnv: {PUID: "1000", PGID: "1000", TZ: tz}
 	arrApiKeys: {
-		RADARR_API_KEY: "${RADARR_API_KEY:?err}"
-		SONARR_API_KEY: "${SONARR_API_KEY:?err}"
+		(stream._scr.RADARR_API_KEY._ID): "${\(stream._scr.RADARR_API_KEY._ID):?err}"
+		(stream._scr.SONARR_API_KEY._ID): "${\(stream._scr.SONARR_API_KEY._ID):?err}"
 	}
-	configs: externals.dirs.repo.configs + "/" + stream.compose.name
+	configs: ext.dirs.repo.configs + "/" + stream.compose.name
 }
 
 stream: D={
-	secrets: {
-		RADARR_API_KEY: source: "stream/RADARR_API_KEY"
-		SONARR_API_KEY: source: "stream/SONARR_API_KEY"
-	}
+	_scr: D.fnox.secrets
 
-	files: "fnox.toml": {format: "toml", contents: D._fnox}
+	// files: "fnox.toml": {format: "toml", contents: D._fnox}
+
+	fnox: {
+		snip.fnox.InfraProvider
+
+		secrets: {
+			[_]: provider:         D.fnox.providers.onepassword._ID
+			RADARR_API_KEY: value: "stream/RADARR_API_KEY"
+			SONARR_API_KEY: value: "stream/SONARR_API_KEY"
+		}
+	}
 
 	compose: S={
 		name: "stream"
-		_webNetworks: ["default", externals.dockerNetworks.pangolinSite.name]
-		networks: {externals.dockerNetworks.pangolinSite.asExternal}
+		_webNetworks: ["default", ext.dockerNetworks.pangolinSite.name]
+		networks: {ext.dockerNetworks.pangolinSite.asExternal}
 		services: {
 			_arrsHealthy: {
-				(movies._ref): condition: "service_healthy"
-				(tv._ref): condition:     "service_healthy"
+				(movies._ID): condition: "service_healthy"
+				(tv._ID): condition:     "service_healthy"
 			}
 
 			subtitles: {
@@ -60,7 +68,7 @@ stream: D={
 					"\(_stream.sharedData):/data",
 				]
 				networks: S._webNetworks
-				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.bazarrPort}
+				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.bazarrPort}
 			}
 			seeder: {
 				image:       "ghcr.io/raydak-labs/configarr:\(_stream.configarrVersion)"
@@ -86,7 +94,7 @@ stream: D={
 					"\(_stream.sharedData)/media:/data/media",
 				]
 				network_mode: "host"
-				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.plexPort, #path: "/identity"}
+				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.plexPort, #path: "/identity"}
 				devices: ["/dev/dri:/dev/dri"]
 			}
 			indexer: {
@@ -95,7 +103,7 @@ stream: D={
 				expose: [_stream.prowlarrPort]
 				volumes: ["\(_stream.bindRoot)/prowlarr/config:/config"]
 				networks: S._webNetworks
-				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.prowlarrPort, #path: "/ping"}
+				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.prowlarrPort, #path: "/ping"}
 			}
 			movies: {
 				image:       "lscr.io/linuxserver/radarr@\(_stream.radarrDigest)"
@@ -106,7 +114,7 @@ stream: D={
 					"\(_stream.sharedData):/data",
 				]
 				networks: S._webNetworks
-				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.radarrPort, #path: "/ping"}
+				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.radarrPort, #path: "/ping"}
 			}
 			downloader: {
 				image:       "lscr.io/linuxserver/sabnzbd@\(_stream.sabnzbdDigest)"
@@ -117,7 +125,7 @@ stream: D={
 					"\(_stream.sharedData):/data",
 				]
 				networks: S._webNetworks
-				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.sabnzbdPort}
+				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.sabnzbdPort}
 			}
 			requests: {
 				image: "ghcr.io/seerr-team/seerr:\(_stream.seerrVersion)"
@@ -136,7 +144,7 @@ stream: D={
 					"\(_stream.sharedData):/data",
 				]
 				networks: S._webNetworks
-				healthcheck: #Snippet.services.healthcheck.httpGet & {#port: _stream.sonarrPort, #path: "/ping"}
+				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.sonarrPort, #path: "/ping"}
 			}
 		}
 	}

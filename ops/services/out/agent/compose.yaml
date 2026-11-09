@@ -10,10 +10,6 @@ services:
     image: docker.io/timberio/vector:0.58.0-alpine
     labels:
       komodo.skip: ""
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     volumes:
       - log_agent_buffer:/var/lib/vector
       - /var/run/docker.sock:/var/run/docker.sock:ro

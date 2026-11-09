@@ -22,10 +22,6 @@ services:
     image: ghcr.io/mp-tool/komodo-mcp-server:1.5.0
     labels:
       komodo.skip: ""
-    logging:
-      driver: json-file
-      options:
-        max-size: 10m
     networks:
       - pangolin-site
 volumes: {}

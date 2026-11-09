@@ -1,4 +1,4 @@
-package export
+package exports
 
 import "github.com/bkenks/infra/model/inventory"
 
