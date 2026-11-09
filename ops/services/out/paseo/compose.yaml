@@ -1,0 +1,17 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: paseo
+services:
+  paseo:
+    restart: unless-stopped
+    container_name: paseo-paseo
+    environment:
+      PASEO_HOSTNAMES: blip.lan
+      PASEO_PASSWORD: ${PASEO_PASSWORD:?err}
+    expose:
+      - 6767
+    image: paseo-with-agents
+    ports:
+      - "6767:6767"
+    volumes:
+      - /srv/paseo/home:/home/paseo
+      - /srv/paseo/workspace:/workspace
