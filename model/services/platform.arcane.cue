@@ -36,7 +36,7 @@ arcane: D={
 
 		secrets: {
 			[_]: provider:         D.fnox.providers.onepassword._ID
-			ENCRYPTION_KEY: value: "arcane/SECRET_KEY_BASE"
+			ENCRYPTION_KEY: value: "arcane/ENCRYPTION_KEY"
 		}
 	}
 }

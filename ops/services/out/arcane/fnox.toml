@@ -8,4 +8,4 @@ vault = 'infra'
 [secrets]
 [secrets.ENCRYPTION_KEY]
 provider = 'onepassword'
-value = 'arcane/SECRET_KEY_BASE'
+value = 'arcane/ENCRYPTION_KEY'
