@@ -16,12 +16,12 @@ _stream: {
 	bazarrVersion:     "1.5.4"
 	configarrVersion:  "1.28.0"
 	decluttarrVersion: "v2.1.0"
-	plexVersion:       "1.43.3"
-	seerrVersion:      "v3.0.1"
-	prowlarrDigest:    "sha256:d3e9307b320b6772749a2cf8fc2712e9e824c4930b034680ad4d08a9e2f25884"
-	radarrDigest:      "sha256:270f25698624b57b86ca119cc95399d7ff15be8297095b4e1223fd5b549b732c"
-	sabnzbdDigest:     "sha256:fba727f777f6b2633fcdeaea94abc85d73148f2a6b19a8158907bdd5b6e145d0"
-	sonarrDigest:      "sha256:02b4d538d351d6e35882a021c08e8600fe95d28860fb1dd724b597166e7221ca"
+	plexVersion:       "1.43.5"
+	seerrVersion:      "v3.5.1"
+	radarrVersion:     "6.4.4"
+	prowlarrVersion:   "2.7.0"
+	sabnzbdVersion:    "5.1.3"
+	sonarrVersion:     "4.0.20"
 
 	tz:         "America/New_York"
 	bindRoot:   "\(ext.dirs.host.dockerBindMounts)/stream"
@@ -98,7 +98,7 @@ stream: D={
 				devices: ["/dev/dri:/dev/dri"]
 			}
 			indexer: {
-				image:       "lscr.io/linuxserver/prowlarr@\(_stream.prowlarrDigest)"
+				image:       "lscr.io/linuxserver/prowlarr@\(_stream.prowlarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.prowlarrPort]
 				volumes: ["\(_stream.bindRoot)/prowlarr/config:/config"]
@@ -106,7 +106,7 @@ stream: D={
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.prowlarrPort, #path: "/ping"}
 			}
 			movies: {
-				image:       "lscr.io/linuxserver/radarr@\(_stream.radarrDigest)"
+				image:       "lscr.io/linuxserver/radarr@\(_stream.radarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.radarrPort]
 				volumes: [
@@ -117,7 +117,7 @@ stream: D={
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.radarrPort, #path: "/ping"}
 			}
 			downloader: {
-				image:       "lscr.io/linuxserver/sabnzbd@\(_stream.sabnzbdDigest)"
+				image:       "lscr.io/linuxserver/sabnzbd@\(_stream.sabnzbdVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.sabnzbdPort]
 				volumes: [
@@ -136,7 +136,7 @@ stream: D={
 				init:     true
 			}
 			tv: {
-				image:       "lscr.io/linuxserver/sonarr@\(_stream.sonarrDigest)"
+				image:       "lscr.io/linuxserver/sonarr@\(_stream.sonarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.sonarrPort]
 				volumes: [
