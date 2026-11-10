@@ -9,10 +9,12 @@ services:
     restart: unless-stopped
     container_name: paseo
     environment:
-      PASEO_HOSTNAMES: blip.lan, paseo.ktbinternal.com
+      PASEO_HOSTNAMES: blip.lan, paseo.ktbinternal.com, host.docker.internal
       PASEO_PASSWORD: ${PASEO_PASSWORD:?err}
     expose:
       - 6767
+    extra_hosts:
+      - host.docker.internal:host-gateway
     image: paseo-with-agents
     networks:
       - pangolin-site

@@ -19,10 +19,11 @@ paseo: D={
 			image:  _image
 			expose: [_port]
 			environment: {
-				PASEO_HOSTNAMES:                     "blip.lan, paseo.\(ext.domains.ktbInternal)"
+				PASEO_HOSTNAMES:                     "blip.lan, paseo.\(ext.domains.ktbInternal), \(snip.services.extraHosts.hostGatewayFQDN)"
 				(D.fnox.secrets.PASEO_PASSWORD._ID): "${\(D.fnox.secrets.PASEO_PASSWORD._ID):?err}"
 			}
 
+			extra_hosts: [snip.services.extraHosts.hostGateway]
 			container_name: C.name
 			networks: [ext.dockerNetworks.pangolinSite.name]
 			volumes: [

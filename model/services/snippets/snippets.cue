@@ -51,7 +51,8 @@ services: {
 		}
 	}
 	extraHosts: {
-		hostGateway: "host.docker.internal:host-gateway"
+		hostGatewayFQDN: "host.docker.internal"
+		hostGateway: hostGatewayFQDN + ":host-gateway"
 	}
 	labels: {
 		komodoSkip: "komodo.skip": ""
