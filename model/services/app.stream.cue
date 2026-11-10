@@ -98,7 +98,7 @@ stream: D={
 				devices: ["/dev/dri:/dev/dri"]
 			}
 			indexer: {
-				image:       "lscr.io/linuxserver/prowlarr@\(_stream.prowlarrVersion)"
+				image:       "lscr.io/linuxserver/prowlarr:\(_stream.prowlarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.prowlarrPort]
 				volumes: ["\(_stream.bindRoot)/prowlarr/config:/config"]
@@ -106,7 +106,7 @@ stream: D={
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.prowlarrPort, #path: "/ping"}
 			}
 			movies: {
-				image:       "lscr.io/linuxserver/radarr@\(_stream.radarrVersion)"
+				image:       "lscr.io/linuxserver/radarr:\(_stream.radarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.radarrPort]
 				volumes: [
@@ -117,7 +117,7 @@ stream: D={
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.radarrPort, #path: "/ping"}
 			}
 			downloader: {
-				image:       "lscr.io/linuxserver/sabnzbd@\(_stream.sabnzbdVersion)"
+				image:       "lscr.io/linuxserver/sabnzbd:\(_stream.sabnzbdVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.sabnzbdPort]
 				volumes: [
@@ -136,7 +136,7 @@ stream: D={
 				init:     true
 			}
 			tv: {
-				image:       "lscr.io/linuxserver/sonarr@\(_stream.sonarrVersion)"
+				image:       "lscr.io/linuxserver/sonarr:\(_stream.sonarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.sonarrPort]
 				volumes: [
