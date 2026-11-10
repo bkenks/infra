@@ -1,17 +1,21 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: paseo
+networks:
+  pangolin-site:
+    name: pangolin-site
+    external: true
 services:
   paseo:
     restart: unless-stopped
-    container_name: paseo-paseo
+    container_name: paseo
     environment:
-      PASEO_HOSTNAMES: blip.lan
+      PASEO_HOSTNAMES: blip.lan, paseo.ktbinternal.com
       PASEO_PASSWORD: ${PASEO_PASSWORD:?err}
     expose:
       - 6767
     image: paseo-with-agents
-    ports:
-      - "6767:6767"
+    networks:
+      - pangolin-site
     volumes:
       - /srv/paseo/home:/home/paseo
       - /srv/paseo/workspace:/workspace
