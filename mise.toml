@@ -48,3 +48,23 @@ docker buildx build \
   -t "{{vars.image_ref}}:latest" \
   --push .
 '''
+
+[tasks."docker:build:paseo"]
+description = 'Build and push image: {{vars.image_ref}}'
+dir = "ops/services/images/paseo-ktb"
+vars.platforms = "linux/amd64,linux/arm64"
+vars.image_ref = "ghcr.io/bkenks/paseo-ktb"
+vars.sem_major = 0
+vars.sem_minor = 1
+vars.sem_patch = 0
+run = '''
+version="{{vars.sem_major}}.{{vars.sem_minor}}.{{vars.sem_patch}}"
+
+docker buildx build \
+  --platform {{vars.platforms}} \
+  --annotation "index:org.opencontainers.image.source=https://github.com/bkenks/infra" \
+  -t "{{vars.image_ref}}:$version" \
+  -t "{{vars.image_ref}}:{{vars.sem_major}}" \
+  -t "{{vars.image_ref}}:latest" \
+  --push .
+'''
