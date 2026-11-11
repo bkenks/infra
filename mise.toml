@@ -4,7 +4,6 @@
 [tools]
 cue            = "0.17.1"
 lefthook       = "2"
-"npm:likec4"   = "1"
 "npm:wrangler" = "4"
 opentofu       = "1.13"
 prettier       = "3.9.10"
@@ -19,16 +18,42 @@ config_dir    = "{{config_root}}/.config"
 repo_template = "https://github.com/bkenks/tmpl.repo"
 
 
-[tasks]
-"copier:copy"  = "copier copy --trust {{vars.repo_template}} ."
-"copier:pull"  = "copier update --trust -a {{vars.config_dir}}/.copier-answers.configs.yml"
-"cue:render"   = "cue cmd render"
-"cue:vet"      = "cue vet -c ./..."
-"enable-tasks" = "fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x"
-"format"       = "treefmt"
-"open-ansible" = "codium {{config_root}}/ops/automation"
-"vendir:pull"  = "vendir sync"
+# —————————————————————————————————————————————————
+[tasks."enable-tasks"]
+description = 'Make task scripts executable'
+run         = "fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x"
 
+[tasks.format]
+description = 'Format files'
+run         = "treefmt"
+
+[tasks."open-ansible"]
+description = 'Open Ansible configuration in VSCodium'
+run         = "codium {{config_root}}/ops/automation"
+
+# —————————————————————————————————————————————————
+[tasks."copier:copy"]
+description = 'Copy files from the repository template'
+run         = "copier copy --trust {{vars.repo_template}} ."
+
+[tasks."copier:pull"]
+description = 'Update files from the repository template'
+run         = "copier update --trust -a {{vars.config_dir}}/.copier-answers.configs.yml"
+
+[tasks."vendir:pull"]
+description = 'Sync vendored dependencies'
+run         = "vendir sync"
+# —————————————————————————————————————————————————
+[tasks."cue:vet"]
+description = 'Validate CUE files'
+run         = "cue vet -c ./..."
+
+[tasks."cue:render"]
+description = 'Render files from CUE'
+dir         = "{{ config_root }}/model"
+run         = "cue cmd render"
+
+# —————————————————————————————————————————————————
 [tasks."docker:build:fnox"]
 description = 'Build and push image: {{vars.image_ref}}'
 dir = "ops/services/images/fnox"
