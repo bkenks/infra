@@ -38,10 +38,10 @@ pangolinConnector: S={
 
 		profiles: {
 			for _, h in inv.hosts {
-				(h.name): secrets: {
+				(h.kuid): secrets: {
 					[_]: provider:           S.fnox.providers.onepassword._ID
-					(_refSiteID): value:     "hosts.\(h.name).newt/SITE_ID"
-					(_refSiteSecret): value: "hosts.\(h.name).newt/SITE_SECRET"
+					(_refSiteID): value:     "hosts.\(h.kuid).newt/SITE_ID"
+					(_refSiteSecret): value: "hosts.\(h.kuid).newt/SITE_SECRET"
 				}
 			}
 		}

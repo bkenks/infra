@@ -30,25 +30,35 @@ value = 'hosts.000-03F.newt/SITE_ID'
 provider = 'onepassword'
 value = 'hosts.000-03F.newt/SITE_SECRET'
 
-[profiles.blip]
-[profiles.blip.secrets]
-[profiles.blip.secrets.SITE_ID]
+[profiles.000-0BR]
+[profiles.000-0BR.secrets]
+[profiles.000-0BR.secrets.SITE_ID]
 provider = 'onepassword'
-value = 'hosts.blip.newt/SITE_ID'
+value = 'hosts.000-0BR.newt/SITE_ID'
 
-[profiles.blip.secrets.SITE_SECRET]
+[profiles.000-0BR.secrets.SITE_SECRET]
 provider = 'onepassword'
-value = 'hosts.blip.newt/SITE_SECRET'
+value = 'hosts.000-0BR.newt/SITE_SECRET'
 
-[profiles.pango]
-[profiles.pango.secrets]
-[profiles.pango.secrets.SITE_ID]
+[profiles.000-0CX]
+[profiles.000-0CX.secrets]
+[profiles.000-0CX.secrets.SITE_ID]
 provider = 'onepassword'
-value = 'hosts.pango.newt/SITE_ID'
+value = 'hosts.000-0CX.newt/SITE_ID'
 
-[profiles.pango.secrets.SITE_SECRET]
+[profiles.000-0CX.secrets.SITE_SECRET]
 provider = 'onepassword'
-value = 'hosts.pango.newt/SITE_SECRET'
+value = 'hosts.000-0CX.newt/SITE_SECRET'
+
+[profiles.000-0D3]
+[profiles.000-0D3.secrets]
+[profiles.000-0D3.secrets.SITE_ID]
+provider = 'onepassword'
+value = 'hosts.000-0D3.newt/SITE_ID'
+
+[profiles.000-0D3.secrets.SITE_SECRET]
+provider = 'onepassword'
+value = 'hosts.000-0D3.newt/SITE_SECRET'
 
 [providers]
 [providers.onepassword]

@@ -1,22 +1,22 @@
 package exports
 
-import "github.com/bkenks/infra/model/inventory"
+import (
+	inv "github.com/bkenks/infra/model/inventory"
+)
 
-ansible: all: {
-	hosts: {
-		for n, h in inventory.hosts {
-			(n): {ansible_host: h.fqdn}
-		}
-	}
-	children: {
-		for n, h in inventory.hosts {
-			for r in h.roles {
-				if r != _|_ {
-					"role_\(r)": hosts: (n): {}
+ansible: {
+	if inv.hosts != _|_ if len(inv.hosts) > 0 {
+		all: {
+			for n, h in inv.hosts {
+				hosts: (n): ansible_host: h.fqdn
+
+				if len(h.roles) > 0 for r in h.roles {
+					children: "role_\(r)": hosts: (n): {}
 				}
-			}
-			if h.kind != _|_ {
-				"kind_\(h.kind)": hosts: (n): {}
+
+				if h.kind != _|_ {
+					children: "kind_\(h.kind)": hosts: (n): {}
+				}
 			}
 		}
 	}

@@ -5,24 +5,27 @@ import (
 )
 
 hosts: schema.#Hosts & {
-	"000-015": schema.#Host & {
-		fqdn: "000-015.lan"
+	littlebuddy: schema.#Host & {
+		kuid: "000-015"
+		fqdn: "littlebuddy.lan"
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.control_plane]
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}
 
-	"000-02A": schema.#Host & {
-		fqdn: "000-02A.lan"
+	bill: schema.#Host & {
+		kuid: "000-02A"
+		fqdn: "bill.lan"
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.apps]
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}
 
-	"000-03F": schema.#Host & {
-		fqdn: "000-03F.lan"
+	paiki: schema.#Host & {
+		kuid: "000-03F"
+		fqdn: "paiki.lan"
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.media]
 		os:   schema.#OS.ubuntu
@@ -30,6 +33,7 @@ hosts: schema.#Hosts & {
 	}
 
 	pango: schema.#Host & {
+		kuid: "000-0CX"
 		fqdn: "pango.lan"
 		kind: schema.#Kind.vm
 		roles: [schema.#Role.edge]
@@ -38,9 +42,19 @@ hosts: schema.#Hosts & {
 	}
 
 	blip: schema.#Host & {
+		kuid: "000-0D3"
 		fqdn: "blip.lan"
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.apps]
+		os:   schema.#OS.ubuntu
+		arch: schema.#Arch.amd64
+	}
+
+	chad: schema.#Host & {
+		kuid: "000-0BR"
+		fqdn: "chad.lan"
+		kind: schema.#Kind.vm
+		roles: [schema.#Role.edge, schema.#Role.mesh]
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}

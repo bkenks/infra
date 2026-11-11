@@ -8,7 +8,7 @@ import (
 
 // ——————————————————————————————————————————————————————————————————————————————————————————————————
 #Host: {
-	name:      string
+	kuid:      string
 	site?:     #Site.#enum
 	provider?: #Provider.#enum
 	fqdn:      net.FQDN
@@ -23,7 +23,7 @@ import (
 	roles?: [...#Role.#enum]
 }
 
-#Hosts: [Name=string]: #Host & {name: Name}
+#Hosts: [_]: #Host
 
 #Arch: A={
 	#enum: or([for v in A {v}])
@@ -63,6 +63,7 @@ import (
 	media:         "media"
 	edge:          "edge"
 	apps:          "apps"
+	mesh:          "mesh"
 }
 
 // ——————————————————————————————————————————————————————————————————————————————————————————————————

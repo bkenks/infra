@@ -1,0 +1,3 @@
+---
+system__should_extend_lvm: false
+system__should_enable_wol: false
