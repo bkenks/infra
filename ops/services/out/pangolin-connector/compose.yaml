@@ -13,7 +13,7 @@ services:
       SITE_SECRET: ${SITE_SECRET:?err}
     extra_hosts:
       - host.docker.internal:host-gateway
-    image: fosrl/pangolin-cli:0.20.0
+    image: fosrl/pangolin-cli:0.21.0
     restart: unless-stopped
     networks:
       pangolin-site:

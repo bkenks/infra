@@ -7,6 +7,7 @@ import (
 )
 
 pangolinConnector: S={
+	_version: "0.21.0"
 	_ipv4_address: "10.250.0.10"
 
 	compose: C={
@@ -16,7 +17,7 @@ pangolinConnector: S={
 		networks: _psNet.asExternal
 
 		services: connector: {
-			image: "fosrl/pangolin-cli:0.20.0"
+			image: "fosrl/pangolin-cli:\(_version)"
 			environment: {
 				PANGOLIN_ENDPOINT:       ext.routes.pangolin
 				(S.fnox._refSiteID):     "${\(S.fnox._refSiteID):?err}"
