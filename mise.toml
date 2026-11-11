@@ -2,15 +2,15 @@
 
 
 [tools]
-cue            = "0.17.1"
-lefthook       = "2"
-"npm:wrangler" = "4"
-opentofu       = "1.13"
-prettier       = "3.9.10"
-taplo          = "0.10.0"
-treefmt        = "2.6.0"
-uv             = "0.13.0"
-vendir         = "0.46.2"
+"aqua:numtide/treefmt" = "2.6.0"
+cue                    = "0.17.1"
+lefthook               = "2"
+"npm:wrangler"         = "4"
+opentofu               = "1.13"
+prettier               = "3.9.10"
+taplo                  = "0.10.0"
+uv                     = "0.13.0"
+vendir                 = "0.46.2"
 
 
 [vars]
