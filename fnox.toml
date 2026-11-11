@@ -1,0 +1,7 @@
+[providers.onepassword]
+account = "FUKUXFLIDREQDELXYP2PALUAVY"
+type    = "1password"
+vault   = "infra"
+
+[secrets]
+PANGOLIN_API_KEY = { provider = "onepassword", value = "pangolin.blip/credential" }
