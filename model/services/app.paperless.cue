@@ -21,6 +21,11 @@ _paperless: {
 }
 
 paperless: D={
+	deploy: {
+		manager: "komodo"
+		targets: ["bill", "littlebuddy"]
+	}
+
 	_scr: D.fnox.secrets
 
 	// files: "fnox.toml": {format: "toml", contents: D._fnox}

@@ -11,6 +11,14 @@ _agent: {
 }
 
 agent: {
+	deploy: {
+		manager: "komodo"
+		targets: ["bill", "littlebuddy", "paiki", "pango"]
+		per_host: true
+	}
+
+	notes: "Per-host log shipper (Vector); one instance per target host, shipping to victorialogs. Komodo names instances log-agent_<host>."
+
 	compose: S={
 		name: "agent"
 

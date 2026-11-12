@@ -12,6 +12,11 @@ _openseo: {
 }
 
 openseo: D={
+	deploy: {
+		manager: "komodo"
+		targets: ["bill"]
+	}
+
 	_scr: D.fnox.secrets
 
 	// files: "fnox.toml": {format: "toml", contents: D._fnox}

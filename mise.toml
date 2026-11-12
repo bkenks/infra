@@ -5,6 +5,7 @@
 "aqua:numtide/treefmt" = "2.6.0"
 cue                    = "0.17.1"
 lefthook               = "2"
+"npm:likec4"           = "1"
 "npm:wrangler"         = "4"
 opentofu               = "1.13"
 prettier               = "3.9.10"
@@ -52,6 +53,11 @@ run         = "cue vet -c ./..."
 description = 'Render files from CUE'
 dir         = "{{ config_root }}/model"
 run         = "cue cmd render"
+
+# —————————————————————————————————————————————————
+[tasks.likec4]
+description = 'Serve the infrastructure diagram UI'
+run         = "likec4 start docs/diagrams"
 
 # —————————————————————————————————————————————————
 [tasks."docker:build:fnox"]

@@ -18,6 +18,13 @@ _komodo: {
 }
 
 komodo: D={
+	deploy: {
+		manager: "ansible"
+		targets: ["littlebuddy"]
+	}
+
+	notes: "Deploy orchestrator core. Deployed by Ansible (ops/automation/playbooks/50_platform.yml), not by Komodo itself."
+
 	_scr: D.fnox.secrets
 
 	// files: "fnox.toml": {format: "toml", contents: D._fnox}

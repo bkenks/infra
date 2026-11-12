@@ -7,7 +7,15 @@ import (
 )
 
 pangolinConnector: S={
-	_version: "0.21.0"
+	deploy: {
+		manager: "komodo"
+		targets: ["bill", "littlebuddy", "paiki", "pango"]
+		per_host: true
+	}
+
+	notes: "Mesh connector; one instance per target host joining it to the pangolin site. Komodo names instances pangolin-connector_<host> and sets FNOX_PROFILE to the host kuid."
+
+	_version:      "0.21.0"
 	_ipv4_address: "10.250.0.10"
 
 	compose: C={

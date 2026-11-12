@@ -9,25 +9,32 @@ _actual_budget: {
 	version: "latest"
 }
 
-actual_budget: compose: S={
-	name: "actual-budget"
+actual_budget: {
+	deploy: {
+		manager: "komodo"
+		targets: ["bill"]
+	}
 
-	volumes: data: name: "actual-budget-app_data"
+	compose: S={
+		name: "actual-budget"
 
-	networks: externals.dockerNetworks.pangolinSite.asExternal
+		volumes: data: name: "actual-budget-app_data"
 
-	services: app: {
-		image: "docker.io/actualbudget/actual-server:\(_actual_budget.version)"
-		environment: ACTUAL_PORT: "\(_actual_budget.port)"
-		expose: [_actual_budget.port]
-		volumes: ["\(S.volumes.data._ID):/data"]
-		networks: [externals.dockerNetworks.pangolinSite.name]
-		healthcheck: {
-			test: ["CMD-SHELL", "node scripts/health-check.js"]
-			interval:     "60s"
-			timeout:      "10s"
-			retries:      3
-			start_period: "20s"
+		networks: externals.dockerNetworks.pangolinSite.asExternal
+
+		services: app: {
+			image: "docker.io/actualbudget/actual-server:\(_actual_budget.version)"
+			environment: ACTUAL_PORT: "\(_actual_budget.port)"
+			expose: [_actual_budget.port]
+			volumes: ["\(S.volumes.data._ID):/data"]
+			networks: [externals.dockerNetworks.pangolinSite.name]
+			healthcheck: {
+				test: ["CMD-SHELL", "node scripts/health-check.js"]
+				interval:     "60s"
+				timeout:      "10s"
+				retries:      3
+				start_period: "20s"
+			}
 		}
 	}
 }

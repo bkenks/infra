@@ -1,0 +1,167 @@
+// GENERATED from CUE — DO NOT EDIT.
+// Rendered from the same model as store/graph.yml.
+specification {
+	element host
+	element stack
+	element network
+}
+
+model {
+littlebuddy = host "littlebuddy" {
+	technology "ubuntu · physical"
+}
+bill = host "bill" {
+	technology "ubuntu · physical"
+}
+paiki = host "paiki" {
+	technology "ubuntu · physical"
+}
+pango = host "pango" {
+	technology "ubuntu · vm"
+}
+blip = host "blip" {
+	technology "ubuntu · physical"
+}
+chad = host "chad" {
+	technology "ubuntu · vm"
+}
+actual-budget = stack "actual-budget" {
+	technology "komodo"
+}
+docuseal = stack "docuseal" {
+	technology "komodo"
+}
+git-clone = stack "git-clone" {
+	technology "none"
+}
+grist = stack "grist" {
+	technology "komodo"
+}
+immich = stack "immich" {
+	technology "komodo"
+}
+openhands = stack "openhands" {
+	technology "none"
+}
+openseo = stack "openseo" {
+	technology "komodo"
+}
+paperless = stack "paperless" {
+	technology "komodo"
+}
+paseo = stack "paseo" {
+	technology "none"
+}
+searxng = stack "searxng" {
+	technology "komodo"
+}
+stream = stack "stream" {
+	technology "komodo"
+}
+pangolin-connector = stack "pangolin-connector" {
+	technology "komodo"
+}
+agent = stack "agent" {
+	technology "komodo"
+}
+arcane = stack "arcane" {
+	technology "none"
+}
+komodo-mcp = stack "komodo-mcp" {
+	technology "komodo"
+}
+komodo = stack "komodo" {
+	technology "ansible"
+}
+pangolin = stack "pangolin" {
+	technology "komodo"
+}
+pocket-id = stack "pocket-id" {
+	technology "komodo"
+}
+victorialogs = stack "victorialogs" {
+	technology "komodo"
+}
+frappe = stack "frappe" {
+	technology "komodo"
+}
+pangolin-site = network "pangolin-site" {
+	technology "10.250.0.0/24"
+}
+actual-budget -> bill "runs on"
+docuseal -> littlebuddy "runs on"
+grist -> bill "runs on"
+immich -> paiki "runs on"
+openseo -> bill "runs on"
+paperless -> bill "runs on"
+paperless -> littlebuddy "runs on"
+searxng -> bill "runs on"
+stream -> paiki "runs on"
+pangolin-connector -> bill "runs on"
+pangolin-connector -> littlebuddy "runs on"
+pangolin-connector -> paiki "runs on"
+pangolin-connector -> pango "runs on"
+agent -> bill "runs on"
+agent -> littlebuddy "runs on"
+agent -> paiki "runs on"
+agent -> pango "runs on"
+komodo-mcp -> littlebuddy "runs on"
+komodo -> littlebuddy "runs on"
+pangolin -> pango "runs on"
+pocket-id -> pango "runs on"
+victorialogs -> littlebuddy "runs on"
+frappe -> bill "runs on"
+actual-budget -> pangolin-site "attached"
+docuseal -> pangolin-site "attached"
+grist -> pangolin-site "attached"
+immich -> pangolin-site "attached"
+openhands -> pangolin-site "attached"
+openseo -> pangolin-site "attached"
+paperless -> pangolin-site "attached"
+paseo -> pangolin-site "attached"
+searxng -> pangolin-site "attached"
+stream -> pangolin-site "attached"
+pangolin-connector -> pangolin-site "attached"
+komodo-mcp -> pangolin-site "attached"
+komodo -> pangolin-site "attached"
+pocket-id -> pangolin-site "attached"
+victorialogs -> pangolin-site "attached"
+}
+
+views {
+view index {
+	title "Infrastructure"
+	include *
+	autoLayout LeftRight
+}
+view host-littlebuddy {
+	title "littlebuddy"
+	include littlebuddy, docuseal, paperless, pangolin-connector, agent, komodo-mcp, komodo, victorialogs
+	autoLayout TopBottom
+}
+view host-bill {
+	title "bill"
+	include bill, actual-budget, grist, openseo, paperless, searxng, pangolin-connector, agent, frappe
+	autoLayout TopBottom
+}
+view host-paiki {
+	title "paiki"
+	include paiki, immich, stream, pangolin-connector, agent
+	autoLayout TopBottom
+}
+view host-pango {
+	title "pango"
+	include pango, pangolin-connector, agent, pangolin, pocket-id
+	autoLayout TopBottom
+}
+view host-blip {
+	title "blip"
+	include blip
+	autoLayout TopBottom
+}
+view host-chad {
+	title "chad"
+	include chad
+	autoLayout TopBottom
+}
+}

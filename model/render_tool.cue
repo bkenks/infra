@@ -27,6 +27,7 @@ command: render: {
 			networks: {name: "networks.yml", absPath: path.Join([store.absPath, name])}
 			hosts: {name: "hosts.yml", absPath: path.Join([store.absPath, name])}
 			paths: {name: "paths.yml", absPath: path.Join([store.absPath, name])}
+			graph: {name: "graph.yml", absPath: path.Join([store.absPath, name])}
 		}
 
 		store: {name: "store", absPath: path.Join([repoRoot.absPath, name])}
@@ -50,6 +51,27 @@ command: render: {
 		let dir = ext.dirs.host
 		filename: out.files.paths.absPath
 		contents: cueHeader + yaml.Marshal(dir)
+	}
+
+	// The machine-readable infra map AI agents read. Derived entirely from
+	// the model — hosts from inventory, deploy info from each stack's
+	// `deploy` field.
+	storeGraph: file.Create & {
+		filename: out.files.graph.absPath
+		contents: cueHeader + yaml.Marshal(exp.graph)
+	}
+
+	// The same map as an explorable LikeC4 diagram for humans.
+	diagrams: {name: "diagrams", absPath: path.Join([repoRoot.absPath, "docs", name])}
+
+	diagramMkdir: file.MkdirAll & {
+		path: diagrams.absPath
+	}
+
+	diagramLikec4: file.Create & {
+		$after: diagramMkdir
+		filename: path.Join([diagrams.absPath, "infra.likec4"])
+		contents: exp.likec4
 	}
 
 	let outSvc = out.services.absPath
