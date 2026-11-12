@@ -15,6 +15,13 @@ _immich: {
 }
 
 immich: D={
+	deploy: {
+		manager: "komodo"
+		targets: ["paiki"]
+	}
+
+	notes: "Photo library. Library bind-mounted from host path /mnt/immich-library. Public at https://immich.homektb.com via pangolin."
+
 	_scr: D.fnox.secrets
 
 	// files: "fnox.toml": {format: "toml", contents: D._fnox}

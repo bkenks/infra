@@ -38,6 +38,13 @@ _pangolin: {
 }
 
 pangolin: D={
+	deploy: {
+		manager: "komodo"
+		targets: ["pango"]
+	}
+
+	notes: "Public ingress: gerbil tunnel + traefik proxy in front of the pangolin app."
+
 	_scr: D.fnox.secrets
 
 	// files: "fnox.toml": {format: "toml", contents: D._fnox}

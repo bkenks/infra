@@ -1,0 +1,433 @@
+# GENERATED from CUE — DO NOT EDIT.
+version: 1
+meta:
+  description: Machine-readable map of the infrastructure, generated from model/ (CUE). Read this first for any infra task. Never edit this file — edit the model and re-render.
+  regenerate: mise run cue:render
+  legend: docs/legend.md
+hosts:
+  littlebuddy:
+    fqdn: littlebuddy.lan
+    kind: physical
+    os: ubuntu
+    arch: amd64
+    roles:
+      - control_plane
+  bill:
+    fqdn: bill.lan
+    kind: physical
+    os: ubuntu
+    arch: amd64
+    roles:
+      - apps
+  paiki:
+    fqdn: paiki.lan
+    kind: physical
+    os: ubuntu
+    arch: amd64
+    roles:
+      - media
+  pango:
+    fqdn: pango.lan
+    kind: vm
+    os: ubuntu
+    arch: amd64
+    roles:
+      - edge
+  blip:
+    fqdn: blip.lan
+    kind: physical
+    os: ubuntu
+    arch: amd64
+    roles:
+      - apps
+  chad:
+    fqdn: chad.lan
+    kind: vm
+    os: ubuntu
+    arch: amd64
+    roles:
+      - edge
+      - mesh
+networks:
+  pangolin-site:
+    subnet: 10.250.0.0/24
+stacks:
+  actual_budget:
+    name: actual-budget
+    run_directory: ops/services/out/actual-budget
+    modeled: true
+    services:
+      - actual-budget-app
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+    per_host: false
+  docuseal:
+    name: docuseal
+    run_directory: ops/services/out/docuseal
+    modeled: true
+    services:
+      - docuseal-app
+      - docuseal-db
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - littlebuddy
+    per_host: false
+  git_clone:
+    name: git-clone
+    run_directory: ops/services/out/git-clone
+    modeled: true
+    services:
+      - git-clone
+    manager: none
+    hosts: []
+  grist:
+    name: grist
+    run_directory: ops/services/out/grist
+    modeled: true
+    services:
+      - grist-app
+      - grist-cache
+      - grist-db
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+    per_host: false
+  immich:
+    name: immich
+    run_directory: ops/services/out/immich
+    modeled: true
+    services:
+      - immich-db
+      - immich-ml
+      - immich-cache
+      - immich-app
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - paiki
+    per_host: false
+    notes: Photo library. Library bind-mounted from host path /mnt/immich-library. Public at https://immich.homektb.com via pangolin.
+  openhands:
+    name: openhands
+    run_directory: ops/services/out/openhands
+    modeled: true
+    services:
+      - openhands-app
+    networks:
+      - pangolin-site
+    manager: none
+    hosts: []
+  openseo:
+    name: openseo
+    run_directory: ops/services/out/openseo
+    modeled: true
+    services:
+      - openseo-app
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+    per_host: false
+  paperless:
+    name: paperless
+    run_directory: ops/services/out/paperless
+    modeled: true
+    services:
+      - paperless-cache
+      - paperless-db
+      - paperless-converter
+      - paperless-parser
+      - paperless-app
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+      - littlebuddy
+    per_host: false
+  paseo:
+    name: paseo
+    run_directory: ops/services/out/paseo
+    modeled: true
+    services:
+      - paseo
+    networks:
+      - pangolin-site
+    manager: none
+    hosts: []
+  searxng:
+    name: searxng
+    run_directory: ops/services/out/searxng
+    modeled: true
+    services:
+      - searxng-app
+      - searxng-cache
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+    per_host: false
+  stream:
+    name: stream
+    run_directory: ops/services/out/stream
+    modeled: true
+    services:
+      - stream-subtitles
+      - stream-seeder
+      - stream-janitor
+      - stream-media
+      - stream-indexer
+      - stream-movies
+      - stream-downloader
+      - stream-requests
+      - stream-tv
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - paiki
+    per_host: false
+  pangolinConnector:
+    name: pangolin-connector
+    run_directory: ops/services/out/pangolin-connector
+    modeled: true
+    services:
+      - pangolin-connector
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+      - littlebuddy
+      - paiki
+      - pango
+    per_host: true
+    notes: Mesh connector; one instance per target host joining it to the pangolin site. Komodo names instances pangolin-connector_<host> and sets FNOX_PROFILE to the host kuid.
+  agent:
+    name: agent
+    run_directory: ops/services/out/agent
+    modeled: true
+    services:
+      - agent-log-agent
+    manager: komodo
+    hosts:
+      - bill
+      - littlebuddy
+      - paiki
+      - pango
+    per_host: true
+    notes: Per-host log shipper (Vector); one instance per target host, shipping to victorialogs. Komodo names instances log-agent_<host>.
+  arcane:
+    name: arcane
+    run_directory: ops/services/out/arcane
+    modeled: true
+    services:
+      - arcane
+    manager: none
+    hosts: []
+  komodo_mcp:
+    name: komodo-mcp
+    run_directory: ops/services/out/komodo-mcp
+    modeled: true
+    services:
+      - komodo-mcp-app
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - littlebuddy
+    per_host: false
+  komodo:
+    name: komodo
+    run_directory: ops/services/out/komodo
+    modeled: true
+    services:
+      - komodo-app
+      - komodo-db
+    networks:
+      - pangolin-site
+    manager: ansible
+    hosts:
+      - littlebuddy
+    per_host: false
+    notes: Deploy orchestrator core. Deployed by Ansible (ops/automation/playbooks/50_platform.yml), not by Komodo itself.
+  pangolin:
+    name: pangolin
+    run_directory: ops/services/out/pangolin
+    modeled: true
+    services:
+      - pangolin
+      - gerbil
+      - traefik
+    networks:
+      - pangolin_default
+    manager: komodo
+    hosts:
+      - pango
+    per_host: false
+    notes: 'Public ingress: gerbil tunnel + traefik proxy in front of the pangolin app.'
+  pocket_id:
+    name: pocket-id
+    run_directory: ops/services/out/pocket-id
+    modeled: true
+    services:
+      - pocket-id
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - pango
+    per_host: false
+  victorialogs:
+    name: victorialogs
+    run_directory: ops/services/out/victorialogs
+    modeled: true
+    services:
+      - victorialogs-logs
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - littlebuddy
+    per_host: false
+    notes: Central log store for the fleet. See ADR 01-02-01 (fleet log aggregation).
+  frappe:
+    name: frappe
+    modeled: false
+    manager: komodo
+    hosts:
+      - bill
+    run_directory: ops/services/frappe
+relations:
+  - type: deployed_on
+    stack: actual-budget
+    host: bill
+  - type: deployed_on
+    stack: docuseal
+    host: littlebuddy
+  - type: deployed_on
+    stack: grist
+    host: bill
+  - type: deployed_on
+    stack: immich
+    host: paiki
+  - type: deployed_on
+    stack: openseo
+    host: bill
+  - type: deployed_on
+    stack: paperless
+    host: bill
+  - type: deployed_on
+    stack: paperless
+    host: littlebuddy
+  - type: deployed_on
+    stack: searxng
+    host: bill
+  - type: deployed_on
+    stack: stream
+    host: paiki
+  - type: deployed_on
+    stack: pangolin-connector
+    host: bill
+    per_instance: true
+  - type: deployed_on
+    stack: pangolin-connector
+    host: littlebuddy
+    per_instance: true
+  - type: deployed_on
+    stack: pangolin-connector
+    host: paiki
+    per_instance: true
+  - type: deployed_on
+    stack: pangolin-connector
+    host: pango
+    per_instance: true
+  - type: deployed_on
+    stack: agent
+    host: bill
+    per_instance: true
+  - type: deployed_on
+    stack: agent
+    host: littlebuddy
+    per_instance: true
+  - type: deployed_on
+    stack: agent
+    host: paiki
+    per_instance: true
+  - type: deployed_on
+    stack: agent
+    host: pango
+    per_instance: true
+  - type: deployed_on
+    stack: komodo-mcp
+    host: littlebuddy
+  - type: deployed_on
+    stack: komodo
+    host: littlebuddy
+  - type: deployed_on
+    stack: pangolin
+    host: pango
+  - type: deployed_on
+    stack: pocket-id
+    host: pango
+  - type: deployed_on
+    stack: victorialogs
+    host: littlebuddy
+  - type: deployed_on
+    stack: frappe
+    host: bill
+  - type: on_network
+    stack: actual-budget
+    network: pangolin-site
+  - type: on_network
+    stack: docuseal
+    network: pangolin-site
+  - type: on_network
+    stack: grist
+    network: pangolin-site
+  - type: on_network
+    stack: immich
+    network: pangolin-site
+  - type: on_network
+    stack: openhands
+    network: pangolin-site
+  - type: on_network
+    stack: openseo
+    network: pangolin-site
+  - type: on_network
+    stack: paperless
+    network: pangolin-site
+  - type: on_network
+    stack: paseo
+    network: pangolin-site
+  - type: on_network
+    stack: searxng
+    network: pangolin-site
+  - type: on_network
+    stack: stream
+    network: pangolin-site
+  - type: on_network
+    stack: pangolin-connector
+    network: pangolin-site
+  - type: on_network
+    stack: komodo-mcp
+    network: pangolin-site
+  - type: on_network
+    stack: komodo
+    network: pangolin-site
+  - type: on_network
+    stack: pocket-id
+    network: pangolin-site
+  - type: on_network
+    stack: victorialogs
+    network: pangolin-site

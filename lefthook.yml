@@ -3,4 +3,4 @@ pre-commit:
   jobs:
     - name: "CUE | render"
       glob: "*.cue"
-      run: mise run cue:render && git add -A store ops/services/out
+      run: mise run cue:render && git add -A store ops/services/out docs/diagrams && mise exec -- likec4 validate docs/diagrams

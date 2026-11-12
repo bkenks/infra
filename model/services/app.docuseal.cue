@@ -14,6 +14,11 @@ _docuseal: {
 }
 
 docuseal: D={
+	deploy: {
+		manager: "komodo"
+		targets: ["littlebuddy"]
+	}
+
 	_scr: D.fnox.secrets
 
 	// files: "fnox.toml": {format: "toml", contents: D._fnox}
