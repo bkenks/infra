@@ -24,8 +24,6 @@ activepieces: D={
 
 	_scr: D.fnox.secrets
 
-	// files: "fnox.toml": {format: "toml", contents: D._fnox}
-
 	fnox: {
 		snip.fnox.InfraProvider
 
@@ -72,7 +70,7 @@ activepieces: D={
 				environment: {
 					POSTGRES_USER:                S.name
 					POSTGRES_DB:                  S.name
-					(_scr.AP_POSTGRES_PASSWORD._ID): "${\(_scr.AP_POSTGRES_PASSWORD._ID):?err}"
+					POSTGRES_PASSWORD:            "${\(_scr.AP_POSTGRES_PASSWORD._ID):?err}"
 				}
 				expose: [_activepieces.dbPort]
 				volumes: ["\(S.volumes.db_data._ID):/var/lib/postgresql"]

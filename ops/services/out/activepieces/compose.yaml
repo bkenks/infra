@@ -29,7 +29,7 @@ services:
     environment:
       POSTGRES_USER: activepieces
       POSTGRES_DB: activepieces
-      AP_POSTGRES_PASSWORD: ${AP_POSTGRES_PASSWORD:?err}
+      POSTGRES_PASSWORD: ${AP_POSTGRES_PASSWORD:?err}
     image: docker.io/pgvector/pgvector:0.8.0-pg14
     expose:
       - 5432

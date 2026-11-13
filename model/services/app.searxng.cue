@@ -22,8 +22,6 @@ searxng: D={
 
 	_scr: D.fnox.secrets
 
-	// files: "fnox.toml": {format: "toml", contents: D._fnox}
-
 	fnox: {
 		snip.fnox.InfraProvider
 

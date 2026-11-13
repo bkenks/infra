@@ -111,13 +111,13 @@ command: render: {
 				// their file list, so adding or dropping an output (fnox.toml,
 				// configs, ...) is a model change, not a tool change.
 				if stack.files != _|_ if len(stack.files) > 0 {
-					for fpath, fv in stack.files {
-						("write_" + fpath): file.Create & {
+					for id, fv in stack.files {
+						("write_" + id): file.Create & {
 							$after: mkdir
-							filename: path.Join([outStk, fpath])
+							filename: path.Join([outStk, fv.filename])
 							contents: cueHeader + [
 								if fv.format == "toml" {toml.Marshal(fv.contents)},
-								if fv.format != "toml" {yaml.Marshal(fv.contents)},
+								if fv.format == "yaml" {yaml.Marshal(fv.contents)},
 							][0]
 						}
 					}
