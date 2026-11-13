@@ -1,0 +1,118 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: activepieces
+networks:
+  pangolin-site:
+    name: pangolin-site
+    external: true
+services:
+  cache:
+    restart: unless-stopped
+    container_name: activepieces-cache
+    image: docker.io/library/redis:7.0.7
+    expose:
+      - 6379
+    healthcheck:
+      interval: 10s
+      retries: 5
+      test:
+        - CMD
+        - redis-cli
+        - ping
+      timeout: 5s
+    networks:
+      - default
+    volumes:
+      - cache_data:/data
+  db:
+    restart: unless-stopped
+    container_name: activepieces-db
+    environment:
+      POSTGRES_USER: activepieces
+      POSTGRES_DB: activepieces
+      AP_POSTGRES_PASSWORD: ${AP_POSTGRES_PASSWORD:?err}
+    image: docker.io/pgvector/pgvector:0.8.0-pg14
+    expose:
+      - 5432
+    healthcheck:
+      interval: 5s
+      retries: 10
+      test:
+        - CMD-SHELL
+        - pg_isready --username=activepieces
+      timeout: 10s
+    networks:
+      - default
+    volumes:
+      - db_data:/var/lib/postgresql
+  app:
+    restart: unless-stopped
+    container_name: activepieces-app
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+    environment:
+      AP_CONTAINER_TYPE: APP
+      AP_FRONTEND_URL: https://activepieces.ktbcloud.com
+      AP_POSTGRES_HOST: activepieces-db
+      AP_POSTGRES_PORT: "5432"
+      AP_POSTGRES_DATABASE: activepieces
+      AP_POSTGRES_USERNAME: activepieces
+      AP_REDIS_HOST: activepieces-cache
+      AP_REDIS_PORT: "6379"
+      AP_ENCRYPTION_KEY: ${AP_ENCRYPTION_KEY:?err}
+      AP_JWT_SECRET: ${AP_JWT_SECRET:?err}
+      AP_POSTGRES_PASSWORD: ${AP_POSTGRES_PASSWORD:?err}
+    expose:
+      - 80
+    healthcheck:
+      interval: 30s
+      retries: 5
+      test:
+        - CMD
+        - node
+        - -e
+        - 'fetch(''http://localhost:80/api/v1/health'').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))'
+      timeout: 10s
+      start_period: 30s
+    image: ghcr.io/activepieces/activepieces:0.93.0
+    networks:
+      - default
+      - pangolin-site
+    volumes:
+      - app_cache:/usr/src/app/cache
+  worker:
+    restart: unless-stopped
+    container_name: activepieces-worker
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+      app:
+        condition: service_started
+    environment:
+      AP_CONTAINER_TYPE: WORKER
+      AP_FRONTEND_URL: https://activepieces.ktbcloud.com
+      AP_POSTGRES_HOST: activepieces-db
+      AP_POSTGRES_PORT: "5432"
+      AP_POSTGRES_DATABASE: activepieces
+      AP_POSTGRES_USERNAME: activepieces
+      AP_REDIS_HOST: activepieces-cache
+      AP_REDIS_PORT: "6379"
+      AP_ENCRYPTION_KEY: ${AP_ENCRYPTION_KEY:?err}
+      AP_JWT_SECRET: ${AP_JWT_SECRET:?err}
+      AP_POSTGRES_PASSWORD: ${AP_POSTGRES_PASSWORD:?err}
+    image: ghcr.io/activepieces/activepieces:0.93.0
+    networks:
+      - default
+    volumes:
+      - app_cache:/usr/src/app/cache
+volumes:
+  app_cache:
+    name: activepieces-app_cache
+  db_data:
+    name: activepieces-db_data
+  cache_data:
+    name: activepieces-cache_data

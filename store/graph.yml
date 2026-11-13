@@ -52,6 +52,22 @@ networks:
   pangolin-site:
     subnet: 10.250.0.0/24
 stacks:
+  activepieces:
+    name: activepieces
+    run_directory: ops/services/out/activepieces
+    modeled: true
+    services:
+      - activepieces-cache
+      - activepieces-db
+      - activepieces-app
+      - activepieces-worker
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+    per_host: false
+    notes: Automation/workflow builder (n8n alternative). Webhooks and app triggers need AP_FRONTEND_URL (https://activepieces.ktbcloud.com) reachable by third parties.
   actual_budget:
     name: actual-budget
     run_directory: ops/services/out/actual-budget
@@ -310,6 +326,9 @@ stacks:
     run_directory: ops/services/frappe
 relations:
   - type: deployed_on
+    stack: activepieces
+    host: bill
+  - type: deployed_on
     stack: actual-budget
     host: bill
   - type: deployed_on
@@ -386,6 +405,9 @@ relations:
   - type: deployed_on
     stack: frappe
     host: bill
+  - type: on_network
+    stack: activepieces
+    network: pangolin-site
   - type: on_network
     stack: actual-budget
     network: pangolin-site

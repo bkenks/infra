@@ -25,6 +25,9 @@ blip = host "blip" {
 chad = host "chad" {
 	technology "ubuntu · vm"
 }
+activepieces = stack "activepieces" {
+	technology "komodo"
+}
 actual-budget = stack "actual-budget" {
 	technology "komodo"
 }
@@ -88,6 +91,7 @@ frappe = stack "frappe" {
 pangolin-site = network "pangolin-site" {
 	technology "10.250.0.0/24"
 }
+activepieces -> bill "runs on"
 actual-budget -> bill "runs on"
 docuseal -> littlebuddy "runs on"
 grist -> bill "runs on"
@@ -111,6 +115,7 @@ pangolin -> pango "runs on"
 pocket-id -> pango "runs on"
 victorialogs -> littlebuddy "runs on"
 frappe -> bill "runs on"
+activepieces -> pangolin-site "attached"
 actual-budget -> pangolin-site "attached"
 docuseal -> pangolin-site "attached"
 grist -> pangolin-site "attached"
@@ -141,7 +146,7 @@ view host-littlebuddy {
 }
 view host-bill {
 	title "bill"
-	include bill, actual-budget, grist, openseo, paperless, searxng, pangolin-connector, agent, frappe
+	include bill, activepieces, actual-budget, grist, openseo, paperless, searxng, pangolin-connector, agent, frappe
 	autoLayout TopBottom
 }
 view host-paiki {
