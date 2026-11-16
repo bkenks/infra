@@ -61,12 +61,14 @@ librenms: D={
 	}
 
 	// Sidecars share /data with the app, and they read the APP_KEY the app
-	// writes there on first start.
+	// writes there on first start. Upstream's compose uses plain depends_on:
+	// released images (<= 26.10.2) ship no HEALTHCHECK, so service_healthy on
+	// app fails the deploy.
 	_sidecar: {
 		image: "docker.io/librenms/librenms:\(_librenms.version)"
 		cap_add: ["NET_ADMIN", "NET_RAW"]
 		depends_on: {
-			app: condition:   "service_healthy"
+			app: condition:   "service_started"
 			redis: condition: "service_healthy"
 		}
 		volumes: ["\(D.compose.volumes.data._ID):/data"]
@@ -121,7 +123,7 @@ librenms: D={
 					start_period: "5s"
 				}
 			}
-			// Web UI. Healthcheck is baked into the image (/usr/local/bin/healthcheck).
+			// Web UI.
 			app: {
 				image:    "docker.io/librenms/librenms:\(_librenms.version)"
 				hostname: S.name

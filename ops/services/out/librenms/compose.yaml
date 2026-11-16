@@ -120,7 +120,7 @@ services:
     image: docker.io/librenms/librenms:26.10.2
     depends_on:
       app:
-        condition: service_healthy
+        condition: service_started
       redis:
         condition: service_healthy
     networks:
@@ -154,7 +154,7 @@ services:
     image: docker.io/librenms/librenms:26.10.2
     depends_on:
       app:
-        condition: service_healthy
+        condition: service_started
       redis:
         condition: service_healthy
     networks:
@@ -191,7 +191,7 @@ services:
     image: docker.io/librenms/librenms:26.10.2
     depends_on:
       app:
-        condition: service_healthy
+        condition: service_started
       redis:
         condition: service_healthy
     networks:
