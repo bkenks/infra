@@ -2,12 +2,14 @@ package inventory
 
 import (
 	"github.com/bkenks/infra/model/schema"
+	ext "github.com/bkenks/infra/model/externals"
 )
 
 hosts: schema.#Hosts & {
+	[_]: H={fqdn: "\(H.kuid).\(ext.domains.lanKtbInternal)"}
+
 	littlebuddy: schema.#Host & {
 		kuid: "000-015"
-		fqdn: "littlebuddy.lan"
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.control_plane]
 		os:   schema.#OS.ubuntu
@@ -15,8 +17,7 @@ hosts: schema.#Hosts & {
 	}
 
 	bill: schema.#Host & {
-		kuid: "000-02A"
-		fqdn: "bill.lan"
+		kuid: "000-02a"
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.apps]
 		os:   schema.#OS.ubuntu
@@ -24,8 +25,7 @@ hosts: schema.#Hosts & {
 	}
 
 	paiki: schema.#Host & {
-		kuid: "000-03F"
-		fqdn: "paiki.lan"
+		kuid: "000-03f"
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.media]
 		os:   schema.#OS.ubuntu
@@ -33,8 +33,7 @@ hosts: schema.#Hosts & {
 	}
 
 	pango: schema.#Host & {
-		kuid: "000-0CX"
-		fqdn: "pango.lan"
+		kuid: "000-0cx"
 		kind: schema.#Kind.vm
 		roles: [schema.#Role.edge]
 		os:   schema.#OS.ubuntu
@@ -42,19 +41,9 @@ hosts: schema.#Hosts & {
 	}
 
 	blip: schema.#Host & {
-		kuid: "000-0D3"
-		fqdn: "blip.lan"
+		kuid: "000-0d3"
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.apps]
-		os:   schema.#OS.ubuntu
-		arch: schema.#Arch.amd64
-	}
-
-	chad: schema.#Host & {
-		kuid: "000-0BR"
-		fqdn: "chad.lan"
-		kind: schema.#Kind.vm
-		roles: [schema.#Role.edge, schema.#Role.mesh]
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}

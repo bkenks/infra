@@ -2,7 +2,7 @@ package externals
 
 dirs: {
 	host: {
-		share:             "/srv"
+		share:            "/srv"
 		dockerShare:      share + "/docker"
 		dockerFiles:      dockerShare + "/files"
 		dockerStacks:     dockerShare + "/stacks"
@@ -13,8 +13,9 @@ dirs: {
 }
 
 domains: {
-	ktbInternal: "ktbinternal.com"
-	ktbCloud:    "ktbcloud.com"
+	ktbInternal:    "ktbinternal.com"
+	lanKtbInternal: "lan.\(ktbInternal)"
+	ktbCloud:       "ktbcloud.com"
 }
 
 dockerNetworks: {

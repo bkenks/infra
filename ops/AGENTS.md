@@ -8,7 +8,8 @@
 - `services/` — service payload: `out/` holds rendered Compose stacks
   (generated from CUE — do not edit), `configs/` hand-written config
   files, `frappe/` a hand-written stack not modeled in CUE, `images/`
-  Dockerfiles, `wrap` the fnox compose wrapper used by Komodo.
+  Dockerfiles, `wrap` the fnox compose wrapper used by Komodo,
+  `README.md` manual post-deploy steps per stack (e.g. NetBox admin user).
 - `state/` — OpenTofu roots (cloudflare, vultr) with remote state.
 
 Deploy flow: edit CUE → `mise run cue:render` → commit → Komodo pulls the

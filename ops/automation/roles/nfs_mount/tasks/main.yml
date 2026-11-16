@@ -1,0 +1,50 @@
+---
+- name: Ensure the NFS client is installed
+  become: true
+  ansible.builtin.apt:
+    name: nfs-common
+    state: present
+  when: nfs_mount__mounts | length > 0
+
+- name: Ensure the mount points exist
+  become: true
+  ansible.builtin.file:
+    path: "{{ item.path }}"
+    state: directory
+    mode: "0755"
+  loop: "{{ nfs_mount__mounts }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+# state=present only writes fstab; mounting now would bypass the automount
+# and fail the play whenever the server is down.
+- name: Ensure each share is in fstab as an automount
+  become: true
+  ansible.posix.mount:
+    path: "{{ item.path }}"
+    src: "{{ item.src }}"
+    fstype: nfs
+    opts: "{{ item.opts | default(nfs_mount__opts) }}"
+    state: present
+  loop: "{{ nfs_mount__mounts }}"
+  loop_control:
+    label: "{{ item.path }}"
+
+- name: Resolve the automount unit names
+  ansible.builtin.command:
+    cmd: systemd-escape --path --suffix=automount {{ item.path }}
+  loop: "{{ nfs_mount__mounts }}"
+  loop_control:
+    label: "{{ item.path }}"
+  register: nfs_mount__units
+  changed_when: false
+
+- name: Ensure each automount is active
+  become: true
+  ansible.builtin.systemd_service:
+    name: "{{ item.stdout }}"
+    state: started
+    daemon_reload: true
+  loop: "{{ nfs_mount__units.results }}"
+  loop_control:
+    label: "{{ item.stdout }}"

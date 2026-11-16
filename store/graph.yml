@@ -6,48 +6,40 @@ meta:
   legend: docs/legend.md
 hosts:
   littlebuddy:
-    fqdn: littlebuddy.lan
+    fqdn: 000-015.lan.ktbinternal.com
     kind: physical
     os: ubuntu
     arch: amd64
     roles:
       - control_plane
   bill:
-    fqdn: bill.lan
+    fqdn: 000-02a.lan.ktbinternal.com
     kind: physical
     os: ubuntu
     arch: amd64
     roles:
       - apps
   paiki:
-    fqdn: paiki.lan
+    fqdn: 000-03f.lan.ktbinternal.com
     kind: physical
     os: ubuntu
     arch: amd64
     roles:
       - media
   pango:
-    fqdn: pango.lan
+    fqdn: 000-0cx.lan.ktbinternal.com
     kind: vm
     os: ubuntu
     arch: amd64
     roles:
       - edge
   blip:
-    fqdn: blip.lan
+    fqdn: 000-0d3.lan.ktbinternal.com
     kind: physical
     os: ubuntu
     arch: amd64
     roles:
       - apps
-  chad:
-    fqdn: chad.lan
-    kind: vm
-    os: ubuntu
-    arch: amd64
-    roles:
-      - edge
-      - mesh
 networks:
   pangolin-site:
     subnet: 10.250.0.0/24
@@ -131,6 +123,41 @@ stacks:
       - paiki
     per_host: false
     notes: Photo library. Library bind-mounted from host path /mnt/immich-library. Public at https://immich.homektb.com via pangolin.
+  librenms:
+    name: librenms
+    run_directory: ops/services/out/librenms
+    modeled: true
+    services:
+      - librenms-db
+      - librenms-redis
+      - librenms-app
+      - librenms-dispatcher
+      - librenms-syslogng
+      - librenms-snmptrapd
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+    per_host: false
+    notes: Network monitoring (SNMP polling, alerting) at https://librenms.ktbcloud.com. The first-run wizard creates the admin user; see ops/services/README.md. bill publishes syslog (514) and SNMP traps (162) for LAN devices.
+  netbox:
+    name: netbox
+    run_directory: ops/services/out/netbox
+    modeled: true
+    services:
+      - netbox-db
+      - netbox-redis
+      - netbox-redis-cache
+      - netbox-app
+      - netbox-worker
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+    per_host: false
+    notes: Network source of truth / IPAM + DCIM (https://netbox.ktbcloud.com). No superuser is auto-created (SKIP_SUPERUSER); see ops/services/README.md for creating one.
   openhands:
     name: openhands
     run_directory: ops/services/out/openhands
@@ -213,6 +240,7 @@ stacks:
     hosts:
       - paiki
     per_host: false
+    notes: Media library and downloads live on the Synology NAS share /volume1/streaming, automounted at /mnt/streaming on paiki (nfs_mount Ansible role).
   pangolinConnector:
     name: pangolin-connector
     run_directory: ops/services/out/pangolin-connector
@@ -341,6 +369,12 @@ relations:
     stack: immich
     host: paiki
   - type: deployed_on
+    stack: librenms
+    host: bill
+  - type: deployed_on
+    stack: netbox
+    host: bill
+  - type: deployed_on
     stack: openseo
     host: bill
   - type: deployed_on
@@ -419,6 +453,12 @@ relations:
     network: pangolin-site
   - type: on_network
     stack: immich
+    network: pangolin-site
+  - type: on_network
+    stack: librenms
+    network: pangolin-site
+  - type: on_network
+    stack: netbox
     network: pangolin-site
   - type: on_network
     stack: openhands

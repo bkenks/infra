@@ -28,7 +28,11 @@ services:
       - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/bazarr/config:/config
-      - /srv/docker/bind-mounts/stream/shared:/data
+      - type: bind
+        source: /mnt/streaming
+        target: /data
+        bind:
+          propagation: rslave
   seeder:
     container_name: stream-seeder
     depends_on:
@@ -86,7 +90,11 @@ services:
     network_mode: host
     volumes:
       - /srv/docker/bind-mounts/stream/plex/config:/config
-      - /srv/docker/bind-mounts/stream/shared/media:/data/media
+      - type: bind
+        source: /mnt/streaming
+        target: /data
+        bind:
+          propagation: rslave
   indexer:
     restart: unless-stopped
     container_name: stream-indexer
@@ -133,7 +141,11 @@ services:
       - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/radarr/config:/config
-      - /srv/docker/bind-mounts/stream/shared:/data
+      - type: bind
+        source: /mnt/streaming
+        target: /data
+        bind:
+          propagation: rslave
   downloader:
     restart: unless-stopped
     container_name: stream-downloader
@@ -157,7 +169,11 @@ services:
       - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/sabnzbd/config:/config
-      - /srv/docker/bind-mounts/stream/shared:/data
+      - type: bind
+        source: /mnt/streaming
+        target: /data
+        bind:
+          propagation: rslave
   requests:
     restart: unless-stopped
     container_name: stream-requests
@@ -195,4 +211,8 @@ services:
       - pangolin-site
     volumes:
       - /srv/docker/bind-mounts/stream/sonarr/config:/config
-      - /srv/docker/bind-mounts/stream/shared:/data
+      - type: bind
+        source: /mnt/streaming
+        target: /data
+        bind:
+          propagation: rslave

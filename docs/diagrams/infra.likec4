@@ -22,9 +22,6 @@ pango = host "pango" {
 blip = host "blip" {
 	technology "ubuntu · physical"
 }
-chad = host "chad" {
-	technology "ubuntu · vm"
-}
 activepieces = stack "activepieces" {
 	technology "komodo"
 }
@@ -41,6 +38,12 @@ grist = stack "grist" {
 	technology "komodo"
 }
 immich = stack "immich" {
+	technology "komodo"
+}
+librenms = stack "librenms" {
+	technology "komodo"
+}
+netbox = stack "netbox" {
 	technology "komodo"
 }
 openhands = stack "openhands" {
@@ -96,6 +99,8 @@ actual-budget -> bill "runs on"
 docuseal -> littlebuddy "runs on"
 grist -> bill "runs on"
 immich -> paiki "runs on"
+librenms -> bill "runs on"
+netbox -> bill "runs on"
 openseo -> bill "runs on"
 paperless -> bill "runs on"
 paperless -> littlebuddy "runs on"
@@ -120,6 +125,8 @@ actual-budget -> pangolin-site "attached"
 docuseal -> pangolin-site "attached"
 grist -> pangolin-site "attached"
 immich -> pangolin-site "attached"
+librenms -> pangolin-site "attached"
+netbox -> pangolin-site "attached"
 openhands -> pangolin-site "attached"
 openseo -> pangolin-site "attached"
 paperless -> pangolin-site "attached"
@@ -146,7 +153,7 @@ view host-littlebuddy {
 }
 view host-bill {
 	title "bill"
-	include bill, activepieces, actual-budget, grist, openseo, paperless, searxng, pangolin-connector, agent, frappe
+	include bill, activepieces, actual-budget, grist, librenms, netbox, openseo, paperless, searxng, pangolin-connector, agent, frappe
 	autoLayout TopBottom
 }
 view host-paiki {
@@ -162,11 +169,6 @@ view host-pango {
 view host-blip {
 	title "blip"
 	include blip
-	autoLayout TopBottom
-}
-view host-chad {
-	title "chad"
-	include chad
 	autoLayout TopBottom
 }
 }

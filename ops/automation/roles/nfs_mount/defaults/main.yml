@@ -1,0 +1,3 @@
+---
+nfs_mount__mounts: []
+nfs_mount__opts: nfsvers=4.1,hard,noatime,_netdev,nofail,x-systemd.automount,x-systemd.mount-timeout=30

@@ -25,7 +25,14 @@ _stream: {
 
 	tz:         "America/New_York"
 	bindRoot:   "\(ext.dirs.host.dockerBindMounts)/stream"
-	sharedData: "\(bindRoot)/shared"
+	// Automounted from the NAS by the nfs_mount Ansible role. rslave lets
+	// containers started before the NAS was reachable see it once it mounts.
+	sharedData: {
+		type:   "bind"
+		source: "/mnt/streaming"
+		target: "/data"
+		bind: propagation: "rslave"
+	}
 	lsioEnv: {PUID: "1000", PGID: "1000", TZ: tz}
 	arrApiKeys: {
 		(stream._scr.RADARR_API_KEY._ID): "${\(stream._scr.RADARR_API_KEY._ID):?err}"
@@ -39,6 +46,8 @@ stream: D={
 		manager: "komodo"
 		targets: ["paiki"]
 	}
+
+	notes: "Media library and downloads live on the Synology NAS share /volume1/streaming, automounted at /mnt/streaming on paiki (nfs_mount Ansible role)."
 
 	_scr: D.fnox.secrets
 
@@ -68,7 +77,7 @@ stream: D={
 				expose: [_stream.bazarrPort]
 				volumes: [
 					"\(_stream.bindRoot)/bazarr/config:/config",
-					"\(_stream.sharedData):/data",
+					_stream.sharedData,
 				]
 				networks: S._webNetworks
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.bazarrPort}
@@ -94,7 +103,7 @@ stream: D={
 				environment: {PUID: "0", PGID: "0", TZ: _stream.tz, VERSION: "docker"}
 				volumes: [
 					"\(_stream.bindRoot)/plex/config:/config",
-					"\(_stream.sharedData)/media:/data/media",
+					_stream.sharedData,
 				]
 				network_mode: "host"
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.plexPort, #path: "/identity"}
@@ -114,7 +123,7 @@ stream: D={
 				expose: [_stream.radarrPort]
 				volumes: [
 					"\(_stream.bindRoot)/radarr/config:/config",
-					"\(_stream.sharedData):/data",
+					_stream.sharedData,
 				]
 				networks: S._webNetworks
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.radarrPort, #path: "/ping"}
@@ -125,7 +134,7 @@ stream: D={
 				expose: [_stream.sabnzbdPort]
 				volumes: [
 					"\(_stream.bindRoot)/sabnzbd/config:/config",
-					"\(_stream.sharedData):/data",
+					_stream.sharedData,
 				]
 				networks: S._webNetworks
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.sabnzbdPort}
@@ -144,7 +153,7 @@ stream: D={
 				expose: [_stream.sonarrPort]
 				volumes: [
 					"\(_stream.bindRoot)/sonarr/config:/config",
-					"\(_stream.sharedData):/data",
+					_stream.sharedData,
 				]
 				networks: S._webNetworks
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.sonarrPort, #path: "/ping"}

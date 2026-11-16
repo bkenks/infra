@@ -1,0 +1,28 @@
+---
+argument_specs:
+  main:
+    short_description: Automount NFS shares on first access, so boot never waits on the server.
+    options:
+      nfs_mount__mounts:
+        type: list
+        elements: dict
+        default: []
+        description: Shares to mount. Empty means the role does nothing.
+        options:
+          src:
+            type: str
+            required: true
+            description: NFS export, as host:/path.
+          path:
+            type: path
+            required: true
+            description: Local mount point.
+          opts:
+            type: str
+            description: Mount options. Defaults to nfs_mount__opts.
+      nfs_mount__opts:
+        type: str
+        default: nfsvers=4.1,hard,noatime,_netdev,nofail,x-systemd.automount,x-systemd.mount-timeout=30
+        description: >-
+          Default mount options. The automount means a missing server makes the
+          path error on access instead of exposing the empty local directory.

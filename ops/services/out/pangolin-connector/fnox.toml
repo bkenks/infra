@@ -10,55 +10,45 @@ value = 'hosts.000-015.newt/SITE_ID'
 provider = 'onepassword'
 value = 'hosts.000-015.newt/SITE_SECRET'
 
-[profiles.000-02A]
-[profiles.000-02A.secrets]
-[profiles.000-02A.secrets.SITE_ID]
+[profiles.000-02a]
+[profiles.000-02a.secrets]
+[profiles.000-02a.secrets.SITE_ID]
 provider = 'onepassword'
-value = 'hosts.000-02A.newt/SITE_ID'
+value = 'hosts.000-02a.newt/SITE_ID'
 
-[profiles.000-02A.secrets.SITE_SECRET]
+[profiles.000-02a.secrets.SITE_SECRET]
 provider = 'onepassword'
-value = 'hosts.000-02A.newt/SITE_SECRET'
+value = 'hosts.000-02a.newt/SITE_SECRET'
 
-[profiles.000-03F]
-[profiles.000-03F.secrets]
-[profiles.000-03F.secrets.SITE_ID]
+[profiles.000-03f]
+[profiles.000-03f.secrets]
+[profiles.000-03f.secrets.SITE_ID]
 provider = 'onepassword'
-value = 'hosts.000-03F.newt/SITE_ID'
+value = 'hosts.000-03f.newt/SITE_ID'
 
-[profiles.000-03F.secrets.SITE_SECRET]
+[profiles.000-03f.secrets.SITE_SECRET]
 provider = 'onepassword'
-value = 'hosts.000-03F.newt/SITE_SECRET'
+value = 'hosts.000-03f.newt/SITE_SECRET'
 
-[profiles.000-0BR]
-[profiles.000-0BR.secrets]
-[profiles.000-0BR.secrets.SITE_ID]
+[profiles.000-0cx]
+[profiles.000-0cx.secrets]
+[profiles.000-0cx.secrets.SITE_ID]
 provider = 'onepassword'
-value = 'hosts.000-0BR.newt/SITE_ID'
+value = 'hosts.000-0cx.newt/SITE_ID'
 
-[profiles.000-0BR.secrets.SITE_SECRET]
+[profiles.000-0cx.secrets.SITE_SECRET]
 provider = 'onepassword'
-value = 'hosts.000-0BR.newt/SITE_SECRET'
+value = 'hosts.000-0cx.newt/SITE_SECRET'
 
-[profiles.000-0CX]
-[profiles.000-0CX.secrets]
-[profiles.000-0CX.secrets.SITE_ID]
+[profiles.000-0d3]
+[profiles.000-0d3.secrets]
+[profiles.000-0d3.secrets.SITE_ID]
 provider = 'onepassword'
-value = 'hosts.000-0CX.newt/SITE_ID'
+value = 'hosts.000-0d3.newt/SITE_ID'
 
-[profiles.000-0CX.secrets.SITE_SECRET]
+[profiles.000-0d3.secrets.SITE_SECRET]
 provider = 'onepassword'
-value = 'hosts.000-0CX.newt/SITE_SECRET'
-
-[profiles.000-0D3]
-[profiles.000-0D3.secrets]
-[profiles.000-0D3.secrets.SITE_ID]
-provider = 'onepassword'
-value = 'hosts.000-0D3.newt/SITE_ID'
-
-[profiles.000-0D3.secrets.SITE_SECRET]
-provider = 'onepassword'
-value = 'hosts.000-0D3.newt/SITE_SECRET'
+value = 'hosts.000-0d3.newt/SITE_SECRET'
 
 [providers]
 [providers.onepassword]

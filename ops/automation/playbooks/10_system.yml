@@ -7,3 +7,7 @@
     - name: Ubuntu system is in its declared state
       ansible.builtin.import_role:
         name: ktb.ubuntu.system
+
+    - name: NFS shares are automounted
+      ansible.builtin.import_role:
+        name: nfs_mount

@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: Brian Kenkel
+  description: Automount NFS shares on first access, so boot never waits on the server.
+  license: Proprietary
+  min_ansible_version: "2.15"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
+
+dependencies: []
