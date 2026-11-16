@@ -123,24 +123,6 @@ stacks:
       - paiki
     per_host: false
     notes: Photo library. Library bind-mounted from host path /mnt/immich-library. Public at https://immich.homektb.com via pangolin.
-  librenms:
-    name: librenms
-    run_directory: ops/services/out/librenms
-    modeled: true
-    services:
-      - librenms-db
-      - librenms-redis
-      - librenms-app
-      - librenms-dispatcher
-      - librenms-syslogng
-      - librenms-snmptrapd
-    networks:
-      - pangolin-site
-    manager: komodo
-    hosts:
-      - bill
-    per_host: false
-    notes: Network monitoring (SNMP polling, alerting) at https://librenms.ktbcloud.com. The first-run wizard creates the admin user; see ops/services/README.md. bill publishes syslog (514) and SNMP traps (162) for LAN devices.
   netbox:
     name: netbox
     run_directory: ops/services/out/netbox
@@ -369,9 +351,6 @@ relations:
     stack: immich
     host: paiki
   - type: deployed_on
-    stack: librenms
-    host: bill
-  - type: deployed_on
     stack: netbox
     host: bill
   - type: deployed_on
@@ -453,9 +432,6 @@ relations:
     network: pangolin-site
   - type: on_network
     stack: immich
-    network: pangolin-site
-  - type: on_network
-    stack: librenms
     network: pangolin-site
   - type: on_network
     stack: netbox

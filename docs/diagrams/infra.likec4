@@ -40,9 +40,6 @@ grist = stack "grist" {
 immich = stack "immich" {
 	technology "komodo"
 }
-librenms = stack "librenms" {
-	technology "komodo"
-}
 netbox = stack "netbox" {
 	technology "komodo"
 }
@@ -99,7 +96,6 @@ actual-budget -> bill "runs on"
 docuseal -> littlebuddy "runs on"
 grist -> bill "runs on"
 immich -> paiki "runs on"
-librenms -> bill "runs on"
 netbox -> bill "runs on"
 openseo -> bill "runs on"
 paperless -> bill "runs on"
@@ -125,7 +121,6 @@ actual-budget -> pangolin-site "attached"
 docuseal -> pangolin-site "attached"
 grist -> pangolin-site "attached"
 immich -> pangolin-site "attached"
-librenms -> pangolin-site "attached"
 netbox -> pangolin-site "attached"
 openhands -> pangolin-site "attached"
 openseo -> pangolin-site "attached"
@@ -153,7 +148,7 @@ view host-littlebuddy {
 }
 view host-bill {
 	title "bill"
-	include bill, activepieces, actual-budget, grist, librenms, netbox, openseo, paperless, searxng, pangolin-connector, agent, frappe
+	include bill, activepieces, actual-budget, grist, netbox, openseo, paperless, searxng, pangolin-connector, agent, frappe
 	autoLayout TopBottom
 }
 view host-paiki {
