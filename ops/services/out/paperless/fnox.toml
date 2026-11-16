@@ -1,4 +1,6 @@
 # GENERATED from CUE — DO NOT EDIT.
+root = true
+
 [providers]
 [providers.onepassword]
 account = 'FUKUXFLIDREQDELXYP2PALUAVY'

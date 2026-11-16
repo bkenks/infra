@@ -1,4 +1,6 @@
 # GENERATED from CUE — DO NOT EDIT.
+root = true
+
 [profiles]
 [profiles.000-015]
 [profiles.000-015.secrets]

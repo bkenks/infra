@@ -14,6 +14,9 @@ import (
 )
 
 cueHeader: "# GENERATED from CUE — DO NOT EDIT.\n"
+fnoxTemplate: {
+	root: true
+}
 
 command: render: {
 	repoRoot: exec.Run & {
@@ -100,10 +103,12 @@ command: render: {
 					}
 				}
 				if stack.fnox != _|_ if len(stack.fnox) > 0 {
+					fnoxContents: fnoxTemplate & stack.fnox
+
 					writeFnox: file.Create & {
 						$after: mkdir
 						filename: path.Join([outStk, "fnox.toml"])
-						contents: cueHeader + toml.Marshal(stack.fnox)
+						contents: cueHeader + toml.Marshal(fnoxContents)
 					}
 				}
 
