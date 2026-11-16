@@ -8,7 +8,10 @@ ansible: {
 	if inv.hosts != _|_ if len(inv.hosts) > 0 {
 		all: {
 			for n, h in inv.hosts {
-				hosts: (n): ansible_host: h.fqdn
+				hosts: (n): {
+					ansible_host: h.fqdn
+					kuid: h.kuid
+				}
 
 				if len(h.roles) > 0 for r in h.roles {
 					children: "role_\(r)": hosts: (n): {}
