@@ -1,0 +1,25 @@
+# GENERATED from CUE — DO NOT EDIT.
+root = true
+
+[providers]
+[providers.onepassword]
+account = 'FUKUXFLIDREQDELXYP2PALUAVY'
+type = '1password'
+vault = 'infra'
+
+[secrets]
+[secrets.DATABASE_KEY]
+provider = 'onepassword'
+value = 'termix/DATABASE_KEY'
+
+[secrets.ENCRYPTION_KEY]
+provider = 'onepassword'
+value = 'termix/ENCRYPTION_KEY'
+
+[secrets.INTERNAL_AUTH_TOKEN]
+provider = 'onepassword'
+value = 'termix/INTERNAL_AUTH_TOKEN'
+
+[secrets.JWT_SECRET]
+provider = 'onepassword'
+value = 'termix/JWT_SECRET'

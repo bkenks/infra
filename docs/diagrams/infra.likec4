@@ -64,6 +64,9 @@ searxng = stack "searxng" {
 stream = stack "stream" {
 	technology "komodo"
 }
+termix = stack "termix" {
+	technology "komodo"
+}
 pangolin-connector = stack "pangolin-connector" {
 	technology "komodo"
 }
@@ -105,6 +108,7 @@ paperless -> bill "runs on"
 paperless -> littlebuddy "runs on"
 searxng -> bill "runs on"
 stream -> paiki "runs on"
+termix -> bill "runs on"
 pangolin-connector -> bill "runs on"
 pangolin-connector -> littlebuddy "runs on"
 pangolin-connector -> paiki "runs on"
@@ -131,6 +135,7 @@ paperless -> pangolin-site "attached"
 paseo -> pangolin-site "attached"
 searxng -> pangolin-site "attached"
 stream -> pangolin-site "attached"
+termix -> pangolin-site "attached"
 pangolin-connector -> pangolin-site "attached"
 komodo-mcp -> pangolin-site "attached"
 komodo -> pangolin-site "attached"
@@ -151,7 +156,7 @@ view host-littlebuddy {
 }
 view host-bill {
 	title "bill"
-	include bill, activepieces, actual-budget, grist, netbox, openseo, paperless, searxng, pangolin-connector, agent, frappe
+	include bill, activepieces, actual-budget, grist, netbox, openseo, paperless, searxng, termix, pangolin-connector, agent, frappe
 	autoLayout TopBottom
 }
 view host-paiki {

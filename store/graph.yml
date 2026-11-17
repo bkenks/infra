@@ -230,6 +230,19 @@ stacks:
       - paiki
     per_host: false
     notes: Media library and downloads live on the Synology NAS share /volume1/streaming, automounted at /mnt/streaming on paiki (nfs_mount Ansible role).
+  termix:
+    name: termix
+    run_directory: ops/services/out/termix
+    modeled: true
+    services:
+      - termix-app
+    networks:
+      - pangolin-site
+    manager: komodo
+    hosts:
+      - bill
+    per_host: false
+    notes: Web SSH/RDP/VNC terminal and server manager (https://termix.ktbcloud.com, pangolin SSO). Encrypted SQLite DB, plugins and recordings live in the termix-app_data volume; its keys come from 1Password (infra/termix) and DATABASE_KEY/ENCRYPTION_KEY must never change once data exists.
   pangolinConnector:
     name: pangolin-connector
     run_directory: ops/services/out/pangolin-connector
@@ -376,6 +389,9 @@ relations:
     stack: stream
     host: paiki
   - type: deployed_on
+    stack: termix
+    host: bill
+  - type: deployed_on
     stack: pangolin-connector
     host: bill
     per_instance: true
@@ -460,6 +476,9 @@ relations:
     network: pangolin-site
   - type: on_network
     stack: stream
+    network: pangolin-site
+  - type: on_network
+    stack: termix
     network: pangolin-site
   - type: on_network
     stack: pangolin-connector
