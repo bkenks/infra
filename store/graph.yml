@@ -40,6 +40,13 @@ hosts:
     arch: amd64
     roles:
       - apps
+  orion:
+    fqdn: 000-0E8.lan.ktbinternal.com
+    kind: vm
+    os: ubuntu
+    arch: amd64
+    roles:
+      - mesh
 networks:
   pangolin-site:
     subnet: 10.250.0.0/24

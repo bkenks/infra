@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "4571fa6b0b5c922b",
+        "id": "cca1c980bed13228",
         "type": "tabs",
         "children": [
           {
-            "id": "583752179928d278",
+            "id": "0439a5118367a51d",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -186,12 +186,20 @@
   },
   "active": "e0bf7642b7b5d8fb",
   "lastOpenFiles": [
+    "diagrams/infra.likec4",
+    "diagrams-v2/infra.likec4",
+    "diagrams-v2",
+    "diagrams/v2/infra.likec4",
+    "diagrams/v2/infra-v2.likec4",
+    "diagrams/v2",
+    "diagrams/infra-v2.likec4",
+    "diagrams/new.likec4",
+    "adr/01-03-01-stacks-in-one-cue-package.md",
+    "adr/01-02-01-fleet-log-aggregation.md",
+    "adr/01-01-01-stacks-in-pkl.md",
     "adr/01-03-02-stack-sources-apart-from-deploy-files.md",
     "simplification-audit.md",
     "fix-list.md",
-    "adr/Untitled.md",
-    "adr/01-03-01-stacks-in-one-cue-package.md",
-    "adr/01-02-01-fleet-log-aggregation.md",
-    "adr/01-01-01-stacks-in-pkl.md"
+    "adr/Untitled.md"
   ]
 }

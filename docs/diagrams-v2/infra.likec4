@@ -1,0 +1,62 @@
+specification {
+    element netDevice
+    element bridgeDevice
+
+    element vlan {
+        technology 'VLAN'
+        style {
+            color amber
+        }
+    }
+
+    element subnet {
+        style {
+            color indigo
+        }
+    }
+}
+
+model {
+    brLan = bridgeDevice 'LAN' {
+        technology 'Bridge'
+        
+        eth1 = netDevice
+        eth2 = netDevice
+        eth3 = netDevice
+        eth4 = netDevice
+    }
+
+    brGuest = bridgeDevice 'Guest'
+
+
+    main = vlan 'Main' {
+        metadata {
+            id '10'
+        }
+    }
+    guest = vlan 'Guest' {
+        metadata {
+            id '20'
+        }
+    }
+    homelab = vlan 'Homelab' {
+        metadata {
+            id '30'
+        }
+    }
+    iot = vlan 'IOT' {
+        metadata {
+            id '40'
+        }
+    }
+}
+
+views {
+    view index {
+        include *
+    }
+
+    view of brLan {
+        include *
+    }
+}

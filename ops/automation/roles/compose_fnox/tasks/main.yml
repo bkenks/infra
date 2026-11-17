@@ -43,13 +43,3 @@
     owner: root
     group: root
     mode: "0755"
-
-- name: Install docker-compose-fnox {{ compose_fnox__provider_version }}
-  become: true
-  ansible.builtin.get_url:
-    url: "{{ compose_fnox__provider_release_url }}/docker-compose-fnox_linux_{{ compose_fnox__arch }}"
-    checksum: "sha256:{{ compose_fnox__provider_release_url }}/checksums.txt"
-    dest: "{{ compose_fnox__install_dir }}/docker-compose-fnox"
-    owner: root
-    group: root
-    mode: "0755"

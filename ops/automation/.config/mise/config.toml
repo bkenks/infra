@@ -19,3 +19,15 @@ mise run init:ansible
 lint                = "uv run ansible-lint --offline"
 "place-secrets"     = "uv run ansible-playbook playbooks/maintenance/place_secrets.yml"
 "playbook:run:full" = "uv run ansible-playbook playbooks/site.yml"
+
+[tasks."init:netbird"]
+run = '''
+mkdir -p .tmp && cd .tmp
+git clone https://github.com/netbirdio/ansible-netbird.git && cd ansible-netbird
+
+ansible-galaxy collection build
+ansible-galaxy collection install community-ansible_netbird-*.tar.gz
+
+cd {{config_root}}
+rm -rf .tmp/ansible-netbird
+'''

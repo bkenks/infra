@@ -22,6 +22,9 @@ pango = host "pango" {
 blip = host "blip" {
 	technology "ubuntu · physical"
 }
+orion = host "orion" {
+	technology "ubuntu · vm"
+}
 activepieces = stack "activepieces" {
 	technology "komodo"
 }
@@ -164,6 +167,11 @@ view host-pango {
 view host-blip {
 	title "blip"
 	include blip
+	autoLayout TopBottom
+}
+view host-orion {
+	title "orion"
+	include orion
 	autoLayout TopBottom
 }
 }
