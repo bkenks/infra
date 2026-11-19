@@ -1,16 +1,19 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: termix
 networks:
-  pangolin-site:
-    name: pangolin-site
-    external: true
+  default:
+    name: termix_default
+    ipam:
+      config:
+        - subnet: 10.250.1.0/24
+          gateway: 10.250.1.1
 services:
   app:
     restart: unless-stopped
     container_name: termix-app
     environment:
       PORT: "8080"
-      TRUSTED_PROXIES: 10.250.0.10
+      TRUSTED_PROXIES: 10.250.1.1
       TERMIX_REQUIRE_EXTERNAL_SECRETS: "true"
       JWT_SECRET: ${JWT_SECRET:?err}
       DATABASE_KEY: ${DATABASE_KEY:?err}
@@ -29,8 +32,6 @@ services:
         - 'fetch(''http://localhost:30001/health'').then(r => process.exit(r.ok ? 0 : 1), () => process.exit(1))'
       timeout: 10s
       start_period: 60s
-    networks:
-      - pangolin-site
     ports:
       - "8080:8080"
     volumes:

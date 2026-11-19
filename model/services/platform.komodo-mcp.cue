@@ -9,6 +9,8 @@ _komodo_mcp: {
 	version: "1.5.0"
 	host:    "\(komodo_mcp.compose.name).\(ext.domains.ktbInternal)"
 	port:    8000
+	// 8000 on the host is paperless's (littlebuddy).
+	hostPort: 8001
 }
 
 komodo_mcp: {
@@ -28,6 +30,7 @@ komodo_mcp: {
 				TZ:                "America/Chicago"
 			}
 			expose: [_komodo_mcp.port]
+			ports: ["\(_komodo_mcp.hostPort):\(_komodo_mcp.port)"]
 
 			// —————————————————————————
 			labels: snip.services.labels.komodoSkip

@@ -1,9 +1,12 @@
 # GENERATED from CUE — DO NOT EDIT.
 name: pocket-id
 networks:
-  pangolin-site:
-    name: pangolin-site
-    external: true
+  default:
+    name: pocket-id_default
+    ipam:
+      config:
+        - subnet: 10.250.2.0/24
+          gateway: 10.250.2.1
 secrets:
   encryption_key:
     environment: ENC_KEY
@@ -13,13 +16,11 @@ services:
     container_name: pocket-id
     environment:
       APP_URL: https://id.ktbcloud.com
-      TRUST_PROXY: 10.250.0.10
+      TRUST_PROXY: 10.250.2.1
       MAXMIND_LICENSE_KEY: ""
       PUID: 1000
       PGID: 1000
       ENCRYPTION_KEY_FILE: /run/secrets/encryption_key
-    expose:
-      - 1411
     healthcheck:
       interval: 1m30s
       retries: 2
@@ -30,12 +31,14 @@ services:
       timeout: 5s
       start_period: 10s
     image: pocketid/pocket-id:v2
-    networks:
-      - pangolin-site
+    ports:
+      - "127.0.0.1:1411:1411"
     secrets:
       - encryption_key
     volumes:
       - data:/app/data
+    expose:
+      - 1411
 volumes:
   data:
     name: pocket-id_data

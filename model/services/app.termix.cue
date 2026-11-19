@@ -10,6 +10,12 @@ _termix: {
 	host:    "termix.\(ext.domains.ktbInternal)"
 	port:    8080
 	version: "26.11.1"
+
+	// Own network with a pinned subnet: host-side connections to the published
+	// port (the bare-metal Pangolin site) arrive from its gateway, which
+	// TRUSTED_PROXIES trusts. Keep clear of Docker's 172.16.0.0/12 pool.
+	subnet:  "10.250.1.0/24"
+	gateway: "10.250.1.1"
 }
 
 termix: D={
@@ -39,14 +45,14 @@ termix: D={
 
 		volumes: data: name: "termix-app_data"
 
-		networks: ext.dockerNetworks.pangolinSite.asExternal
+		networks: default: ipam: config: [{subnet: _termix.subnet, gateway: _termix.gateway}]
 
 		services: app: {
 			image: "ghcr.io/termix-ssh/termix:\(_termix.version)"
 			environment: {
 				PORT: "\(_termix.port)"
 				// Trust X-Forwarded-For only from the pangolin connector.
-				TRUSTED_PROXIES: pangolinConnector._ipv4_address
+				TRUSTED_PROXIES: _termix.gateway
 				// Refuse to start (or write keys to the volume) without the
 				// secrets below.
 				TERMIX_REQUIRE_EXTERNAL_SECRETS: "true"
@@ -57,7 +63,6 @@ termix: D={
 			expose: [_termix.port]
 			ports: ["\(_termix.port):\(_termix.port)"]
 			volumes: ["\(S.volumes.data._ID):/app/data"]
-			networks: [ext.dockerNetworks.pangolinSite.name]
 			// The image's own healthcheck uses wget, which upstream is
 			// dropping; probe the backend health endpoint with node instead.
 			healthcheck: snip.services.healthcheck.nodeFetch & {

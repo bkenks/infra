@@ -24,3 +24,5 @@ services:
       komodo.skip: ""
     networks:
       - pangolin-site
+    ports:
+      - "8001:8000"
