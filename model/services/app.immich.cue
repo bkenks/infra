@@ -5,6 +5,7 @@ import (
 	snip "github.com/bkenks/infra/model/services/snippets"
 )
 
+// ——————————————————————————————————————————————————————————————————————————————————————————————————
 _immich: {
 	port:       2283
 	version:    "v2.7.5"
@@ -14,6 +15,7 @@ _immich: {
 	bindDir:    "\(ext.dirs.host.dockerBindMounts)/apps/immich"
 }
 
+// ——————————————————————————————————————————————————————————————————————————————————————————————————
 immich: D={
 	// Photo library. Library bind-mounted from host path
 	// /mnt/immich-library. Public at https://immich.homektb.com via
@@ -21,6 +23,7 @@ immich: D={
 
 	_scr: D.fnox.secrets
 
+	// —————————————————————————————————————————————————
 	fnox: {
 		snip.fnox.InfraProvider
 
@@ -31,27 +34,14 @@ immich: D={
 		}
 	}
 
+	// —————————————————————————————————————————————————
 	compose: S={
 		name: "immich"
+
 		networks: {ext.dockerNetworks.pangolinSite.asExternal}
+
 		services: {
-			db: {
-				image: _immich.dbImage
-				environment: {
-					POSTGRES_DB:                  S.name
-					POSTGRES_USER:                S.name
-					POSTGRES_INITDB_ARGS:         "--data-checksums"
-					(_scr.POSTGRES_PASSWORD._ID): "${\(_scr.POSTGRES_PASSWORD._ID):?err}"
-				}
-				volumes: ["\(_immich.bindDir)/postgres:/var/lib/postgresql/data"]
-				shm_size: "128m"
-			}
-			ml: {
-				image: "ghcr.io/immich-app/immich-machine-learning:\(_immich.version)"
-				environment: TZ: _immich.tz
-				volumes: ["\(_immich.bindDir)/model-cache:/cache"]
-			}
-			cache: image: _immich.cacheImage
+			// —————————————————————————
 			app: {
 				image: "ghcr.io/immich-app/immich-server:\(_immich.version)"
 				depends_on: {
@@ -68,9 +58,32 @@ immich: D={
 				}
 				expose: [_immich.port]
 				ports: ["\(_immich.port):\(_immich.port)"]
-				volumes: ["/mnt/immich-library:/data"]
+				volumes: ["/mnt/immich:/data"]
 				networks: ["default", ext.dockerNetworks.pangolinSite.name]
 				devices: ["/dev/dri:/dev/dri"]
+			}
+
+			// —————————————————————————
+			db: {
+				image: _immich.dbImage
+				environment: {
+					POSTGRES_DB:                  S.name
+					POSTGRES_USER:                S.name
+					POSTGRES_INITDB_ARGS:         "--data-checksums"
+					(_scr.POSTGRES_PASSWORD._ID): "${\(_scr.POSTGRES_PASSWORD._ID):?err}"
+				}
+				volumes: ["\(_immich.bindDir)/postgres:/var/lib/postgresql/data"]
+				shm_size: "128m"
+			}
+
+			// —————————————————————————
+			cache: image: _immich.cacheImage
+
+			// —————————————————————————
+			ml: {
+				image: "ghcr.io/immich-app/immich-machine-learning:\(_immich.version)"
+				environment: TZ: _immich.tz
+				volumes: ["\(_immich.bindDir)/model-cache:/cache"]
 			}
 		}
 	}

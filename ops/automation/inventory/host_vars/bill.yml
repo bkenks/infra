@@ -1,0 +1,4 @@
+---
+nfs_mount__mounts:
+  - src: nas.lan.ktbinternal.com:/volume1/immich
+    path: /mnt/immich

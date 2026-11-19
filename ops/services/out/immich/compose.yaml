@@ -5,30 +5,6 @@ networks:
     name: pangolin-site
     external: true
 services:
-  db:
-    restart: unless-stopped
-    container_name: immich-db
-    environment:
-      POSTGRES_DB: immich
-      POSTGRES_USER: immich
-      POSTGRES_INITDB_ARGS: --data-checksums
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
-    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
-    shm_size: 128m
-    volumes:
-      - /srv/docker/bind-mounts/apps/immich/postgres:/var/lib/postgresql/data
-  ml:
-    restart: unless-stopped
-    container_name: immich-ml
-    environment:
-      TZ: America/New_York
-    image: ghcr.io/immich-app/immich-machine-learning:v2.7.5
-    volumes:
-      - /srv/docker/bind-mounts/apps/immich/model-cache:/cache
-  cache:
-    restart: unless-stopped
-    container_name: immich-cache
-    image: docker.io/valkey/valkey:9@sha256:8436e10bc65c94886a91d4415b6a6dfa9cb5a306fb3b996e5bb67cd2b4854193
   app:
     restart: unless-stopped
     container_name: immich-app
@@ -55,4 +31,28 @@ services:
     ports:
       - "2283:2283"
     volumes:
-      - /mnt/immich-library:/data
+      - /mnt/immich:/data
+  db:
+    restart: unless-stopped
+    container_name: immich-db
+    environment:
+      POSTGRES_DB: immich
+      POSTGRES_USER: immich
+      POSTGRES_INITDB_ARGS: --data-checksums
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?err}
+    image: ghcr.io/immich-app/postgres:14-vectorchord0.4.3-pgvectors0.2.0@sha256:bcf63357191b76a916ae5eb93464d65c07511da41e3bf7a8416db519b40b1c23
+    shm_size: 128m
+    volumes:
+      - /srv/docker/bind-mounts/apps/immich/postgres:/var/lib/postgresql/data
+  cache:
+    restart: unless-stopped
+    container_name: immich-cache
+    image: docker.io/valkey/valkey:9@sha256:8436e10bc65c94886a91d4415b6a6dfa9cb5a306fb3b996e5bb67cd2b4854193
+  ml:
+    restart: unless-stopped
+    container_name: immich-ml
+    environment:
+      TZ: America/New_York
+    image: ghcr.io/immich-app/immich-machine-learning:v2.7.5
+    volumes:
+      - /srv/docker/bind-mounts/apps/immich/model-cache:/cache
