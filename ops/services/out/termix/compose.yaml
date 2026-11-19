@@ -19,7 +19,7 @@ services:
       DATABASE_KEY: ${DATABASE_KEY:?err}
       ENCRYPTION_KEY: ${ENCRYPTION_KEY:?err}
       INTERNAL_AUTH_TOKEN: ${INTERNAL_AUTH_TOKEN:?err}
-    image: ghcr.io/termix-ssh/termix:26.11.1
+    image: ghcr.io/termix-ssh/termix:26.11.2
     expose:
       - 8080
     healthcheck:
