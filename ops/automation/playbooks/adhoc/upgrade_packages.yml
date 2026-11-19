@@ -1,0 +1,16 @@
+- name: Packages are updated and pruned
+  hosts: all
+
+  roles:
+    - role: ktb.ubuntu.system
+      vars:
+        system__should_upgrade: true
+        system__should_set_hostname: false
+        system__should_extend_lvm: false
+        system__should_install_packages: false
+        system__should_set_timezone: false
+        system__should_enable_wol: false
+        system__should_enable_swap: false
+        system__should_enable_unattended_upgrades: false
+        system__should_cap_journal: false
+        system__should_reboot: false
