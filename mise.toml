@@ -15,8 +15,10 @@ vendir                 = "0.46.2"
 
 
 [vars]
-config_dir    = "{{config_root}}/.config"
-repo_template = "https://github.com/bkenks/tmpl.repo"
+ansible_dir           = "{{config_root}}/ops/automation"
+ansible_playbooks_dir = "{{vars.ansible_dir}}/playbooks"
+config_dir            = "{{config_root}}/.config"
+repo_template         = "https://github.com/bkenks/tmpl.repo"
 
 
 # —————————————————————————————————————————————————
@@ -28,9 +30,12 @@ run         = "fd -H -t d -g --full-path '**/.config/mise/tasks' -X chmod -R +x"
 description = 'Format files'
 run         = "treefmt"
 
+
+# —————————————————————————————————————————————————
 [tasks."open-ansible"]
 description = 'Open Ansible configuration in VSCodium'
 run         = "codium {{config_root}}/ops/automation"
+
 
 # —————————————————————————————————————————————————
 [tasks."copier:copy"]
@@ -44,6 +49,8 @@ run         = "copier update --trust -a {{vars.config_dir}}/.copier-answers.conf
 [tasks."vendir:pull"]
 description = 'Sync vendored dependencies'
 run         = "vendir sync"
+
+
 # —————————————————————————————————————————————————
 [tasks."cue:vet"]
 description = 'Validate CUE files'
@@ -59,6 +66,7 @@ run         = "cue cmd render"
 description = 'Serve the infrastructure diagram UI'
 run         = "likec4 start docs/diagrams"
 
+
 # —————————————————————————————————————————————————
 [tasks."docker:build:fnox"]
 description = 'Build and push image: {{vars.image_ref}}'
@@ -68,26 +76,6 @@ vars.image_ref = "ghcr.io/bkenks/fnox"
 vars.sem_major = 0
 vars.sem_minor = 2
 vars.sem_patch = 1
-run = '''
-version="{{vars.sem_major}}.{{vars.sem_minor}}.{{vars.sem_patch}}"
-
-docker buildx build \
-  --platform {{vars.platforms}} \
-  --annotation "index:org.opencontainers.image.source=https://github.com/bkenks/infra" \
-  -t "{{vars.image_ref}}:$version" \
-  -t "{{vars.image_ref}}:{{vars.sem_major}}" \
-  -t "{{vars.image_ref}}:latest" \
-  --push .
-'''
-
-[tasks."docker:build:paseo"]
-description = 'Build and push image: {{vars.image_ref}}'
-dir = "ops/services/images/paseo-ktb"
-vars.platforms = "linux/amd64,linux/arm64"
-vars.image_ref = "ghcr.io/bkenks/paseo-ktb"
-vars.sem_major = 0
-vars.sem_minor = 1
-vars.sem_patch = 0
 run = '''
 version="{{vars.sem_major}}.{{vars.sem_minor}}.{{vars.sem_patch}}"
 

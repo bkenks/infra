@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Brian Kenkel
-  description: Install fnox, the 1Password CLI and the docker-compose-fnox Compose provider from their GitHub releases.
+  description: Install the 1Password CLI (op), which fnox's 1password provider shells out to.
   license: Proprietary
   min_ansible_version: "2.15"
   platforms:

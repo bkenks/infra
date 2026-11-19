@@ -1,0 +1,3 @@
+---
+fnox__triple: "{{ ansible_facts['architecture'] }}-unknown-linux-musl"
+fnox__url: "https://github.com/jdx/fnox/releases/download/v{{ fnox__version }}/fnox-{{ fnox__triple }}.tar.gz"

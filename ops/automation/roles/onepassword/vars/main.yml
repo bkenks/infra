@@ -1,0 +1,4 @@
+---
+onepassword__arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] }}"
+onepassword__install_url: >-
+  https://cache.agilebits.com/dist/1P/op2/pkg/v{{ onepassword__version }}/op_linux_{{ onepassword__arch }}_v{{ onepassword__version }}.zip

@@ -242,7 +242,7 @@ stacks:
     hosts:
       - bill
     per_host: false
-    notes: Web SSH/RDP/VNC terminal and server manager (https://termix.ktbcloud.com, pangolin SSO). Encrypted SQLite DB, plugins and recordings live in the termix-app_data volume; its keys come from 1Password (infra/termix) and DATABASE_KEY/ENCRYPTION_KEY must never change once data exists.
+    notes: Web SSH/RDP/VNC terminal and server manager (https://termix.ktbinternal.com, private pangolin resource; not publicly exposed). Encrypted SQLite DB, plugins and recordings live in the termix-app_data volume; its keys come from 1Password (infra/termix) and DATABASE_KEY/ENCRYPTION_KEY must never change once data exists.
   pangolinConnector:
     name: pangolin-connector
     run_directory: ops/services/out/pangolin-connector

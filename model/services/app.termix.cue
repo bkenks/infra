@@ -7,7 +7,7 @@ import (
 
 // Based on docs.termix.site/install/server/docker.
 _termix: {
-	host:    "termix.\(ext.domains.ktbCloud)"
+	host:    "termix.\(ext.domains.ktbInternal)"
 	port:    8080
 	version: "26.11.1"
 }
@@ -18,7 +18,7 @@ termix: D={
 		targets: ["bill"]
 	}
 
-	notes: "Web SSH/RDP/VNC terminal and server manager (https://\(_termix.host), pangolin SSO). Encrypted SQLite DB, plugins and recordings live in the termix-app_data volume; its keys come from 1Password (infra/termix) and DATABASE_KEY/ENCRYPTION_KEY must never change once data exists."
+	notes: "Web SSH/RDP/VNC terminal and server manager (https://\(_termix.host), private pangolin resource; not publicly exposed). Encrypted SQLite DB, plugins and recordings live in the termix-app_data volume; its keys come from 1Password (infra/termix) and DATABASE_KEY/ENCRYPTION_KEY must never change once data exists."
 
 	_scr: D.fnox.secrets
 
