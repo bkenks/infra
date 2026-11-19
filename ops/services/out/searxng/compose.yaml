@@ -33,6 +33,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "8888:8080"
     volumes:
       - app_config:/etc/searxng
       - app_data:/var/cache/searxng

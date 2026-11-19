@@ -1,0 +1,31 @@
+---
+argument_specs:
+  main:
+    short_description: Install the Pangolin CLI and run this host as a provisioned Pangolin site.
+    options:
+      pangolin_site__version:
+        type: str
+        default: "0.21.0"
+        description: Pangolin CLI release to install.
+      pangolin_site__install_dir:
+        type: path
+        default: /usr/local/bin
+        description: Directory the pangolin binary is installed into.
+      pangolin_site__endpoint:
+        type: str
+        default: https://pangolin.ktbcloud.com
+        description: Pangolin server the site connects to.
+      pangolin_site__name:
+        type: str
+        description: Site name shown in Pangolin. Defaults to the inventory hostname.
+      pangolin_site__config_file:
+        type: path
+        default: /etc/pangolin/site.json
+        description: >-
+          Site config file. Written once with the provisioning key; the CLI then
+          replaces the key with the site id and secret and owns the file.
+      pangolin_site__provisioning_key:
+        type: str
+        description: >-
+          Provisioning key (spk_...) for hosts that aren't provisioned yet. Prompted
+          for at runtime when unset and needed; pass with -e to skip the prompt.

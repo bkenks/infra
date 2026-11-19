@@ -1,6 +1,0 @@
----
-onepass_service_account__name: "{{ inventory_hostname }}"
-onepass_service_account__vault: infra
-onepass_service_account__item: "{{ onepass_service_account__name }}.op-service-account"
-onepass_service_account__vaults: []
-onepass_service_account__owner: "{{ ansible_facts['user_id'] }}"

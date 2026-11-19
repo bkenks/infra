@@ -46,6 +46,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "8484:8484"
     volumes:
       - app_data:/persist
   cache:

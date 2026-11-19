@@ -11,12 +11,8 @@ _victorialogs: {
 }
 
 victorialogs: {
-	deploy: {
-		manager: "komodo"
-		targets: ["littlebuddy"]
-	}
-
-	notes: "Central log store for the fleet. See ADR 01-02-01 (fleet log aggregation)."
+	// Central log store for the fleet. See ADR 01-02-01 (fleet log
+	// aggregation).
 
 	compose: S={
 		name: "victorialogs"

@@ -12,11 +12,6 @@ _openseo: {
 }
 
 openseo: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["bill"]
-	}
-
 	_scr: D.fnox.secrets
 
 	fnox: {
@@ -55,6 +50,7 @@ openseo: D={
 				(_scr.BETTER_AUTH_SECRET._ID): "${\(_scr.BETTER_AUTH_SECRET._ID):-}"
 			}
 			expose: [_openseo.port]
+			ports: ["\(_openseo.port):\(_openseo.port)"]
 			volumes: ["\(S.volumes.app_data._ID):/app/.wrangler"]
 			networks: [ext.dockerNetworks.pangolinSite.name]
 			healthcheck: snip.services.healthcheck.nodeFetch & {#port: _openseo.port, #path: "/api/health", retries: 3, start_period: "300s"}

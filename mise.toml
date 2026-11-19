@@ -64,7 +64,7 @@ run         = "cue cmd render"
 # —————————————————————————————————————————————————
 [tasks.likec4]
 description = 'Serve the infrastructure diagram UI'
-run         = "likec4 start docs/diagrams"
+run         = "likec4 start docs/diagrams-v2"
 
 
 # —————————————————————————————————————————————————

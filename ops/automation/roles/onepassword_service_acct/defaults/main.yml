@@ -1,0 +1,6 @@
+---
+onepassword_service_acct__name: "{{ inventory_hostname }}"
+onepassword_service_acct__vault: infra
+onepassword_service_acct__item: "{{ onepassword_service_acct__name }}.op-service-account"
+onepassword_service_acct__vaults: []
+onepassword_service_acct__owner: "{{ ansible_facts['user_id'] }}"

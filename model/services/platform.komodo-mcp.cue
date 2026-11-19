@@ -12,11 +12,6 @@ _komodo_mcp: {
 }
 
 komodo_mcp: {
-	deploy: {
-		manager: "komodo"
-		targets: ["littlebuddy"]
-	}
-
 	compose: {
 		name: "komodo-mcp"
 		networks: {ext.dockerNetworks.pangolinSite.asExternal}

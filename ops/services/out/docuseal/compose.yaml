@@ -22,6 +22,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "3000:3000"
     volumes:
       - app_data:/data/docuseal
   db:

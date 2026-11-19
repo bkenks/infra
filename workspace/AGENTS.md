@@ -14,5 +14,5 @@ freely — nothing in this directory feeds renders or deploys.
   and where their state lives.
 
 For infrastructure facts (hosts, stacks, deploys), agents should read
-`store/graph.yml` and `docs/` instead — this directory is for everything
+`model/` and `docs/` instead — this directory is for everything
 else.

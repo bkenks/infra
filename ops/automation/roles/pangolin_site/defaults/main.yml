@@ -1,0 +1,6 @@
+---
+pangolin_site__version: "0.21.0"
+pangolin_site__install_dir: /usr/local/bin
+pangolin_site__endpoint: https://app.pangolin.net
+pangolin_site__name: "{{ inventory_hostname }}"
+pangolin_site__config_file: /etc/pangolin/site.json

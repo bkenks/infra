@@ -1,0 +1,4 @@
+---
+pangolin_site__arch: "{{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] }}"
+pangolin_site__url: >-
+  https://github.com/fosrl/cli/releases/download/{{ pangolin_site__version }}/pangolin-cli_linux_{{ pangolin_site__arch }}

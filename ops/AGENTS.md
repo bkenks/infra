@@ -13,4 +13,4 @@
 - `state/` — OpenTofu roots (cloudflare, vultr) with remote state.
 
 Deploy flow: edit CUE → `mise run cue:render` → commit → Komodo pulls the
-stacks repo and deploys to the hosts recorded in `store/graph.yml`.
+stacks repo and deploys to the hosts configured in Komodo.

@@ -47,12 +47,4 @@ hosts: schema.#Hosts & {
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}
-
-	orion: schema.#Host & {
-		kuid: "000-0E8"
-		kind: schema.#Kind.vm
-		roles: [schema.#Role.mesh]
-		os:   schema.#OS.ubuntu
-		arch: schema.#Arch.amd64
-	}
 }

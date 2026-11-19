@@ -17,11 +17,6 @@ _grist: {
 }
 
 grist: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["bill"]
-	}
-
 	_scr: D.fnox.secrets
 
 	fnox: {
@@ -77,6 +72,7 @@ grist: D={
 					(_scr.GRIST_OIDC_IDP_CLIENT_SECRET._ID): "${\(_scr.GRIST_OIDC_IDP_CLIENT_SECRET._ID):?err}"
 				}
 				expose: [_grist.port]
+				ports: ["\(_grist.port):\(_grist.port)"]
 				volumes: ["\(S.volumes.app_data._ID):/persist"]
 				networks: ["default", ext.dockerNetworks.pangolinSite.name]
 				healthcheck: snip.services.healthcheck.nodeFetch & {#port: _grist.port, #path: "/status"}

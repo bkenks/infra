@@ -19,11 +19,6 @@ _pocket_id: {
 }
 
 pocket_id: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["pango"]
-	}
-
 	_scr: D.fnox.secrets
 
 	fnox: {

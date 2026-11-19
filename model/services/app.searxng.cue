@@ -8,6 +8,7 @@ import (
 _searxng: {
 	host:         "search.\(ext.domains.ktbInternal)"
 	port:         8080
+	hostPort:          8888
 	cachePort:    6379
 	version:      "2026.11.6-ac11e14c5"
 	cacheVersion: "9-alpine"
@@ -15,11 +16,6 @@ _searxng: {
 }
 
 searxng: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["bill"]
-	}
-
 	_scr: D.fnox.secrets
 
 	fnox: {
@@ -56,6 +52,7 @@ searxng: D={
 					SEARXNG_SEARCH_FORMATS:    "html,json"
 				}
 				expose: [_searxng.port]
+				ports: ["\(_searxng.hostPort):\(_searxng.port)"]
 				volumes: [
 					// Entrypoint seeds settings.yml here on first start.
 					"\(S.volumes.app_config._ID):/etc/searxng",

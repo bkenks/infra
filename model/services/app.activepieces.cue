@@ -7,6 +7,7 @@ import (
 
 _activepieces: {
 	host:      "activepieces.\(ext.domains.ktbCloud)"
+	hostPort:  8081
 	port:      80
 	cachePort: 6379
 	dbPort:    5432
@@ -15,12 +16,9 @@ _activepieces: {
 }
 
 activepieces: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["bill"]
-	}
-
-	notes: "Automation/workflow builder (n8n alternative). Webhooks and app triggers need AP_FRONTEND_URL (https://\(_activepieces.host)) reachable by third parties."
+	// Automation/workflow builder (n8n alternative). Webhooks and app
+	// triggers need AP_FRONTEND_URL (https://activepieces.ktbcloud.com)
+	// reachable by third parties.
 
 	_scr: D.fnox.secrets
 
@@ -87,6 +85,7 @@ activepieces: D={
 					AP_CONTAINER_TYPE: "APP"
 				}
 				expose: [_activepieces.port]
+				ports: ["\(_activepieces.hostPort):\(_activepieces.port)"]
 				volumes: ["\(S.volumes.app_cache._ID):/usr/src/app/cache"]
 				networks: ["default", ext.dockerNetworks.pangolinSite.name]
 				healthcheck: snip.services.healthcheck.nodeFetch & {#port: _activepieces.port, #path: "/api/v1/health"}

@@ -26,6 +26,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "6767:6767"
     volumes:
       - /srv/docker/bind-mounts/stream/bazarr/config:/config
       - type: bind
@@ -116,6 +118,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "9696:9696"
     volumes:
       - /srv/docker/bind-mounts/stream/prowlarr/config:/config
   movies:
@@ -139,6 +143,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "7878:7878"
     volumes:
       - /srv/docker/bind-mounts/stream/radarr/config:/config
       - type: bind
@@ -167,6 +173,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "8080:8080"
     volumes:
       - /srv/docker/bind-mounts/stream/sabnzbd/config:/config
       - type: bind
@@ -186,6 +194,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "5055:5055"
     volumes:
       - /srv/docker/bind-mounts/stream/seerr/config:/app/config
   tv:
@@ -209,6 +219,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "8989:8989"
     volumes:
       - /srv/docker/bind-mounts/stream/sonarr/config:/config
       - type: bind

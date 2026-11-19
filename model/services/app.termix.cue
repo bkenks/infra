@@ -13,12 +13,12 @@ _termix: {
 }
 
 termix: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["bill"]
-	}
-
-	notes: "Web SSH/RDP/VNC terminal and server manager (https://\(_termix.host), private pangolin resource; not publicly exposed). Encrypted SQLite DB, plugins and recordings live in the termix-app_data volume; its keys come from 1Password (infra/termix) and DATABASE_KEY/ENCRYPTION_KEY must never change once data exists."
+	// Web SSH/RDP/VNC terminal and server manager
+	// (https://termix.ktbinternal.com, private pangolin resource; not
+	// publicly exposed). Encrypted SQLite DB, plugins and recordings live
+	// in the termix-app_data volume; its keys come from 1Password
+	// (infra/termix) and DATABASE_KEY/ENCRYPTION_KEY must never change
+	// once data exists.
 
 	_scr: D.fnox.secrets
 
@@ -55,6 +55,7 @@ termix: D={
 				}
 			}
 			expose: [_termix.port]
+			ports: ["\(_termix.port):\(_termix.port)"]
 			volumes: ["\(S.volumes.data._ID):/app/data"]
 			networks: [ext.dockerNetworks.pangolinSite.name]
 			// The image's own healthcheck uses wget, which upstream is

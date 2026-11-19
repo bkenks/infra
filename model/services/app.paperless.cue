@@ -21,11 +21,6 @@ _paperless: {
 }
 
 paperless: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["bill", "littlebuddy"]
-	}
-
 	_scr: D.fnox.secrets
 
 	fnox: {
@@ -104,6 +99,7 @@ paperless: D={
 					(_scr.PAPERLESS_SECRET_KEY._ID):   "${\(_scr.PAPERLESS_SECRET_KEY._ID):?err}"
 				}
 				expose: [_paperless.port]
+				ports: ["\(_paperless.port):\(_paperless.port)"]
 				volumes: [
 					"\(S.volumes.app_data._ID):/usr/src/paperless/data",
 					"\(S.volumes.app_media._ID):/usr/src/paperless/media",

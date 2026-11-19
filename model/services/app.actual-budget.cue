@@ -10,11 +10,6 @@ _actual_budget: {
 }
 
 actual_budget: {
-	deploy: {
-		manager: "komodo"
-		targets: ["bill"]
-	}
-
 	compose: S={
 		name: "actual-budget"
 
@@ -26,6 +21,7 @@ actual_budget: {
 			image: "docker.io/actualbudget/actual-server:\(_actual_budget.version)"
 			environment: ACTUAL_PORT: "\(_actual_budget.port)"
 			expose: [_actual_budget.port]
+			ports: ["\(_actual_budget.port):\(_actual_budget.port)"]
 			volumes: ["\(S.volumes.data._ID):/data"]
 			networks: [externals.dockerNetworks.pangolinSite.name]
 			healthcheck: {

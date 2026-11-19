@@ -36,6 +36,8 @@ services:
       start_period: 300s
     networks:
       - pangolin-site
+    ports:
+      - "3001:3001"
     volumes:
       - app_data:/app/.wrangler
 volumes:

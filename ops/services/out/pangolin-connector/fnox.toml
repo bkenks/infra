@@ -32,16 +32,6 @@ value = 'hosts.000-03f.newt/SITE_ID'
 provider = 'onepassword'
 value = 'hosts.000-03f.newt/SITE_SECRET'
 
-[profiles.000-0E8]
-[profiles.000-0E8.secrets]
-[profiles.000-0E8.secrets.SITE_ID]
-provider = 'onepassword'
-value = 'hosts.000-0E8.newt/SITE_ID'
-
-[profiles.000-0E8.secrets.SITE_SECRET]
-provider = 'onepassword'
-value = 'hosts.000-0E8.newt/SITE_SECRET'
-
 [profiles.000-0cx]
 [profiles.000-0cx.secrets]
 [profiles.000-0cx.secrets.SITE_ID]

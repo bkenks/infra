@@ -1,7 +1,7 @@
 ---
 - name: Komodo Core runs on the control plane
   hosts: role_control_plane
-  tags: [platform, komodo_core]
+  tags: [komodo_core]
 
   tasks:
     - name: Platform stack files are present
@@ -13,7 +13,6 @@
         docker_stack_files__name: platform
         docker_stack_files__repo_subdir: ops/services
 
-    # wrap loads the 1Password token and runs compose under fnox with the stack's profile.
     - name: Komodo Core is running
       become: true
       ansible.builtin.command:
@@ -24,7 +23,7 @@
 
 - name: Komodo Periphery runs on every host
   hosts: all
-  tags: [platform, komodo_periphery]
+  tags: [komodo_periphery]
 
   tasks:
     - name: Komodo Periphery is installed and configured
@@ -33,7 +32,7 @@
 
 - name: Backrest runs on every host
   hosts: all
-  tags: [platform, backrest]
+  tags: [backrest]
 
   tasks:
     - name: Backrest is installed

@@ -1,0 +1,100 @@
+---
+- name: Read the installed Pangolin CLI version
+  ansible.builtin.command: "{{ pangolin_site__install_dir }}/pangolin version"
+  register: pangolin_site__installed
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+- name: Install Pangolin CLI {{ pangolin_site__version }}
+  when: pangolin_site__version not in pangolin_site__installed.stdout | default('')
+  become: true
+  ansible.builtin.get_url:
+    url: "{{ pangolin_site__url }}"
+    dest: "{{ pangolin_site__install_dir }}/pangolin"
+    force: true
+    owner: root
+    group: root
+    mode: "0755"
+  notify: Restart pangolin-site
+
+- name: Read the site config
+  become: true
+  ansible.builtin.slurp:
+    src: "{{ pangolin_site__config_file }}"
+  register: pangolin_site__config
+  failed_when: false
+
+# set_fact (not a role var) so the prompt below can see every host's state through hostvars.
+- name: Note whether the site is already provisioned
+  ansible.builtin.set_fact:
+    pangolin_site__provisioned: >-
+      {{ (pangolin_site__config.content | default('{}' | b64encode) | b64decode | from_json).id
+         | default('') | length > 0 }}
+
+# pause runs once for the play; run_once makes its answer register on every host.
+- name: Prompt for a provisioning key
+  when:
+    - pangolin_site__provisioning_key is undefined
+    - ansible_play_hosts | map('extract', hostvars, 'pangolin_site__provisioned') | reject | list | length > 0
+  run_once: true
+  ansible.builtin.pause:
+    prompt: Pangolin provisioning key (spk_...)
+    echo: false
+  register: pangolin_site__prompt
+
+- name: Use the prompted provisioning key
+  when: pangolin_site__prompt.user_input is defined
+  ansible.builtin.set_fact:
+    pangolin_site__provisioning_key: "{{ pangolin_site__prompt.user_input | trim }}"
+  no_log: true
+
+- name: Provision the site
+  when: not pangolin_site__provisioned
+  become: true
+  block:
+    - name: Check a provisioning key was given
+      ansible.builtin.assert:
+        that: pangolin_site__provisioning_key | default('') | length > 0
+        fail_msg: >-
+          {{ inventory_hostname }} isn't provisioned and no provisioning key was given.
+          Run interactively to be prompted, or pass -e pangolin_site__provisioning_key=spk_...
+        quiet: true
+
+    - name: Create the Pangolin config directory
+      ansible.builtin.file:
+        path: "{{ pangolin_site__config_file | dirname }}"
+        state: directory
+        owner: root
+        group: root
+        mode: "0755"
+
+    # Only written while unprovisioned: the CLI swaps the key for an id and secret and
+    # rewrites this file, so rewriting it later would orphan the site and mint a new one.
+    - name: Write the site provisioning config
+      ansible.builtin.template:
+        src: site.json.j2
+        dest: "{{ pangolin_site__config_file }}"
+        owner: root
+        group: root
+        mode: "0600"
+      no_log: true
+      notify: Restart pangolin-site
+
+- name: Install the pangolin-site service
+  become: true
+  ansible.builtin.template:
+    src: pangolin-site.service.j2
+    dest: /etc/systemd/system/pangolin-site.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart pangolin-site
+
+- name: Run the pangolin-site service
+  become: true
+  ansible.builtin.systemd_service:
+    name: pangolin-site
+    enabled: true
+    state: started
+    daemon_reload: true

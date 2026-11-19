@@ -1,0 +1,6 @@
+---
+- name: Pangolin Site is provisioned
+  hosts: all
+
+  roles:
+    - role: pangolin_site

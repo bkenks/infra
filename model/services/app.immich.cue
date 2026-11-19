@@ -15,12 +15,9 @@ _immich: {
 }
 
 immich: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["paiki"]
-	}
-
-	notes: "Photo library. Library bind-mounted from host path /mnt/immich-library. Public at https://immich.homektb.com via pangolin."
+	// Photo library. Library bind-mounted from host path
+	// /mnt/immich-library. Public at https://immich.homektb.com via
+	// pangolin.
 
 	_scr: D.fnox.secrets
 
@@ -70,6 +67,7 @@ immich: D={
 					(_scr.DB_PASSWORD._ID): "${\(_scr.DB_PASSWORD._ID):?err}"
 				}
 				expose: [_immich.port]
+				ports: ["\(_immich.port):\(_immich.port)"]
 				volumes: ["/mnt/immich-library:/data"]
 				networks: ["default", ext.dockerNetworks.pangolinSite.name]
 				devices: ["/dev/dri:/dev/dri"]

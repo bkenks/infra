@@ -14,11 +14,6 @@ _docuseal: {
 }
 
 docuseal: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["littlebuddy"]
-	}
-
 	_scr: D.fnox.secrets
 
 	fnox: {
@@ -52,6 +47,7 @@ docuseal: D={
 					(_scr.SECRET_KEY_BASE._ID): "${\(_scr.SECRET_KEY_BASE._ID):?err}"
 				}
 				expose: [_docuseal.port]
+				ports: ["\(_docuseal.port):\(_docuseal.port)"]
 				volumes: ["\(S.volumes.app_data._ID):/data/docuseal"]
 				networks: ["default", externals.dockerNetworks.pangolinSite.name]
 			}

@@ -1,0 +1,2 @@
+pangolin_site__endpoint: https://pangolin.ktbcloud.com
+pangolin_site__name: "{{ kuid }}"

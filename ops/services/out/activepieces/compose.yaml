@@ -80,6 +80,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "8081:80"
     volumes:
       - app_cache:/usr/src/app/cache
   worker:

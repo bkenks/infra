@@ -100,6 +100,8 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "8000:8000"
     volumes:
       - app_data:/usr/src/paperless/data
       - app_media:/usr/src/paperless/media

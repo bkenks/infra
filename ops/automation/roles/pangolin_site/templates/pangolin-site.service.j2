@@ -1,0 +1,19 @@
+# {{ ansible_managed }}
+# Named to match the CLI's own unit, so `pangolin service status|logs site` work.
+[Unit]
+Description=Pangolin site
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart={{ pangolin_site__install_dir }}/pangolin up site --config-file {{ pangolin_site__config_file }}
+Restart=always
+RestartSec=2
+UMask=0077
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

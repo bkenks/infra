@@ -42,12 +42,9 @@ _stream: {
 }
 
 stream: D={
-	deploy: {
-		manager: "komodo"
-		targets: ["paiki"]
-	}
-
-	notes: "Media library and downloads live on the Synology NAS share /volume1/streaming, automounted at /mnt/streaming on paiki (nfs_mount Ansible role)."
+	// Media library and downloads live on the Synology NAS share
+	// /volume1/streaming, automounted at /mnt/streaming on paiki
+	// (nfs_mount Ansible role).
 
 	_scr: D.fnox.secrets
 
@@ -75,6 +72,7 @@ stream: D={
 				image:       "lscr.io/linuxserver/bazarr:\(_stream.bazarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.bazarrPort]
+				ports: ["\(_stream.bazarrPort):\(_stream.bazarrPort)"]
 				volumes: [
 					"\(_stream.bindRoot)/bazarr/config:/config",
 					_stream.sharedData,
@@ -113,6 +111,7 @@ stream: D={
 				image:       "lscr.io/linuxserver/prowlarr:\(_stream.prowlarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.prowlarrPort]
+				ports: ["\(_stream.prowlarrPort):\(_stream.prowlarrPort)"]
 				volumes: ["\(_stream.bindRoot)/prowlarr/config:/config"]
 				networks: S._webNetworks
 				healthcheck: snip.services.healthcheck.httpGet & {#port: _stream.prowlarrPort, #path: "/ping"}
@@ -121,6 +120,7 @@ stream: D={
 				image:       "lscr.io/linuxserver/radarr:\(_stream.radarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.radarrPort]
+				ports: ["\(_stream.radarrPort):\(_stream.radarrPort)"]
 				volumes: [
 					"\(_stream.bindRoot)/radarr/config:/config",
 					_stream.sharedData,
@@ -132,6 +132,7 @@ stream: D={
 				image:       "lscr.io/linuxserver/sabnzbd:\(_stream.sabnzbdVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.sabnzbdPort]
+				ports: ["\(_stream.sabnzbdPort):\(_stream.sabnzbdPort)"]
 				volumes: [
 					"\(_stream.bindRoot)/sabnzbd/config:/config",
 					_stream.sharedData,
@@ -143,6 +144,7 @@ stream: D={
 				image: "ghcr.io/seerr-team/seerr:\(_stream.seerrVersion)"
 				environment: TZ: _stream.tz
 				expose: [_stream.seerrPort]
+				ports: ["\(_stream.seerrPort):\(_stream.seerrPort)"]
 				volumes: ["\(_stream.bindRoot)/seerr/config:/app/config"]
 				networks: S._webNetworks
 				init:     true
@@ -151,6 +153,7 @@ stream: D={
 				image:       "lscr.io/linuxserver/sonarr:\(_stream.sonarrVersion)"
 				environment: _stream.lsioEnv
 				expose: [_stream.sonarrPort]
+				ports: ["\(_stream.sonarrPort):\(_stream.sonarrPort)"]
 				volumes: [
 					"\(_stream.bindRoot)/sonarr/config:/config",
 					_stream.sharedData,

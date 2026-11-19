@@ -52,5 +52,7 @@ services:
     networks:
       - default
       - pangolin-site
+    ports:
+      - "2283:2283"
     volumes:
       - /mnt/immich-library:/data
