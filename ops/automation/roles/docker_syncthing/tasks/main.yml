@@ -23,3 +23,6 @@
   community.docker.docker_compose_v2:
     project_src: "{{ docker_syncthing__stacks_dir }}/syncthing"
     state: present
+
+- name: Ensure Syncthing is configured
+  ansible.builtin.import_tasks: configure.yml

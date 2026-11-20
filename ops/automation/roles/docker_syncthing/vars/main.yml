@@ -1,0 +1,8 @@
+---
+docker_syncthing__container: syncthing
+# Must match STGUIADDRESS in the rendered compose (model/services/platform.syncthing.cue).
+docker_syncthing__api: http://127.0.0.1:8384
+docker_syncthing__headers:
+  X-API-Key: "{{ docker_syncthing__apikey.stdout }}"
+docker_syncthing__peers: >-
+  {{ ansible_play_hosts | map('extract', hostvars, 'docker_syncthing__device') | list }}

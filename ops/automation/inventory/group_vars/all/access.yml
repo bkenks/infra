@@ -9,3 +9,4 @@ access__ssh_port: "{{ hardened_ssh_port }}"
 access__firewall_group_ports:
   all: [80, 443, 3204, 9120, 8120]
   control_plane: [18006, 18022]
+  provider_home: [22000] # syncthing sync protocol

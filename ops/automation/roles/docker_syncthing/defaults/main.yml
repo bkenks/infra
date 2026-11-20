@@ -6,3 +6,11 @@ docker_syncthing__repo_version: main
 # Must match PUID/PGID in the rendered compose (model/services/platform.syncthing.cue).
 docker_syncthing__uid: 1000
 docker_syncthing__gid: 1000
+
+docker_syncthing__gui_user: admin
+docker_syncthing__gui_password: ""
+# Merged into /rest/config/options; only the keys given are managed.
+docker_syncthing__options: {}
+# Folders shared with every host in the play. `path` is inside the container
+# (the sync dir is mounted at /sync). Keys: id, path, label?, type?.
+docker_syncthing__folders: []

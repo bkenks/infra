@@ -1,0 +1,156 @@
+---
+# Configures Syncthing through its REST API on 127.0.0.1, from the host itself.
+# Every host in the play becomes a peer of every other, and each folder in
+# docker_syncthing__folders is shared with all of them. Peers and folder
+# devices are only ever added, never removed, so a --limit run is safe.
+
+- name: Ensure the Syncthing GUI password is set
+  ansible.builtin.assert:
+    that:
+      - docker_syncthing__gui_password | length > 0
+    fail_msg: >-
+      docker_syncthing__gui_password is empty. Load the fnox environment on the
+      controller so SYNCTHING_GUI_PASSWORD in fnox.toml is exported, then re-run.
+    quiet: true
+  no_log: true
+
+- name: Read the Syncthing API key
+  become: true
+  ansible.builtin.command:
+    argv:
+      - docker
+      - exec
+      - "{{ docker_syncthing__container }}"
+      - sed
+      - -n
+      - 's:.*<apikey>\(.*\)</apikey>.*:\1:p'
+      - /var/syncthing/config/config.xml
+  register: docker_syncthing__apikey
+  until: docker_syncthing__apikey.stdout | length > 0
+  retries: 15
+  delay: 2
+  changed_when: false
+  check_mode: false
+  no_log: true
+
+- name: Wait for the Syncthing API
+  ansible.builtin.uri:
+    url: "{{ docker_syncthing__api }}/rest/system/status"
+    headers: "{{ docker_syncthing__headers }}"
+  register: docker_syncthing__status
+  until: docker_syncthing__status.status == 200
+  retries: 15
+  delay: 2
+  check_mode: false
+
+- name: Record this host as a Syncthing peer
+  ansible.builtin.set_fact:
+    docker_syncthing__device_id: "{{ docker_syncthing__status.json.myID }}"
+    docker_syncthing__device:
+      deviceID: "{{ docker_syncthing__status.json.myID }}"
+      name: "{{ kuid }}"
+      addresses:
+        - "tcp://{{ ansible_host }}:22000"
+        - dynamic
+
+- name: Read the Syncthing config
+  ansible.builtin.uri:
+    url: "{{ docker_syncthing__api }}/rest/config"
+    headers: "{{ docker_syncthing__headers }}"
+  register: docker_syncthing__config
+  check_mode: false
+
+- name: Check the Syncthing GUI credentials
+  ansible.builtin.uri:
+    url: "{{ docker_syncthing__api }}/rest/noauth/auth/password"
+    method: POST
+    body_format: json
+    body:
+      username: "{{ docker_syncthing__gui_user }}"
+      password: "{{ docker_syncthing__gui_password }}"
+      stayLoggedIn: false
+    status_code: [204, 403]
+  register: docker_syncthing__login
+  check_mode: false
+  no_log: true
+
+# Syncthing bcrypt-hashes a plaintext password itself.
+- name: Ensure the Syncthing GUI credentials are set
+  ansible.builtin.uri:
+    url: "{{ docker_syncthing__api }}/rest/config/gui"
+    method: PATCH
+    headers: "{{ docker_syncthing__headers }}"
+    body_format: json
+    body:
+      user: "{{ docker_syncthing__gui_user }}"
+      password: "{{ docker_syncthing__gui_password }}"
+  when: >-
+    docker_syncthing__login.status != 204
+    or docker_syncthing__config.json.gui.user != docker_syncthing__gui_user
+    or docker_syncthing__config.json.gui.password | length == 0
+  changed_when: true
+  no_log: true
+
+- name: Ensure the Syncthing options are set
+  ansible.builtin.uri:
+    url: "{{ docker_syncthing__api }}/rest/config/options"
+    method: PATCH
+    headers: "{{ docker_syncthing__headers }}"
+    body_format: json
+    body: "{{ docker_syncthing__options }}"
+  when: >-
+    docker_syncthing__config.json.options | combine(docker_syncthing__options)
+    != docker_syncthing__config.json.options
+  changed_when: true
+
+- name: Ensure every peer is a known Syncthing device
+  vars:
+    docker_syncthing__current: >-
+      {{ docker_syncthing__config.json.devices
+         | selectattr('deviceID', 'equalto', item.deviceID) | first | default({}) }}
+  ansible.builtin.uri:
+    url: "{{ docker_syncthing__api }}/rest/config/devices/{{ item.deviceID }}"
+    method: "{{ 'PATCH' if docker_syncthing__current else 'PUT' }}"
+    headers: "{{ docker_syncthing__headers }}"
+    body_format: json
+    body: "{{ item }}"
+  loop: "{{ docker_syncthing__peers | rejectattr('deviceID', 'equalto', docker_syncthing__device_id) }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: >-
+    docker_syncthing__current.name | default('') != item.name
+    or docker_syncthing__current.addresses | default([]) != item.addresses
+  changed_when: true
+
+- name: Ensure each Syncthing folder is shared with every peer
+  vars:
+    docker_syncthing__current: >-
+      {{ docker_syncthing__config.json.folders
+         | selectattr('id', 'equalto', item.id) | first | default({}) }}
+    docker_syncthing__current_ids: >-
+      {{ docker_syncthing__current.devices | default([]) | map(attribute='deviceID') | list }}
+    docker_syncthing__wanted_ids: >-
+      {{ docker_syncthing__current_ids
+         | union(docker_syncthing__peers | map(attribute='deviceID')) }}
+    docker_syncthing__folder:
+      id: "{{ item.id }}"
+      label: "{{ item.label | default(item.id) }}"
+      path: "{{ item.path }}"
+      type: "{{ item.type | default('sendreceive') }}"
+      devices: "{{ docker_syncthing__wanted_ids | map('community.general.dict_kv', 'deviceID') | list }}"
+  ansible.builtin.uri:
+    url: "{{ docker_syncthing__api }}/rest/config/folders/{{ item.id }}"
+    method: "{{ 'PATCH' if docker_syncthing__current else 'PUT' }}"
+    headers: "{{ docker_syncthing__headers }}"
+    body_format: json
+    body: "{{ docker_syncthing__folder }}"
+  loop: "{{ docker_syncthing__folders }}"
+  loop_control:
+    label: "{{ item.id }}"
+  when: >-
+    not docker_syncthing__current
+    or docker_syncthing__current.label != docker_syncthing__folder.label
+    or docker_syncthing__current.path != docker_syncthing__folder.path
+    or docker_syncthing__current.type != docker_syncthing__folder.type
+    or docker_syncthing__wanted_ids | difference(docker_syncthing__current_ids) | length > 0
+  changed_when: true

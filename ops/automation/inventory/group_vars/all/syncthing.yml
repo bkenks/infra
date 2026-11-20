@@ -1,0 +1,9 @@
+---
+docker_syncthing__gui_user: janitor
+docker_syncthing__gui_password: "{{ lookup('env', 'SYNCTHING_GUI_PASSWORD') }}"
+docker_syncthing__options:
+  urAccepted: 3 # answer the usage-reporting prompt (3 = accepted, -1 = declined)
+docker_syncthing__folders:
+  - id: fc3gn-9vrrv # created by hand on littlebuddy; keep the id so it is reused
+    label: sync
+    path: /sync
