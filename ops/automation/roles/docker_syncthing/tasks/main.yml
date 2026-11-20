@@ -1,0 +1,25 @@
+---
+- name: Ensure the Syncthing sync directory exists
+  become: true
+  ansible.builtin.file:
+    path: "{{ docker_syncthing__sync_dir }}"
+    state: directory
+    owner: "{{ docker_syncthing__uid }}"
+    group: "{{ docker_syncthing__gid }}"
+    mode: "0750"
+
+- name: Ensure the Syncthing stack files are present
+  ansible.builtin.import_role:
+    name: docker_stack_files
+  vars:
+    docker_stack_files__stacks_dir: "{{ docker_syncthing__stacks_dir }}"
+    docker_stack_files__repo: "{{ docker_syncthing__repo }}"
+    docker_stack_files__repo_version: "{{ docker_syncthing__repo_version }}"
+    docker_stack_files__name: syncthing
+    docker_stack_files__repo_subdir: ops/services/out/syncthing
+
+- name: Ensure Syncthing is running
+  become: true
+  community.docker.docker_compose_v2:
+    project_src: "{{ docker_syncthing__stacks_dir }}/syncthing"
+    state: present

@@ -10,6 +10,7 @@ hosts: schema.#Hosts & {
 
 	littlebuddy: schema.#Host & {
 		kuid: "000-015"
+		provider: schema.#Provider.home
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.control_plane]
 		os:   schema.#OS.ubuntu
@@ -18,6 +19,7 @@ hosts: schema.#Hosts & {
 
 	bill: schema.#Host & {
 		kuid: "000-02a"
+		provider: schema.#Provider.home
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.apps]
 		os:   schema.#OS.ubuntu
@@ -26,24 +28,27 @@ hosts: schema.#Hosts & {
 
 	paiki: schema.#Host & {
 		kuid: "000-03f"
+		provider: schema.#Provider.home
 		kind: schema.#Kind.physical
 		roles: [schema.#Role.media]
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}
 
-	pango: schema.#Host & {
-		kuid: "000-0cx"
-		kind: schema.#Kind.vm
-		roles: [schema.#Role.edge]
+	blip: schema.#Host & {
+		kuid: "000-0d3"
+		provider: schema.#Provider.home
+		kind: schema.#Kind.physical
+		roles: [schema.#Role.apps]
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}
 
-	blip: schema.#Host & {
-		kuid: "000-0d3"
-		kind: schema.#Kind.physical
-		roles: [schema.#Role.apps]
+	pango: schema.#Host & {
+		kuid: "000-0cx"
+		provider: schema.#Provider.vultr
+		kind: schema.#Kind.vm
+		roles: [schema.#Role.edge]
 		os:   schema.#OS.ubuntu
 		arch: schema.#Arch.amd64
 	}

@@ -7,6 +7,7 @@ dirs: {
 		dockerFiles:      dockerShare + "/files"
 		dockerStacks:     dockerShare + "/stacks"
 		dockerBindMounts: dockerShare + "/bind-mounts"
+		syncthingSync:    share + "/sync"
 	}
 
 	repo: configs: "../../configs"

@@ -1,0 +1,8 @@
+---
+docker_syncthing__sync_dir: "{{ syncthingSync }}"
+docker_syncthing__stacks_dir: "{{ dockerStacks }}"
+docker_syncthing__repo: "https://github.com/bkenks/infra.git"
+docker_syncthing__repo_version: main
+# Must match PUID/PGID in the rendered compose (model/services/platform.syncthing.cue).
+docker_syncthing__uid: 1000
+docker_syncthing__gid: 1000

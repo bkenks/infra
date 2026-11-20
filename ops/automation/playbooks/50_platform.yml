@@ -38,3 +38,12 @@
     - name: Backrest is installed
       ansible.builtin.import_role:
         name: backrest
+
+- name: Syncthing runs on every home host
+  hosts: provider_home
+  tags: [syncthing]
+
+  tasks:
+    - name: Syncthing is running
+      ansible.builtin.import_role:
+        name: docker_syncthing

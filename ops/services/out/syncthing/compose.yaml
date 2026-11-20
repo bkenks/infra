@@ -1,0 +1,18 @@
+# GENERATED from CUE — DO NOT EDIT.
+name: syncthing
+services:
+  syncthing:
+    restart: unless-stopped
+    container_name: syncthing
+    environment:
+      PUID: 1000
+      PGID: 1000
+      STGUIADDRESS: "127.0.0.1:8384"
+    image: syncthing/syncthing:latest
+    network_mode: host
+    volumes:
+      - /srv/sync:/sync
+      - config:/var/syncthing
+volumes:
+  config:
+    name: syncthing_config

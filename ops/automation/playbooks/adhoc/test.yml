@@ -1,0 +1,6 @@
+- name: Test
+  hosts: test_host
+
+  tasks:
+    - name: Test task
+      ansible.builtin.command: 'echo "hello"'

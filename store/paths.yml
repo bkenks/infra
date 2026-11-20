@@ -4,3 +4,4 @@ dockerShare: /srv/docker
 dockerFiles: /srv/docker/files
 dockerStacks: /srv/docker/stacks
 dockerBindMounts: /srv/docker/bind-mounts
+syncthingSync: /srv/sync
