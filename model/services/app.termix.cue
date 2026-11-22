@@ -9,7 +9,7 @@ import (
 _termix: {
 	host:    "termix.\(ext.domains.ktbInternal)"
 	port:    8080
-	version: "26.11.2"
+	version: "26.11.3"
 
 	// Own network with a pinned subnet: host-side connections to the published
 	// port (the bare-metal Pangolin site) arrive from its gateway, which
