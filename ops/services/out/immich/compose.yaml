@@ -24,7 +24,7 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?err}
     expose:
       - 2283
-    image: ghcr.io/immich-app/immich-server:v2.7.5
+    image: ghcr.io/immich-app/immich-server:v3.4.2
     networks:
       - default
       - pangolin-site
@@ -53,6 +53,6 @@ services:
     container_name: immich-ml
     environment:
       TZ: America/New_York
-    image: ghcr.io/immich-app/immich-machine-learning:v2.7.5
+    image: ghcr.io/immich-app/immich-machine-learning:v3.4.2
     volumes:
       - /srv/docker/bind-mounts/apps/immich/model-cache:/cache
