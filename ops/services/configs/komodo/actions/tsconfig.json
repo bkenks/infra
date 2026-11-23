@@ -1,0 +1,15 @@
+{
+  // Type-checking only: Komodo runs these files itself (Deno).
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "moduleDetection": "force",
+    "lib": ["ES2022", "DOM"],
+    "types": ["deno"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true
+  },
+  "include": ["*.ts"]
+}
