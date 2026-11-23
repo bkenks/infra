@@ -22,7 +22,7 @@ const IGNORE_TAG = "no-backup-check";
 const OK_STATES = ["running", "deploying", "unknown"];
 /** Alerter names/ids to send to. Empty = every alerter accepting Custom. */
 const ALERTERS: string[] = [];
-const LEVEL = "CRITICAL"; // "OK" | "WARNING" | "CRITICAL"
+const LEVEL = Types.SeverityLevel.Critical; // Ok | Warning | Critical
 
 const [stacks, servers, tags] = await Promise.all([
   komodo.read("ListStacks", {}),
