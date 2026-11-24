@@ -10,7 +10,7 @@ _komodo: {
 	webhookHost:  "komo-hooks.\(ext.domains.ktbCloud)"
 	port:         9120
 	mongoPort:    27017
-	version:      "2.1.2"
+	version:      "2.3.4"
 	mongoVersion: "8.2.4"
 
 	_bm:     ext.dirs.host.dockerBindMounts

@@ -37,7 +37,7 @@ services:
       KOMODO_GOOGLE_OAUTH_ENABLED: "false"
       KOMODO_LOGGING_PRETTY: "true"
       KOMODO_PRETTY_STARTUP_CONFIG: "true"
-    image: ghcr.io/moghtech/komodo-core:2.1.2
+    image: ghcr.io/moghtech/komodo-core:2.3.4
     init: true
     labels:
       komodo.skip: ""
