@@ -1,7 +1,7 @@
 ---
 galaxy_info:
   author: Brian Kenkel
-  description: Install Backrest as a systemd service via its upstream install script.
+  description: Install Backrest as a systemd service and manage its repos and plans.
   license: Proprietary
   min_ansible_version: "2.15"
   platforms:

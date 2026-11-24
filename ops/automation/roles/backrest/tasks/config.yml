@@ -1,0 +1,149 @@
+---
+# Writes the repos and plans in backrest__repos / backrest__plans into
+# config.json, replacing the entries with the same id. Everything else in the
+# file (repos and plans made in the UI, auth, multihost) is left alone.
+# files/compose.jq does the merge.
+#
+# Backrest reads config.json once at startup and saves its in-memory copy on
+# every UI change, so the file is only written while the service is stopped.
+# If Backrest doesn't come back up, the previous file is restored.
+
+- name: Ensure every managed Backrest repo has its secrets
+  ansible.builtin.assert:
+    that:
+      # An empty template renders as None on ansible-core 2.19+.
+      - backrest__repos_incomplete | default('', true) | length == 0
+    fail_msg: >-
+      These Backrest repos are missing a uri, password or env value:
+      {{ backrest__repos_incomplete }}. Load the fnox environment on the
+      controller so the backrest secrets in fnox.toml are exported, then re-run.
+    quiet: true
+  vars:
+    # Ids only, so the message can be shown without leaking secrets.
+    backrest__repos_incomplete: >-
+      {%- for repo in backrest__repos
+          if not repo.uri | default('')
+          or not repo.password | default('')
+          or repo.env | default([]) | reject('match', '^[A-Za-z_][A-Za-z0-9_]*=.') | list -%}
+      {{ repo.id | default('?') }}{{ ', ' if not loop.last }}
+      {%- endfor -%}
+
+- name: Ensure the Backrest config directory exists
+  ansible.builtin.file:
+    path: "{{ backrest__config_path | dirname }}"
+    state: directory
+    mode: "0700"
+
+- name: Read the current Backrest config
+  ansible.builtin.slurp:
+    src: "{{ backrest__config_path }}"
+  register: backrest__config_file
+  failed_when: false
+  check_mode: false
+
+- name: Compose the Backrest config
+  ansible.builtin.command:
+    argv:
+      - jq
+      - "{{ lookup('ansible.builtin.file', 'compose.jq') }}"
+    stdin: >-
+      {{ {
+           'config': backrest__config_file.content | b64decode | from_json
+                     if backrest__config_file.content is defined else none,
+           'seed': backrest__config_seed,
+           'repos': backrest__repos,
+           'plans': backrest__plans,
+           'repos_absent': backrest__repos_absent,
+           'plans_absent': backrest__plans_absent,
+         } | to_json }}
+  register: backrest__compose
+  changed_when: false
+  check_mode: false
+  no_log: true
+
+- name: Keep the composed Backrest config
+  ansible.builtin.set_fact:
+    backrest__desired: "{{ backrest__compose.stdout | from_json }}"
+  no_log: true
+
+# Ids only: the entries themselves hold repo secrets. In --check this is the
+# preview of what a real run would write.
+- name: Report Backrest config drift
+  ansible.builtin.debug:
+    msg: "{{ backrest__desired.drift }}"
+  when: backrest__desired.changed
+  changed_when: ansible_check_mode
+
+- name: Write the Backrest config with the service stopped
+  when:
+    - backrest__desired.changed
+    - not ansible_check_mode
+  block:
+    - name: Keep the previous Backrest config for rollback
+      ansible.builtin.copy:
+        src: "{{ backrest__config_path }}"
+        dest: "{{ backrest__config_path }}.ansible-prev"
+        remote_src: true
+        mode: "0600"
+      when: backrest__config_file.content is defined
+      no_log: true
+
+    - name: Stop Backrest so it can't overwrite the new config
+      ansible.builtin.systemd_service:
+        name: "{{ backrest__service }}"
+        state: stopped
+      become: true
+
+    - name: Write the Backrest config
+      ansible.builtin.copy:
+        content: "{{ backrest__desired.config | to_nice_json(indent=2) }}\n"
+        dest: "{{ backrest__config_path }}"
+        mode: "0600"
+      no_log: true
+
+    - name: Start Backrest
+      ansible.builtin.systemd_service:
+        name: "{{ backrest__service }}"
+        state: started
+        daemon_reload: true
+      become: true
+
+    # Backrest validates the config before it starts listening, and exits on
+    # a bad one, so the UI answering means the config was accepted.
+    - name: Wait for Backrest to accept the new config
+      ansible.builtin.uri:
+        url: "http://{{ backrest__listen }}/"
+      register: backrest__health
+      until: backrest__health.status == 200
+      retries: 15
+      delay: 2
+
+  rescue:
+    - name: Restore the previous Backrest config
+      ansible.builtin.copy:
+        src: "{{ backrest__config_path }}.ansible-prev"
+        dest: "{{ backrest__config_path }}"
+        remote_src: true
+        mode: "0600"
+      when: backrest__config_file.content is defined
+      no_log: true
+
+    - name: Remove the rejected Backrest config
+      ansible.builtin.file:
+        path: "{{ backrest__config_path }}"
+        state: absent
+      when: backrest__config_file.content is not defined
+
+    - name: Restart Backrest on the previous config
+      ansible.builtin.systemd_service:
+        name: "{{ backrest__service }}"
+        state: restarted
+        daemon_reload: true
+      become: true
+
+    - name: Fail with the reason the Backrest config was rolled back
+      ansible.builtin.fail:
+        msg: >-
+          Backrest did not come back up on the new config, so the previous one
+          was restored. Find the validation error with
+          `journalctl -u {{ backrest__service }} -n 50` on {{ inventory_hostname }}.

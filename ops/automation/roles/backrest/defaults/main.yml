@@ -1,3 +1,24 @@
 ---
 backrest__config_path: "~/.config/backrest/config.json"
+backrest__service: backrest
+# Where the install script binds the UI; used to check Backrest came back up.
+backrest__listen: "127.0.0.1:9898"
 backrest__instance: "{{ inventory_hostname | regex_replace('\\.internal$', '') }}"
+
+# Top-level keys written only when config.json lacks them. After that the
+# UI owns them, so e.g. turning auth on in the UI sticks.
+backrest__config_seed:
+  version: 6
+  instance: "{{ backrest__instance }}"
+  auth:
+    disabled: true
+
+# Repos and plans Ansible owns, in Backrest's config.json shape. Each one
+# replaces the entry with the same id on every run; entries with other ids,
+# such as ones made in the UI, are left alone.
+backrest__repos: []
+backrest__plans: []
+
+# Ids to delete. Removing an entry from the lists above only stops managing it.
+backrest__repos_absent: []
+backrest__plans_absent: []

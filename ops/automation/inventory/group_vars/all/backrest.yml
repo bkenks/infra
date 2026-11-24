@@ -1,7 +1,31 @@
 ---
-backrest__base_template: "{{ inventory_dir }}/../files/backrest/config-base.json.jinja"
-backrest__repo_template: "{{ inventory_dir }}/../files/backrest/config-repos.json.jinja"
-backrest__repo_password: "{{ lookup('env', 'BACKREST_KTB_BACKUP_APP_PASSWORD') }}"
-backrest__repo_aws_access_key_id: "{{ lookup('env', 'BACKREST_KTB_BACKUP_APP_AWS_ACCESS_KEY_ID') }}"
-backrest__repo_aws_secret_access_key: >-
-  {{ lookup('env', 'BACKREST_KTB_BACKUP_APP_AWS_SECRET_ACCESS_KEY') }}
+# Backrest config owned by Ansible; see roles/backrest/README.md. Per-host
+# plans go in host_vars as backrest__plans.
+backrest__repos:
+  - id: ktb-backup-app
+    uri: s3:https://s3.us-east-005.backblazeb2.com/ktb-backup-app
+    guid: ab983b591c2ef4341b4167175a28a23ef23ad8b185a4587124104535127daa62
+    password: "{{ lookup('env', 'BACKREST_KTB_BACKUP_APP_PASSWORD') }}"
+    env:
+      - "AWS_ACCESS_KEY_ID={{ lookup('env', 'BACKREST_KTB_BACKUP_APP_AWS_ACCESS_KEY_ID') }}"
+      - "AWS_SECRET_ACCESS_KEY={{ lookup('env', 'BACKREST_KTB_BACKUP_APP_AWS_SECRET_ACCESS_KEY') }}"
+    prunePolicy:
+      schedule:
+        maxFrequencyDays: 7
+        clock: CLOCK_LAST_RUN_TIME
+      maxUnusedPercent: 10
+    checkPolicy:
+      schedule:
+        maxFrequencyDays: 30
+        clock: CLOCK_LAST_RUN_TIME
+      readDataSubsetPercent: 5
+    forgetPolicy:
+      schedule:
+        disabled: true
+        clock: CLOCK_LAST_RUN_TIME
+      retention:
+        policyTimeBucketed:
+          hourly: 24
+          daily: 7
+          weekly: 4
+          monthly: 3
